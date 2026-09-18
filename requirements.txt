@@ -1,0 +1,2 @@
+# Runtime: none. The engine (middleman/) and the CLI (scripts/middleman.py) are stdlib-only
+# by design — a judge runs them with a bare python3 and no install step.
