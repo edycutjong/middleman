@@ -182,7 +182,7 @@ def hero_ctx(r, census):
         "share_int": "0",
         "share": "0%",
         "wallets_n": 0,
-        "claim": "middlemen found in this window — drop the paranoid cap.",
+        "claim": "middlemen found in this window — every print organic; the cap is the pool's own p90.",
         "support": f"{r['window']['prints']} prints, every one organic.",
         "symbol": r["symbol"],
         "quote": routed["quote"],

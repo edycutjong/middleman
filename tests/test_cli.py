@@ -181,7 +181,7 @@ def test_the_hero_line_falls_back_from_round_trips_to_sandwiches_to_the_pool_spr
     assert "80.0% of v0 / Q volume" in cli.hero_line({"pools": rows(5, 0, [10.0])})
     assert "2 sandwich(es) in v0 / Q" in cli.hero_line({"pools": rows(0, 2, [10.0])})
     assert "a fill pays 4.0× more in v1 / Q" in cli.hero_line({"pools": rows(0, 0, [10.0, 40.0])})
-    assert "drop the paranoid cap" in cli.hero_line({"pools": rows(0, 0, [10.0])})
+    assert "every print organic" in cli.hero_line({"pools": rows(0, 0, [10.0])})
 
 
 def test_main_with_no_flags_runs_the_hero_rule_live_and_writes_the_receipt(

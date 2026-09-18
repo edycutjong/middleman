@@ -172,7 +172,11 @@ def hero_line(result):
             f"{top['sandwiches']['count']} sandwich(es) in {top['venue']} / {top['quote']} — "
             f"{top['sandwiches']['victims']} victim print(s)"
         )
-    priced = [r for r in rows if r["q2f"]["p50_bps"] is not None and r["n_organic"] >= 10]
+    priced = [
+        r
+        for r in rows
+        if r["q2f"]["p50_bps"] is not None and r["n_organic"] >= recommend.MIN_ORGANIC
+    ]
     if len(priced) >= 2:
         lo = min(priced, key=lambda r: r["q2f"]["p50_bps"])
         hi = max(priced, key=lambda r: r["q2f"]["p50_bps"])
@@ -183,7 +187,7 @@ def hero_line(result):
                 f"{hi['venue']} / {hi['quote']} ({_bps(hi['q2f']['p50_bps'])} bps) than in "
                 f"{lo['venue']} / {lo['quote']} ({_bps(lo['q2f']['p50_bps'])} bps)"
             )
-    return "no middleman found in this window — drop the paranoid cap"
+    return "no middleman found in this window — every print organic; the cap is the pool's own p90"
 
 
 def render(result, out=None):

@@ -216,7 +216,7 @@
     }
     hero.className = 'hero none';
     $('share').textContent = '0';
-    $('claim').textContent = 'middlemen found in this window — drop the paranoid cap.';
+    $('claim').textContent = 'middlemen found in this window — every print organic; the cap is the pool\'s own p90.';
     $('support').textContent = result.window.prints + ' prints, every one organic.';
   }
   function renderRoute(result) {
