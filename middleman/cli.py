@@ -176,8 +176,9 @@ def hero_line(result):
     return "no middleman found in this window — drop the paranoid cap"
 
 
-def render(result, out=sys.stdout):
+def render(result, out=None):
     """The table and the line, for humans. Every value is in the receipt too."""
+    out = out or sys.stdout  # resolved at call time, so a captured stdout is honoured
     w = result["window"]
     print(
         f"{result['symbol']} · {result['platform']} · {w['prints']} prints · "
