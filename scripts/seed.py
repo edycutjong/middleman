@@ -30,7 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from middleman import cli, enrich, tape  # noqa: E402
+from middleman import cli, enrich, recommend, tape  # noqa: E402
 
 DATA = ROOT / "data"
 PROOF = ROOT / "docs" / "proof"
@@ -229,6 +229,51 @@ def census(results, heroes):
     }
 
 
+def recompute():
+    """Re-derive every receipt from its committed tape with the CURRENT engine, no network.
+
+    The tape is the raw data; the numbers are what the engine says about it, and they must
+    follow the engine. The labels the receipt carries from other endpoints (pool address,
+    liquidity, taxes, 24h coverage) and its call list were captured alongside the tape and
+    are kept as they were. Run after any change to the join or the pricing, then commit.
+    """
+    n = 0
+    for path in sorted(DATA.glob("tape_*.json")):
+        t = json.loads(path.read_text())
+        name = path.name[len("tape_") : -len(".json")]
+        proof_path = PROOF / f"{name}.json"
+        if not proof_path.exists():
+            continue
+        old = json.loads(proof_path.read_text())
+        meta = {"pages": t["pages"], "calls": [], "captured_utc": t["captured_utc"]}
+        fresh = cli.compute(
+            t["swaps"],
+            meta,
+            t["platform"],
+            t["address"],
+            t["symbol"],
+            t["pages"],
+            with_enrich=False,
+        )
+        labels = {tuple(p["key"]): p for p in old["pools"]}
+        for p in fresh["pools"]:
+            o = labels.get(tuple(p["key"])) or {}
+            for k in ("pools_merged", "addr", "liq_usd", "buy_tax", "sell_tax"):
+                p[k] = o.get(k)
+        for k in ("calls", "captured_utc", "wall_s", "auth", "credits_used", "taxes", "tape"):
+            fresh[k] = old.get(k)
+        fresh["decision"] = recommend.route(fresh["pools"])
+        cov = old.get("coverage")
+        routed = next((p for p in fresh["pools"] if p["key"] == fresh["decision"]["pool"]), None)
+        if cov and routed and cov.get("num_transactions_24h"):
+            cov["window_share_of_24h"] = round(routed["n"] / float(cov["num_transactions_24h"]), 4)
+        fresh["coverage"] = cov
+        proof_path.write_text(json.dumps(fresh, indent=1, sort_keys=True, default=str))
+        n += 1
+    print(f"recomputed {n} receipt(s) from their tapes with the current engine, no network")
+    rebuild_census()
+
+
 def rebuild_census():
     """The strip from the receipts already on disk — the heroes are read back from the old strip."""
     old = (
@@ -258,7 +303,14 @@ def main(argv=None):
         action="store_true",
         help="rebuild docs/proof/census.json from the committed receipts, no network",
     )
+    ap.add_argument(
+        "--recompute",
+        action="store_true",
+        help="re-derive every receipt from its committed tape with the current engine, no network",
+    )
     a = ap.parse_args(argv)
+    if a.recompute:
+        return recompute()
     if a.census_only:
         return rebuild_census()
     if tape.api_key():

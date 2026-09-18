@@ -267,6 +267,8 @@
       "v": 760.9553909566743
      }
     ],
+    "same_tx": false,
+    "take_quote": 0.0008317204168704073,
     "victims": [
      "197"
     ]
@@ -724,13 +726,13 @@
    "n_organic": 23,
    "naive": {
     "n": 22,
-    "p50_bps": 19.01,
+    "p50_bps": 18.18,
     "p90_bps": 60.75
    },
    "pools_merged": 1,
    "q2f": {
     "n": 22,
-    "p50_bps": 19.01,
+    "p50_bps": 18.18,
     "p90_bps": 60.75
    },
    "quote": "USDT",
@@ -1106,13 +1108,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 53.19,
+    "p50_bps": 34.33,
     "p90_bps": 53.19
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 53.19,
+    "p50_bps": 34.33,
     "p90_bps": 53.19
    },
    "quote": "WETH",
@@ -1150,13 +1152,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 130.34,
+    "p50_bps": -42.45,
     "p90_bps": 130.34
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 130.34,
+    "p50_bps": -42.45,
     "p90_bps": 130.34
    },
    "quote": "DAI",
@@ -1194,13 +1196,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 163.19,
+    "p50_bps": 0.13,
     "p90_bps": 163.19
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 163.19,
+    "p50_bps": 0.13,
     "p90_bps": 163.19
    },
    "quote": "USDC",

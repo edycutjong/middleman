@@ -237,6 +237,8 @@
       "v": 3427.3361949347036
      }
     ],
+    "same_tx": false,
+    "take_quote": 0.00036066558371428137,
     "victims": [
      "393"
     ]
@@ -490,13 +492,13 @@
    "n_organic": 67,
    "naive": {
     "n": 66,
-    "p50_bps": 8.57,
+    "p50_bps": 8.43,
     "p90_bps": 40.78
    },
    "pools_merged": 1,
    "q2f": {
     "n": 66,
-    "p50_bps": 8.57,
+    "p50_bps": 8.43,
     "p90_bps": 40.78
    },
    "quote": "USDT",
@@ -844,13 +846,13 @@
    "n_organic": 47,
    "naive": {
     "n": 46,
-    "p50_bps": 10.73,
+    "p50_bps": 10.07,
     "p90_bps": 57.18
    },
    "pools_merged": 1,
    "q2f": {
     "n": 46,
-    "p50_bps": 10.73,
+    "p50_bps": 10.07,
     "p90_bps": 57.18
    },
    "quote": "USDC",
@@ -1120,14 +1122,14 @@
    "n_organic": 31,
    "naive": {
     "n": 30,
-    "p50_bps": 16.5,
-    "p90_bps": 54.29
+    "p50_bps": 15.85,
+    "p90_bps": 27.66
    },
    "pools_merged": 1,
    "q2f": {
     "n": 30,
-    "p50_bps": 16.5,
-    "p90_bps": 54.29
+    "p50_bps": 15.85,
+    "p90_bps": 27.66
    },
    "quote": "WBTC",
    "round_trips": {
@@ -1634,13 +1636,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 64.48,
+    "p50_bps": 51.49,
     "p90_bps": 64.48
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 64.48,
+    "p50_bps": 51.49,
     "p90_bps": 64.48
    },
    "quote": "WBTC",

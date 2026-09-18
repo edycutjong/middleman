@@ -14,6 +14,8 @@ marginal impact curve — it includes the previous print's own footprint — and
 COMPARATIVELY, across pools of one token in one window, where that bias is shared.
 """
 
+import math
+
 from . import detect
 
 BPS = 10_000.0
@@ -60,11 +62,13 @@ def quote_to_fill(rows):
 
 
 def percentile(values, p):
-    """Nearest-rank percentile — no interpolation, so a p90 is always a real observation."""
+    """Nearest-rank percentile, rank = ceil(p/100 × n) — no interpolation, so a p90 is always
+    a real observation. ceil, not round: Python rounds half to even and JavaScript rounds half
+    away from zero, and the two engines disagreed on a 16-print pool until this was ceil."""
     if not values:
         return None
     ordered = sorted(values)
-    rank = max(1, min(len(ordered), int(round(p / 100.0 * len(ordered) + 0.5))))
+    rank = max(1, min(len(ordered), math.ceil(p / 100.0 * len(ordered) - 1e-9)))
     return ordered[rank - 1]
 
 
@@ -110,6 +114,8 @@ def _example(rows, rt, sw, organic_q2f, organic):
             "rows": block,
             "highlight": [r.get("lgid") for r in legs],
             "victims": [r.get("lgid") for r in m.get("victims", [])],
+            "same_tx": bool(m.get("same_tx")),
+            "take_quote": m.get("take_quote"),
             "arithmetic": lines,
         }
     for e in organic_q2f:

@@ -161,9 +161,7 @@ def test_capture_refuses_to_write_a_tape_it_could_not_pull(sandbox, monkeypatch)
 
 def test_the_census_takes_the_spread_over_ethereum_only_and_names_which_rule_fired(sandbox):
     washed = seed.capture("MOTO", MOTO, "ethereum", 8)
-    clean_rows = [
-        make_row(h, 1, f"a{h}", "buy", 10, 0.0101 + (h % 2) * 0.0002) for h in range(1, 120)
-    ]
+    clean_rows = [make_row(h, 1, f"a{h}", "buy", 10, 0.0101 + h * 0.0002) for h in range(1, 120)]
     clean_rows += [
         make_row(h, 2, f"b{h}", "buy", 10, 0.0101 + h * 1e-6, t1a=USDC, t1s="USDC")
         for h in range(1, 120)

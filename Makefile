@@ -1,4 +1,4 @@
-.PHONY: help setup lint test test-live bench bench-live demo seed census site verify audit check ci all
+.PHONY: help setup lint test test-live bench bench-live demo seed site serve verify audit check ci all
 
 help:  ## show targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-12s %s\n",$$1,$$2}'
@@ -32,6 +32,9 @@ verify:  ## re-derive every published number from the committed tapes, offline
 
 site:  ## re-render site/ from docs/proof/*.json
 	python3 scripts/render_site.py
+
+serve:  ## serve site/ + api/ locally the way Vercel routes them (port 8101)
+	node scripts/serve.js
 
 audit:  ## dependency + secret audit
 	pip-audit -r requirements-dev.txt || true

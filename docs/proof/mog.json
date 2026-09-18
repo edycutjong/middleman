@@ -306,13 +306,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 159.58,
+    "p50_bps": -446.91,
     "p90_bps": 159.58
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 159.58,
+    "p50_bps": -446.91,
     "p90_bps": 159.58
    },
    "quote": "USDC",

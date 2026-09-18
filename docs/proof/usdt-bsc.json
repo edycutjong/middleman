@@ -216,6 +216,8 @@
       "v": 1341.2044158043293
      }
     ],
+    "same_tx": false,
+    "take_quote": -51.34623899999997,
     "victims": []
    },
    "key": [
@@ -584,13 +586,13 @@
    "n_organic": 39,
    "naive": {
     "n": 38,
-    "p50_bps": 0.76,
+    "p50_bps": 0.68,
     "p90_bps": 2.83
    },
    "pools_merged": 0,
    "q2f": {
     "n": 38,
-    "p50_bps": 0.76,
+    "p50_bps": 0.68,
     "p90_bps": 2.83
    },
    "quote": "ETH",
@@ -921,6 +923,8 @@
       "v": 1316.958834263187
      }
     ],
+    "same_tx": false,
+    "take_quote": 0.0,
     "victims": []
    },
    "key": [
@@ -1977,13 +1981,13 @@
    "n_organic": 7,
    "naive": {
     "n": 6,
-    "p50_bps": 0.05,
+    "p50_bps": 0.04,
     "p90_bps": 50.17
    },
    "pools_merged": 0,
    "q2f": {
     "n": 6,
-    "p50_bps": 0.05,
+    "p50_bps": 0.04,
     "p90_bps": 50.17
    },
    "quote": "BABAB",
@@ -2095,13 +2099,13 @@
    "n_organic": 7,
    "naive": {
     "n": 6,
-    "p50_bps": 11.58,
+    "p50_bps": 3.53,
     "p90_bps": 99.02
    },
    "pools_merged": 0,
    "q2f": {
     "n": 6,
-    "p50_bps": 11.58,
+    "p50_bps": 3.53,
     "p90_bps": 99.02
    },
    "quote": "WARD",
@@ -2139,13 +2143,13 @@
    "n_organic": 7,
    "naive": {
     "n": 6,
-    "p50_bps": 7.04,
+    "p50_bps": 4.66,
     "p90_bps": 10.17
    },
    "pools_merged": 0,
    "q2f": {
     "n": 6,
-    "p50_bps": 7.04,
+    "p50_bps": 4.66,
     "p90_bps": 10.17
    },
    "quote": "FOLKS",
@@ -2255,13 +2259,13 @@
    "n_organic": 7,
    "naive": {
     "n": 6,
-    "p50_bps": 13.32,
+    "p50_bps": 7.04,
     "p90_bps": 183.14
    },
    "pools_merged": 0,
    "q2f": {
     "n": 6,
-    "p50_bps": 13.32,
+    "p50_bps": 7.04,
     "p90_bps": 183.14
    },
    "quote": "FLORK",
@@ -3105,6 +3109,8 @@
       "v": 16.31335310439949
      }
     ],
+    "same_tx": true,
+    "take_quote": 0.0,
     "victims": []
    },
    "key": [
@@ -3124,7 +3130,7 @@
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 10.82,
+    "p50_bps": -11.16,
     "p90_bps": 10.82
    },
    "quote": "Beat",
@@ -3282,6 +3288,8 @@
       "v": 250.88862413318958
      }
     ],
+    "same_tx": true,
+    "take_quote": 0.0,
     "victims": []
    },
    "key": [
@@ -4495,13 +4503,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 3.26,
+    "p50_bps": 0.69,
     "p90_bps": 3.26
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 3.26,
+    "p50_bps": 0.69,
     "p90_bps": 3.26
    },
    "quote": "HEMI",
@@ -4539,13 +4547,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 4.22,
+    "p50_bps": 1.97,
     "p90_bps": 4.22
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 4.22,
+    "p50_bps": 1.97,
     "p90_bps": 4.22
    },
    "quote": "ARTX",
@@ -4583,13 +4591,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 0.18,
+    "p50_bps": 0.03,
     "p90_bps": 0.18
    },
    "pools_merged": 2,
    "q2f": {
     "n": 2,
-    "p50_bps": 0.18,
+    "p50_bps": 0.03,
     "p90_bps": 0.18
    },
    "quote": "USDC",
@@ -4627,13 +4635,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 0.04,
+    "p50_bps": 0.0,
     "p90_bps": 0.04
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 0.04,
+    "p50_bps": 0.0,
     "p90_bps": 0.04
    },
    "quote": "USDC",
@@ -4744,13 +4752,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 6.36,
+    "p50_bps": -5.02,
     "p90_bps": 6.36
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 6.36,
+    "p50_bps": -5.02,
     "p90_bps": 6.36
    },
    "quote": "XRP",
@@ -4788,13 +4796,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 4.47,
+    "p50_bps": 2.43,
     "p90_bps": 4.47
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 4.47,
+    "p50_bps": 2.43,
     "p90_bps": 4.47
    },
    "quote": "DOS",
@@ -4904,13 +4912,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 5.36,
+    "p50_bps": 4.79,
     "p90_bps": 5.36
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 5.36,
+    "p50_bps": 4.79,
     "p90_bps": 5.36
    },
    "quote": "KGEN",
@@ -4948,13 +4956,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 3.75,
+    "p50_bps": 3.57,
     "p90_bps": 3.75
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 3.75,
+    "p50_bps": 3.57,
     "p90_bps": 3.75
    },
    "quote": "FORM",
@@ -5064,13 +5072,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 54.94,
+    "p50_bps": 10.2,
     "p90_bps": 54.94
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 54.94,
+    "p50_bps": 10.2,
     "p90_bps": 54.94
    },
    "quote": "TAIYI",
@@ -5181,13 +5189,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 0.03,
+    "p50_bps": 0.0,
     "p90_bps": 0.03
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 0.03,
+    "p50_bps": 0.0,
     "p90_bps": 0.03
    },
    "quote": "BUSD",
@@ -5225,13 +5233,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 4.06,
+    "p50_bps": 3.9,
     "p90_bps": 4.06
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 4.06,
+    "p50_bps": 3.9,
     "p90_bps": 4.06
    },
    "quote": "PIEVERSE",
@@ -5341,13 +5349,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 0.04,
+    "p50_bps": 0.03,
     "p90_bps": 0.04
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 0.04,
+    "p50_bps": 0.03,
     "p90_bps": 0.04
    },
    "quote": "QQQB",
@@ -5385,13 +5393,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 5.32,
+    "p50_bps": 3.94,
     "p90_bps": 5.32
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 5.32,
+    "p50_bps": 3.94,
     "p90_bps": 5.32
    },
    "quote": "EDU",
@@ -5429,13 +5437,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 5.38,
+    "p50_bps": 2.56,
     "p90_bps": 5.38
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 5.38,
+    "p50_bps": 2.56,
     "p90_bps": 5.38
    },
    "quote": "KITE",

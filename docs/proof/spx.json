@@ -218,13 +218,13 @@
    "n_organic": 559,
    "naive": {
     "n": 558,
-    "p50_bps": 7.33,
+    "p50_bps": 7.29,
     "p90_bps": 61.05
    },
    "pools_merged": 1,
    "q2f": {
     "n": 558,
-    "p50_bps": 7.33,
+    "p50_bps": 7.29,
     "p90_bps": 61.05
    },
    "quote": "WETH",
@@ -424,13 +424,13 @@
    "n_organic": 23,
    "naive": {
     "n": 22,
-    "p50_bps": 44.38,
+    "p50_bps": 42.62,
     "p90_bps": 213.42
    },
    "pools_merged": 1,
    "q2f": {
     "n": 22,
-    "p50_bps": 44.38,
+    "p50_bps": 42.62,
     "p90_bps": 213.42
    },
    "quote": "ETH",

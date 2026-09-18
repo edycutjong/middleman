@@ -224,25 +224,12 @@
     "pool": "Uniswap v3 (Ethereum) / WETH"
    },
    "low": {
-    "p50_bps": 7.33,
+    "p50_bps": 7.29,
     "pool": "Uniswap v2 / WETH"
    },
    "platform": "ethereum",
-   "ratio": 3.38,
+   "ratio": 3.39,
    "symbol": "SPX"
-  },
-  {
-   "high": {
-    "p50_bps": 8.38,
-    "pool": "Uniswap v4 (Ethereum) / USDC"
-   },
-   "low": {
-    "p50_bps": 4.58,
-    "pool": "Uniswap v4 (Ethereum) / ETH"
-   },
-   "platform": "ethereum",
-   "ratio": 1.83,
-   "symbol": "AAVE"
   },
   {
    "high": {
@@ -256,6 +243,19 @@
    "platform": "ethereum",
    "ratio": 1.69,
    "symbol": "SHIB"
+  },
+  {
+   "high": {
+    "p50_bps": 7.17,
+    "pool": "Uniswap v4 (Ethereum) / USDC"
+   },
+   "low": {
+    "p50_bps": 4.58,
+    "pool": "Uniswap v4 (Ethereum) / ETH"
+   },
+   "platform": "ethereum",
+   "ratio": 1.57,
+   "symbol": "AAVE"
   },
   {
    "high": {

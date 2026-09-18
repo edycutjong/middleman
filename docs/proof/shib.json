@@ -656,13 +656,13 @@
    "n_organic": 27,
    "naive": {
     "n": 26,
-    "p50_bps": 9.18,
+    "p50_bps": 1.87,
     "p90_bps": 96.3
    },
    "pools_merged": 1,
    "q2f": {
     "n": 26,
-    "p50_bps": 9.18,
+    "p50_bps": 1.87,
     "p90_bps": 96.3
    },
    "quote": "WETH",

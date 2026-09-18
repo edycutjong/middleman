@@ -460,13 +460,13 @@
    "n_organic": 79,
    "naive": {
     "n": 78,
-    "p50_bps": 8.38,
+    "p50_bps": 7.17,
     "p90_bps": 56.79
    },
    "pools_merged": 2,
    "q2f": {
     "n": 78,
-    "p50_bps": 8.38,
+    "p50_bps": 7.17,
     "p90_bps": 56.79
    },
    "quote": "USDC",
@@ -504,14 +504,14 @@
    "n_organic": 31,
    "naive": {
     "n": 30,
-    "p50_bps": 15.0,
-    "p90_bps": 58.54
+    "p50_bps": 13.18,
+    "p90_bps": 57.71
    },
    "pools_merged": 1,
    "q2f": {
     "n": 30,
-    "p50_bps": 15.0,
-    "p90_bps": 58.54
+    "p50_bps": 13.18,
+    "p90_bps": 57.71
    },
    "quote": "WETH",
    "round_trips": {
@@ -706,13 +706,13 @@
    "n_organic": 19,
    "naive": {
     "n": 18,
-    "p50_bps": 28.57,
+    "p50_bps": 27.15,
     "p90_bps": 57.01
    },
    "pools_merged": 1,
    "q2f": {
     "n": 18,
-    "p50_bps": 28.57,
+    "p50_bps": 27.15,
     "p90_bps": 57.01
    },
    "quote": "WETH",

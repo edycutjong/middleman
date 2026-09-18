@@ -418,6 +418,8 @@
       "v": 0.557799002887464
      }
     ],
+    "same_tx": true,
+    "take_quote": 0.0,
     "victims": []
    },
    "key": [
@@ -437,8 +439,8 @@
    "pools_merged": 0,
    "q2f": {
     "n": 110,
-    "p50_bps": 13.27,
-    "p90_bps": 79.94
+    "p50_bps": 12.98,
+    "p90_bps": 79.87
    },
    "quote": "CARDS",
    "round_trips": {
@@ -549,14 +551,14 @@
    "n_organic": 51,
    "naive": {
     "n": 50,
-    "p50_bps": 1.27,
-    "p90_bps": 3.26
+    "p50_bps": 1.24,
+    "p90_bps": 2.89
    },
    "pools_merged": 1,
    "q2f": {
     "n": 50,
-    "p50_bps": 1.27,
-    "p90_bps": 3.26
+    "p50_bps": 1.24,
+    "p90_bps": 2.89
    },
    "quote": "SOL",
    "round_trips": {
@@ -888,6 +890,8 @@
       "v": 3605.955954848881
      }
     ],
+    "same_tx": true,
+    "take_quote": 0.0,
     "victims": []
    },
    "key": [
@@ -1506,13 +1510,13 @@
    "n_organic": 15,
    "naive": {
     "n": 14,
-    "p50_bps": 0.15,
+    "p50_bps": 0.13,
     "p90_bps": 55.17
    },
    "pools_merged": 1,
    "q2f": {
     "n": 14,
-    "p50_bps": 0.15,
+    "p50_bps": 0.13,
     "p90_bps": 55.17
    },
    "quote": "PUMP",
@@ -2058,6 +2062,8 @@
       "v": 9.026672713988424
      }
     ],
+    "same_tx": true,
+    "take_quote": 0.0,
     "victims": []
    },
    "key": [
@@ -2234,13 +2240,13 @@
    "naive": {
     "n": 10,
     "p50_bps": 0.02,
-    "p90_bps": 0.03
+    "p90_bps": 0.02
    },
    "pools_merged": 0,
    "q2f": {
     "n": 10,
     "p50_bps": 0.02,
-    "p90_bps": 0.03
+    "p90_bps": 0.02
    },
    "quote": "CRCLx",
    "round_trips": {
@@ -3970,13 +3976,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 3.03,
+    "p50_bps": -0.01,
     "p90_bps": 3.03
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 3.03,
+    "p50_bps": -0.01,
     "p90_bps": 3.03
    },
    "quote": "STONK",
@@ -4058,13 +4064,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 50.21,
+    "p50_bps": 46.69,
     "p90_bps": 50.21
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 50.21,
+    "p50_bps": 46.69,
     "p90_bps": 50.21
    },
    "quote": "QUBT",
@@ -4102,13 +4108,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 50.0,
+    "p50_bps": 49.84,
     "p90_bps": 50.0
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 50.0,
+    "p50_bps": 49.84,
     "p90_bps": 50.0
    },
    "quote": "CYPH",
@@ -4146,13 +4152,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 18.85,
+    "p50_bps": 0.07,
     "p90_bps": 18.85
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 18.85,
+    "p50_bps": 0.07,
     "p90_bps": 18.85
    },
    "quote": "neet",
@@ -4262,13 +4268,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 2.0,
+    "p50_bps": 0.02,
     "p90_bps": 2.0
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 2.0,
+    "p50_bps": 0.02,
     "p90_bps": 2.0
    },
    "quote": "COIN",
@@ -4350,13 +4356,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 19.18,
+    "p50_bps": 5.96,
     "p90_bps": 19.18
    },
    "pools_merged": 1,
    "q2f": {
     "n": 2,
-    "p50_bps": 19.18,
+    "p50_bps": 5.96,
     "p90_bps": 19.18
    },
    "quote": "JitoSOL",
@@ -4394,13 +4400,13 @@
    "n_organic": 3,
    "naive": {
     "n": 2,
-    "p50_bps": 0.28,
+    "p50_bps": 0.24,
     "p90_bps": 0.28
    },
    "pools_merged": 0,
    "q2f": {
     "n": 2,
-    "p50_bps": 0.28,
+    "p50_bps": 0.24,
     "p90_bps": 0.28
    },
    "quote": "SPYx",
