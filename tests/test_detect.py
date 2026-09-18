@@ -141,10 +141,10 @@ def test_a_buy_b_buy_a_sell_in_one_block_is_a_sandwich_with_b_as_the_victim():
 
 def test_a_sandwich_with_two_victims_counts_both():
     rows = [
-        make_row(10, 1, "A", "buy", 100, 1),
+        make_row(10, 1, "A", "buy", 100, 1.00),
         make_row(10, 2, "B", "buy", 10, 0.1),
         make_row(10, 3, "C", "buy", 10, 0.1),
-        make_row(10, 4, "A", "sell", 99, 1),
+        make_row(10, 4, "A", "sell", 99, 1.02),
     ]
     _, sw, organic = detect.middlemen(rows)
     assert len(sw) == 1 and len(sw[0]["victims"]) == 2 and len(organic) == 2
@@ -170,22 +170,39 @@ def test_a_triple_split_across_two_blocks_is_not_a_sandwich():
     assert not rt and not sw and len(organic) == 3
 
 
-def test_a_print_the_other_way_between_the_legs_breaks_the_sandwich():
+def test_a_print_the_other_way_between_the_legs_makes_it_a_round_trip_not_a_sandwich():
+    """A is still on both sides of the block — a middleman — but B was not front-run."""
     rows = [
-        make_row(10, 1, "A", "buy", 100, 1),
+        make_row(10, 1, "A", "buy", 100, 1.00),
         make_row(10, 2, "B", "sell", 10, 0.1),
-        make_row(10, 3, "A", "sell", 100, 1),
+        make_row(10, 3, "A", "sell", 100, 1.02),
     ]
-    _, sw, organic = detect.middlemen(rows)
-    assert not sw and len(organic) == 3
+    rt, sw, organic = detect.middlemen(rows)
+    assert not sw and len(rt) == 1 and rt[0]["between"] == 1 and rt[0]["same_tx"] is False
+    assert [r["ma"] for r in organic] == ["B"]
 
 
-def test_more_than_four_victims_is_not_matched_as_one_sandwich():
-    rows = [make_row(10, 1, "A", "buy", 100, 1)]
+def test_a_return_that_extracted_nothing_is_a_round_trip_even_around_another_makers_print():
+    """USDT/DGAI on PancakeSwap v3, 2026-09-19: B sell · C sell · B buy · C buy, each wallet
+    buying back for exactly the quote it received. Two wash round-trips, zero sandwiches."""
+    rows = [
+        make_row(10, 31, "B", "sell", 834.372, 868.321),
+        make_row(10, 35, "C", "sell", 7.063, 7.35),
+        make_row(10, 38, "B", "buy", 834.206, 868.321),
+        make_row(10, 41, "C", "buy", 7.061, 7.35),
+    ]
+    rt, sw, organic = detect.middlemen(rows)
+    assert not sw and len(rt) == 2 and not organic
+    assert [m["ma"] for m in rt] == ["B", "C"] and all(m["take_quote"] == 0.0 for m in rt)
+    assert [m["between"] for m in rt] == [1, 1]
+
+
+def test_more_than_four_prints_between_the_legs_is_a_round_trip_not_a_sandwich():
+    rows = [make_row(10, 1, "A", "buy", 100, 1.00)]
     rows += [make_row(10, 2 + i, f"V{i}", "buy", 10, 0.1) for i in range(5)]
-    rows += [make_row(10, 9, "A", "sell", 100, 1)]
-    _, sw, organic = detect.middlemen(rows)
-    assert not sw and len(organic) == 7
+    rows += [make_row(10, 9, "A", "sell", 100, 1.02)]
+    rt, sw, organic = detect.middlemen(rows)
+    assert not sw and len(rt) == 1 and rt[0]["between"] == 5 and len(organic) == 5
 
 
 def test_a_return_leg_six_percent_off_is_not_a_sandwich():
@@ -202,9 +219,9 @@ def test_a_round_trip_and_a_sandwich_in_one_block_are_both_found():
     rows = [
         make_row(10, 1, "R", "sell", 100, 1),
         make_row(10, 2, "R", "buy", 100, 1),
-        make_row(10, 3, "A", "buy", 100, 1),
+        make_row(10, 3, "A", "buy", 100, 1.00),
         make_row(10, 4, "B", "buy", 10, 0.1),
-        make_row(10, 5, "A", "sell", 100, 1),
+        make_row(10, 5, "A", "sell", 100, 1.02),
     ]
     rt, sw, organic = detect.middlemen(rows)
     assert len(rt) == 1 and len(sw) == 1 and [r["ma"] for r in organic] == ["B"]
@@ -220,3 +237,26 @@ def test_size_match_needs_a_positive_first_leg():
     assert not detect.size_match({"a0": 0}, {"a0": 0})
     assert not detect.size_match({"a0": "x"}, {"a0": 1})
     assert detect.size_match({"a0": 100}, {"a0": 104.9})
+
+
+def test_a_front_run_that_came_out_behind_is_a_round_trip_not_a_sandwich():
+    rows = [
+        make_row(10, 1, "A", "buy", 100, 1.00),
+        make_row(10, 2, "B", "buy", 10, 0.1),
+        make_row(10, 3, "A", "sell", 100, 0.99),
+    ]
+    rt, sw, _ = detect.middlemen(rows)
+    assert not sw and len(rt) == 1 and rt[0]["take_quote"] < 0
+
+
+def test_the_return_leg_is_the_wallets_next_print_not_any_later_one():
+    """A sell · A sell · A buy: the first sell's next print is a sell, so it does not pair;
+    the second sell pairs with the buy."""
+    rows = [
+        make_row(10, 1, "A", "sell", 100, 1),
+        make_row(10, 2, "A", "sell", 100, 1),
+        make_row(10, 3, "A", "buy", 100, 1),
+    ]
+    rt, _, organic = detect.middlemen(rows)
+    assert len(rt) == 1 and [r["lgid"] for r in rt[0]["legs"]] == ["2", "3"]
+    assert [r["lgid"] for r in organic] == ["1"]

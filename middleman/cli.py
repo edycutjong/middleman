@@ -25,12 +25,12 @@ RULES = {
     "order": "sort prints by (int(h), int(lgid)) — both fields arrive as strings",
     "pool": "(en or 'unattributed', t0a, t1a) — no pool address on a row; v3 fee tiers merge",
     "round_trip": (
-        f"adjacent prints, same ma, same h, opposite tp, |Δa0| / a0 ≤ {detect.SIZE_TOL:.0%}"
+        f"a wallet's next print in the block is the other side, |Δa0| / a0 ≤ {detect.SIZE_TOL:.0%}"
         " — the same wallet buying back what it just sold"
     ),
     "sandwich": (
-        f"same ma at both legs, same h, opposite tp, |Δa0| / a0 ≤ {detect.SIZE_TOL:.0%}, "
-        f"1–{detect.MAX_VICTIMS} other makers printing in leg 1's direction between them"
+        f"a round-trip whose legs enclose 1–{detect.MAX_VICTIMS} other makers printing in "
+        "leg 1's direction, with take > 0 — the prints between were front-run"
     ),
     "organic": "every print that is neither leg of a match; victims stay organic",
     "quote_to_fill": (
@@ -43,17 +43,26 @@ RULES = {
 
 
 def analyse(platform, address, symbol, pages=8, with_enrich=True, quiet=False):
-    """Pull, order, group, join, price, decide. Returns the receipt dict (or one with 'error')."""
-    started = time.time()
+    """Pull, then compute. Returns the receipt dict (or one with 'error' and no 'pools')."""
     prints, meta = tape.pull(platform, address, pages=pages, quiet=quiet)
-    calls = list(meta["calls"])
+    return compute(prints, meta, platform, address, symbol, pages, with_enrich, quiet)
+
+
+def compute(prints, meta, platform, address, symbol, pages=8, with_enrich=True, quiet=False):
+    """Order, group, join, price, decide — from prints already pulled (or replayed).
+
+    `with_enrich` adds three labelling calls (pools, taxes, the routed pool's 24h counts);
+    verify_tape.py runs this with it off, so every number it re-derives is network-free.
+    """
+    started = time.time()
+    calls = list(meta.get("calls") or [])
     if not prints:
         return {
             "symbol": symbol,
             "address": address,
             "platform": platform,
-            "error": meta["error"] or "no swaps returned",
-            "throttled": meta["throttled"],
+            "error": meta.get("error") or "no swaps returned",
+            "throttled": bool(meta.get("throttled")),
             "calls": calls,
             "wall_s": round(time.time() - started, 2),
         }
@@ -87,26 +96,27 @@ def analyse(platform, address, symbol, pages=8, with_enrich=True, quiet=False):
                     routed["n"] / float(coverage["num_transactions_24h"]), 4
                 )
     ordered_all = detect.order(prints)
+    keyed = bool(meta.get("keyed"))
     return {
         "symbol": symbol,
         "address": address,
         "platform": platform,
-        "captured_utc": tape._utc(started),
-        "wall_s": round(time.time() - started, 2),
+        "captured_utc": meta.get("captured_utc") or tape._utc(started),
+        "wall_s": round((meta.get("wall_s") or 0.0) + time.time() - started, 2),
         "auth": (
             f"X-CMC_PRO_API_KEY from ${tape.api_key_var()} — keyed escape hatch, not the default"
-            if meta["keyed"]
+            if keyed
             else "none — CoinMarketCap keyless /public-api surface"
         ),
-        "credits_used": meta["credits"] if meta["keyed"] else 0,
+        "credits_used": meta.get("credits", 0) if keyed else 0,
         "source": f"{tape.active_base()}{tape.SWAPS}",
         "window": {
             "prints": len(prints),
-            "pages": meta["pages"],
+            "pages": meta.get("pages"),
             "pages_requested": pages,
-            "partial": bool(meta["error"]),
-            "throttled": meta["throttled"],
-            "error": meta["error"],
+            "partial": bool(meta.get("error")),
+            "throttled": bool(meta.get("throttled")),
+            "error": meta.get("error"),
             "span_hours": round(cost.span_hours(prints), 2),
             "first_block": ordered_all[0].get("h") if ordered_all else None,
             "last_block": ordered_all[-1].get("h") if ordered_all else None,

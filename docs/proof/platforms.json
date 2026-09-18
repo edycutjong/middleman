@@ -1,0 +1,22 @@
+{
+ "captured_utc": "2026-09-18T22:35:59Z",
+ "platforms": {
+  "bsc": {
+   "addr_url": "https://bscscan.com/address/%s",
+   "name": "BNB Smart Chain (BEP20)",
+   "txuf": "https://bscscan.com/tx/%s"
+  },
+  "ethereum": {
+   "addr_url": "https://etherscan.io/address/%s",
+   "name": "Ethereum",
+   "txuf": "https://etherscan.io/tx/%s"
+  },
+  "solana": {
+   "addr_url": "https://solscan.io/account/%s",
+   "name": "Solana",
+   "txuf": "https://solscan.io/tx/%s"
+  }
+ },
+ "sha256": "69afa80f06e9c9496227987e0a1730e192b0f87312a38bfaeaa36a4761af4358",
+ "source": "https://pro-api.coinmarketcap.com/public-api/v1/dex/platform/list?"
+}

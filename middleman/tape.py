@@ -250,6 +250,7 @@ def pull(platform, address, pages=8, quiet=False):
             break
         time.sleep(PAUSE_S)
     return out, {
+        "captured_utc": _utc(started),
         "pages": sum(1 for c in calls if c["ok"]),
         "error": err,
         "throttled": throttled,

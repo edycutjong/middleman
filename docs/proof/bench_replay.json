@@ -1,0 +1,14 @@
+{
+  "captured_utc": "2026-09-18T22:41:47Z",
+  "detect": {
+    "max": 5.3035,
+    "n": 200,
+    "p50": 3.2792,
+    "p95": 3.7179,
+    "unit": "ms"
+  },
+  "iterations": 200,
+  "mode": "replay",
+  "prints": 800,
+  "tape": "data/tape_moto.json"
+}

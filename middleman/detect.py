@@ -12,11 +12,12 @@ Three pure functions over a list of swap rows as CoinMarketCap returns them:
 
 The two shapes, in block order, joined on the maker address `ma`:
 
-    round-trip  A-A    rows[i], rows[i+1]: same ma, same h, opposite tp, |Δa0| / a0 ≤ 5 %
-                       — the same wallet selling and buying back the same size in one block
-    sandwich    A-B-A  rows[i] … rows[k]: same ma at i and k, same h throughout, opposite tp at
-                       i and k, |Δa0| / a0 ≤ 5 %, and every row between is ANOTHER maker
-                       printing in rows[i]'s direction (1 ≤ victims ≤ 4)
+    round-trip  A-A    A's next print in the block is the other side of the same size:
+                       |Δa0| / a0 ≤ 5 % — the same wallet buying back what it just sold,
+                       usually inside one transaction, sometimes around other makers' prints
+    sandwich    A-B-A  the same shape, but every print between the legs is ANOTHER maker in
+                       leg 1's direction (1–4 of them) and A came out ahead (take > 0):
+                       the prints between were front-run
     organic            every print that is neither leg of a match. Victims stay organic —
                        they are real fills, and what they paid is exactly the question.
 
@@ -106,49 +107,51 @@ def _legs_match(a, b, tol):
 def middlemen(rows, tol=SIZE_TOL, max_victims=MAX_VICTIMS):
     """(round_trips, sandwiches, organic) for one pool's rows, already in chain order.
 
-    Scans left to right. A leg belongs to at most one match; victims are never consumed.
-    Each match records the row positions so the receipt can quote the rows verbatim.
+    For each print by wallet A, look for A's NEXT print in the same block. If it is the other
+    side and size-matched, A stood on both sides of the block, and the prints between the two
+    legs decide which shape it is:
+
+        sandwich    every print between is another maker in leg 1's direction, there are 1–4
+                    of them, and A came out ahead (take > 0) — the victims were front-run
+        round-trip  anything else: no print between (the classic same-tx wash), or prints
+                    between that are mixed, or a return that extracted nothing. Two wallets
+                    washing around each other (B sell · C sell · B buy · C buy — USDT/DGAI on
+                    PancakeSwap v3, 2026-09-19) are two round-trips, not sandwiches.
+
+    A leg belongs to at most one match; victims are never consumed. Each match records the
+    row positions so the receipt can quote the rows verbatim.
     """
     n = len(rows)
     consumed = set()
     round_trips, sandwiches = [], []
-    i = 0
-    while i < n - 1:
+    for i in range(n):
         if i in consumed:
-            i += 1
             continue
         a = rows[i]
-        # Round-trip: the very next print is the same wallet coming back.
-        if i + 1 not in consumed and _legs_match(a, rows[i + 1], tol):
-            b = rows[i + 1]
-            round_trips.append(
-                {
-                    "i": i,
-                    "k": i + 1,
-                    "ma": a.get("ma"),
-                    "h": a.get("h"),
-                    "same_tx": a.get("tx") is not None and a.get("tx") == b.get("tx"),
-                    "legs": [a, b],
-                }
-            )
-            consumed.update((i, i + 1))
-            i += 2
+        if a.get("ma") is None or side(a) not in ("buy", "sell"):
             continue
-        # Sandwich: other makers print in A's direction, then A comes back the other way.
-        k = i + 1
-        victims = []
-        while k < n and len(victims) < max_victims:
-            r = rows[k]
-            if k in consumed or _int(r.get("h")) != _int(a.get("h")):
+        h = _int(a.get("h"))
+        k, between = None, []
+        for j in range(i + 1, n):
+            r = rows[j]
+            if _int(r.get("h")) != h:
                 break
             if r.get("ma") == a.get("ma"):
-                break  # A prints again — the return leg is checked below, at k
-            if side(r) != side(a):
-                break  # someone printed the other way — the pattern is broken
-            victims.append(r)
-            k += 1
-        if victims and k < n and k not in consumed and _legs_match(a, rows[k], tol):
-            b = rows[k]
+                k = j
+                break
+            between.append(j)
+        if k is None or k in consumed or not _legs_match(a, rows[k], tol):
+            continue
+        b = rows[k]
+        take = _take(a, b)
+        victims = [rows[j] for j in between]
+        is_sandwich = (
+            1 <= len(between) <= max_victims
+            and all(j not in consumed and side(rows[j]) == side(a) for j in between)
+            and take is not None
+            and take > 0
+        )
+        if is_sandwich:
             sandwiches.append(
                 {
                     "i": i,
@@ -157,13 +160,23 @@ def middlemen(rows, tol=SIZE_TOL, max_victims=MAX_VICTIMS):
                     "h": a.get("h"),
                     "victims": victims,
                     "legs": [a, b],
-                    "take_quote": _take(a, b),
+                    "take_quote": take,
                 }
             )
-            consumed.update((i, k))
-            i += 1
-            continue
-        i += 1
+        else:
+            round_trips.append(
+                {
+                    "i": i,
+                    "k": k,
+                    "ma": a.get("ma"),
+                    "h": a.get("h"),
+                    "same_tx": a.get("tx") is not None and a.get("tx") == b.get("tx"),
+                    "between": len(between),
+                    "take_quote": take,
+                    "legs": [a, b],
+                }
+            )
+        consumed.update((i, k))
     organic = [r for idx, r in enumerate(rows) if idx not in consumed]
     return round_trips, sandwiches, organic
 

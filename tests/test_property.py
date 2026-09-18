@@ -42,11 +42,14 @@ def test_the_join_never_violates_its_own_definition(prints):
         a, b = m["legs"]
         assert a["ma"] == b["ma"] and a["h"] == b["h"] and a["tp"] != b["tp"]
         assert abs(b["a0"] - a["a0"]) / a["a0"] <= detect.SIZE_TOL
+    for m in rt + sw:
+        i, k = rows.index(m["legs"][0]), rows.index(m["legs"][1])
+        assert i < k and all(r["ma"] != m["ma"] for r in rows[i + 1 : k])  # A's NEXT print
     for m in rt:
-        assert rows.index(m["legs"][1]) == rows.index(m["legs"][0]) + 1
+        assert m["between"] == rows.index(m["legs"][1]) - rows.index(m["legs"][0]) - 1
     for m in sw:
         a = m["legs"][0]
-        assert 1 <= len(m["victims"]) <= detect.MAX_VICTIMS
+        assert 1 <= len(m["victims"]) <= detect.MAX_VICTIMS and m["take_quote"] > 0
         for v in m["victims"]:
             assert v["ma"] != a["ma"] and v["tp"] == a["tp"] and v["h"] == a["h"]
             assert v in organic  # a victim's fill is real and stays in the sample

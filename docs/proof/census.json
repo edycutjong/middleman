@@ -1,0 +1,288 @@
+{
+ "captured_utc": "2026-09-18T22:40:32Z",
+ "errors": [],
+ "hero": {
+  "address": "0xbd965230588eaa536de6aa45e8ebbc01638535e0",
+  "fired": "round-trip share",
+  "pair": "MOTO/WETH",
+  "pool": {
+   "pairs": 29,
+   "quote": "WETH",
+   "share_volume": 0.6618,
+   "venue": "Uniswap v2",
+   "wallets": [
+    "0xc9160fdab187f2e55567b760d88a87ae7fe56d95",
+    "0xdd64c9d73ea795b9e92b217cab92bf44d91d30c5",
+    "0x9c97c0a6a00b1a9f74dbe09a4c55ec9f09f8af7d"
+   ]
+  },
+  "rule": "the base token of the #1 uniswap-v2 pair on ethereum by 24h transactions at capture time",
+  "symbol": "MOTO"
+ },
+ "heroes": [
+  {
+   "address": "0xbd965230588eaa536de6aa45e8ebbc01638535e0",
+   "dex_slug": "uniswap-v2",
+   "pair": "MOTO/WETH",
+   "platform": "ethereum",
+   "pool": "0xad1a21f61d653c6101b92c335f61140459c81c79",
+   "rule": "the base token of the #1 uniswap-v2 pair on ethereum by 24h transactions at capture time",
+   "symbol": "MOTO"
+  },
+  {
+   "address": "0x55d398326f99059ff775485246999027b3197955",
+   "dex_slug": "pancakeswap-v2",
+   "pair": "USDT/WBNB",
+   "platform": "bsc",
+   "pool": "0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae",
+   "rule": "the base token of the #1 pancakeswap-v2 pair on bsc by 24h transactions at capture time",
+   "symbol": "USDT"
+  },
+  {
+   "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+   "dex_slug": "raydium",
+   "pair": "USDC/wSOL",
+   "platform": "solana",
+   "pool": "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2",
+   "rule": "the base token of the #1 raydium pair on solana by 24h transactions at capture time",
+   "symbol": "USDC"
+  }
+ ],
+ "pools": 445,
+ "prints": 8000,
+ "round_trip_pairs": 45,
+ "round_trip_wallets": [
+  "0x021a4370754601713c728179743be37b3e9713eb",
+  "0x23cab357a3254aae6d66ccc63e275d6dac19df9b",
+  "0x36292d1fa11d4bfd24ea9eb1b7e1effad1eee5b1",
+  "0x4b9f8e7c7ff53f431e4618b618b4a20313011228",
+  "0x829eefd8443cb9e862953af293956cc712e7c0c7",
+  "0x9c97c0a6a00b1a9f74dbe09a4c55ec9f09f8af7d",
+  "0x9f1565e46643daa61bcfd93aa5187a0ff4e2eb11",
+  "0xb47698eb99ff0fde5560a52d11de3a19e377e6c4",
+  "0xc9160fdab187f2e55567b760d88a87ae7fe56d95",
+  "0xd6f264fb1509894376e1098c284f47d5e6367824",
+  "0xdd64c9d73ea795b9e92b217cab92bf44d91d30c5",
+  "3y5u6tGmYwoFpLgfRYcjxRLj6g4FYHfoG3Z3g4ChGas5",
+  "UUAhspPgUdGuXUnokmxERH1VvNGNh1ouN3mfcbfV8yd",
+  "freeupq4fM9nSdZ5Q52AjSUp5NQ1UXC3y3y9rZVEByC"
+ ],
+ "rows": [
+  {
+   "cap_pct": 0.65,
+   "file": "docs/proof/moto.json",
+   "platform": "ethereum",
+   "pools": 3,
+   "prints": 800,
+   "round_trips": 29,
+   "route": "Uniswap v2 / WETH",
+   "sandwiches": 0,
+   "span_hours": 3.6,
+   "symbol": "MOTO"
+  },
+  {
+   "cap_pct": 0.05,
+   "file": "docs/proof/usdt-bsc.json",
+   "platform": "bsc",
+   "pools": 172,
+   "prints": 800,
+   "round_trips": 13,
+   "route": "PancakeSwap v4 CLAMM(BSC) / KII",
+   "sandwiches": 0,
+   "span_hours": 0.01,
+   "symbol": "USDT"
+  },
+  {
+   "cap_pct": 0.05,
+   "file": "docs/proof/usdc-solana.json",
+   "platform": "solana",
+   "pools": 167,
+   "prints": 800,
+   "round_trips": 3,
+   "route": "Tessera V / SOL",
+   "sandwiches": 0,
+   "span_hours": 0.01,
+   "symbol": "USDC"
+  },
+  {
+   "cap_pct": 0.65,
+   "file": "docs/proof/shib.json",
+   "platform": "ethereum",
+   "pools": 18,
+   "prints": 800,
+   "round_trips": 0,
+   "route": "ShibaSwap / WETH",
+   "sandwiches": 0,
+   "span_hours": 20.27,
+   "symbol": "SHIB"
+  },
+  {
+   "cap_pct": 0.65,
+   "file": "docs/proof/pepe.json",
+   "platform": "ethereum",
+   "pools": 14,
+   "prints": 800,
+   "round_trips": 0,
+   "route": "Uniswap v2 / WETH",
+   "sandwiches": 0,
+   "span_hours": 17.24,
+   "symbol": "PEPE"
+  },
+  {
+   "cap_pct": 0.2,
+   "file": "docs/proof/uni.json",
+   "platform": "ethereum",
+   "pools": 19,
+   "prints": 800,
+   "round_trips": 0,
+   "route": "Uniswap v3 (Ethereum) / WETH",
+   "sandwiches": 1,
+   "span_hours": 1.76,
+   "symbol": "UNI"
+  },
+  {
+   "cap_pct": 0.05,
+   "file": "docs/proof/link.json",
+   "platform": "ethereum",
+   "pools": 22,
+   "prints": 800,
+   "round_trips": 0,
+   "route": "Uniswap v4 (Ethereum) / ETH",
+   "sandwiches": 1,
+   "span_hours": 6.09,
+   "symbol": "LINK"
+  },
+  {
+   "cap_pct": 0.15,
+   "file": "docs/proof/aave.json",
+   "platform": "ethereum",
+   "pools": 17,
+   "prints": 800,
+   "round_trips": 0,
+   "route": "Uniswap v3 (Ethereum) / WETH",
+   "sandwiches": 0,
+   "span_hours": 5.94,
+   "symbol": "AAVE"
+  },
+  {
+   "cap_pct": 0.65,
+   "file": "docs/proof/mog.json",
+   "platform": "ethereum",
+   "pools": 5,
+   "prints": 800,
+   "round_trips": 0,
+   "route": "Uniswap v2 / WETH",
+   "sandwiches": 0,
+   "span_hours": 22.89,
+   "symbol": "Mog"
+  },
+  {
+   "cap_pct": 0.65,
+   "file": "docs/proof/spx.json",
+   "platform": "ethereum",
+   "pools": 8,
+   "prints": 800,
+   "round_trips": 0,
+   "route": "Uniswap v2 / WETH",
+   "sandwiches": 0,
+   "span_hours": 20.69,
+   "symbol": "SPX"
+  }
+ ],
+ "sandwiches": 2,
+ "spread_scope": "ethereum tokens, pools with \u2265 50 organic prints",
+ "spreads": [
+  {
+   "high": {
+    "p50_bps": 14.23,
+    "pool": "Uniswap v3 (Ethereum) / USDC"
+   },
+   "low": {
+    "p50_bps": 0.62,
+    "pool": "Uniswap v4 (Ethereum) / ETH"
+   },
+   "platform": "ethereum",
+   "ratio": 22.95,
+   "symbol": "LINK"
+  },
+  {
+   "high": {
+    "p50_bps": 17.74,
+    "pool": "Uniswap v3 (Ethereum) / WETH"
+   },
+   "low": {
+    "p50_bps": 4.97,
+    "pool": "Uniswap v2 / WETH"
+   },
+   "platform": "ethereum",
+   "ratio": 3.57,
+   "symbol": "PEPE"
+  },
+  {
+   "high": {
+    "p50_bps": 24.74,
+    "pool": "Uniswap v3 (Ethereum) / WETH"
+   },
+   "low": {
+    "p50_bps": 7.33,
+    "pool": "Uniswap v2 / WETH"
+   },
+   "platform": "ethereum",
+   "ratio": 3.38,
+   "symbol": "SPX"
+  },
+  {
+   "high": {
+    "p50_bps": 8.38,
+    "pool": "Uniswap v4 (Ethereum) / USDC"
+   },
+   "low": {
+    "p50_bps": 4.58,
+    "pool": "Uniswap v4 (Ethereum) / ETH"
+   },
+   "platform": "ethereum",
+   "ratio": 1.83,
+   "symbol": "AAVE"
+  },
+  {
+   "high": {
+    "p50_bps": 10.65,
+    "pool": "Uniswap v2 / WETH"
+   },
+   "low": {
+    "p50_bps": 6.32,
+    "pool": "ShibaSwap / WETH"
+   },
+   "platform": "ethereum",
+   "ratio": 1.69,
+   "symbol": "SHIB"
+  },
+  {
+   "high": {
+    "p50_bps": 10.08,
+    "pool": "Uniswap v4 (Ethereum) / USDC"
+   },
+   "low": {
+    "p50_bps": 6.79,
+    "pool": "Uniswap v3 (Ethereum) / WETH"
+   },
+   "platform": "ethereum",
+   "ratio": 1.48,
+   "symbol": "UNI"
+  }
+ ],
+ "tokens": 10,
+ "widest_spread": {
+  "high": {
+   "p50_bps": 14.23,
+   "pool": "Uniswap v3 (Ethereum) / USDC"
+  },
+  "low": {
+   "p50_bps": 0.62,
+   "pool": "Uniswap v4 (Ethereum) / ETH"
+  },
+  "platform": "ethereum",
+  "ratio": 22.95,
+  "symbol": "LINK"
+ }
+}
