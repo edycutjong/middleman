@@ -76,7 +76,7 @@ def _serve(monkeypatch, responses):
 
 
 def test_the_cursor_is_read_from_the_envelope_not_from_the_last_swap(monkeypatch):
-    """Until elephant's 2026-09-07 fix the paginator read txId off the last swap; the server
+    """An earlier paginator on this feed read txId off the last swap; the server
     accepted it and returned page 1 again. The cursor is data.lastId on the envelope."""
     seen = _serve(
         monkeypatch,

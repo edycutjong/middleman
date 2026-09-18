@@ -1,0 +1,19 @@
+# gitleaks configuration — extends the default rules.
+#
+# Contract addresses (0x + 40 hex) and Solana base58 mints are public identifiers that the
+# generic-api-key rule mistakes for secrets when they sit in a variable named BASE, TOKEN or
+# ADDRESS. Nothing in this repository holds a credential: the product is keyless by design.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "public on-chain identifiers, never secrets"
+regexes = [
+  '''0x[0-9a-fA-F]{40}''',
+  '''0x[0-9a-fA-F]{64}''',
+]
+paths = [
+  '''data/tape_.*\.json''',
+  '''docs/proof/.*\.json''',
+  '''site/assets/fonts/.*''',
+]

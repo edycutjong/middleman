@@ -3,7 +3,7 @@ ts are STRINGS, amounts are floats, and the pool is (en, t0a, t1a)."""
 
 import pytest
 
-TOKEN = "0xbd965230588eaa536de6aa45e8ebbc01638535e0"
+BASE = "0xbd965230588eaa536de6aa45e8ebbc01638535e0"  # MOTO, the hero on capture day
 WETH = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 USDC = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
 
@@ -22,7 +22,7 @@ def make_row(
         "v": float(v if v is not None else a0),
         "tx": tx or f"0x{h}{lgid}{ma}",
         "en": en,
-        "t0a": TOKEN,
+        "t0a": BASE,
         "t1a": t1a,
         "t0s": "TOKEN",
         "t1s": t1s,

@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import spike  # noqa: E402
-from conftest import TOKEN, make_row  # noqa: E402
+from conftest import BASE, make_row  # noqa: E402
 
 PROOF = Path(__file__).resolve().parents[1] / "docs" / "proof" / "spike.json"
 
@@ -16,7 +16,7 @@ PROOF = Path(__file__).resolve().parents[1] / "docs" / "proof" / "spike.json"
 def test_field_facts_count_what_the_engine_depends_on():
     rows = [make_row(1, 1, "a", "buy", 100, 1), make_row(1, 2, "b", "buy", 100, 1, en=None)]
     rows[1]["q"] = 0.0  # a Uniswap v4-style row: q unusable, a1/a0 fine
-    f = spike.field_facts(rows, TOKEN)
+    f = spike.field_facts(rows, BASE)
     assert f["rows"] == 2 and f["missing_per_field"]["ma"] == 0
     assert f["string_typed"] == {"h": 2, "lgid": 2, "ts": 2}
     assert f["q_equals_a1_over_a0_within_1e-6"] == 1 and f["q_mismatch_by_venue"] == {
