@@ -7,7 +7,7 @@
 <p><em>Who stands between your quote and your fill, per pool.</em></p>
 
 <p align="center">
-  <img src="docs/assets/readme-hero-animated.svg" alt="Middleman — names the middleman: two blue prints in one block turn orange the instant the same wallet is found on both sides; 66.2% of the busiest Uniswap v2 pair's volume was 3 wallets buying back what they just sold" width="100%">
+  <img src="docs/assets/readme-hero-animated.svg" alt="Middleman — names the middleman: Two blue prints in one block turn orange the instant the same wallet is found on both sides. 66.2% of the busiest Uniswap v2 pair's volume was 3 wallets buying back what they just sold." width="100%">
 </p>
 
 <p>A DEX trader sees a quote and a fill and cannot tell what stood between them — a wallet
