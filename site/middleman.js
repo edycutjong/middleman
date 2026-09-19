@@ -10,6 +10,15 @@
   const SIZE_TOL = 0.05, MAX_VICTIMS = 4, MIN_ORGANIC = 50, CAP_STEP_PCT = 0.05, BPS = 10000;
   const RULE = 'lowest organic p90 quote-to-fill among pools with ≥ 50 organic prints';
   const REPO = 'https://github.com/edycutjong/middleman';
+  // The functions under api/ live on Vercel. On Vercel — and on scripts/serve.js, which routes
+  // api/ the same way from a fresh clone — the proxy is same-origin. Anywhere else the static
+  // page is hosted (GitHub Pages at middleman.edycu.dev, a file server) the fetch goes to the
+  // Vercel deployment by absolute URL; api/swaps.js and api/health.js send
+  // Access-Control-Allow-Origin: * and answer OPTIONS, and the request carries no custom
+  // header, so it is a simple cross-origin GET with no preflight.
+  const VERCEL = 'https://middleman-cmc.vercel.app';
+  const host = (typeof location !== 'undefined' && location.hostname) || '';
+  const API_BASE = (/\.vercel\.app$/.test(host) || host === 'localhost' || host === '127.0.0.1') ? '' : VERCEL;
 
   // ── detect ─────────────────────────────────────────────────────────────────
   const toInt = (v) => { const n = parseInt(String(v == null ? '' : v).trim(), 10); return Number.isFinite(n) ? n : null; };
@@ -298,7 +307,7 @@
     for (let p = 0; p < pages; p++) {
       const qs = new URLSearchParams({ platform, address, limit: '100' }); if (cursor) qs.set('lastId', cursor);
       onProgress(p + 1, pages);
-      const res = await fetch('/api/swaps?' + qs.toString());
+      const res = await fetch(API_BASE + '/api/swaps?' + qs.toString());
       const body = await res.json().catch(() => ({}));
       if (!res.ok || !body.ok) { const err = new Error(body.error || ('HTTP ' + res.status)); err.status = res.status; err.hint = body.hint; err.pages = n; throw err; }
       n++; if (!firstUrl) firstUrl = body.source;

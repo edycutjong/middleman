@@ -6,8 +6,10 @@ const path = require('path');
 
 module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store');
+  if (req.method === 'OPTIONS') { res.statusCode = 204; return res.end(); }
   let census = null;
   try {
     census = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'docs', 'proof', 'census.json'), 'utf8'));
