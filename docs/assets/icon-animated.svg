@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"
+     role="img" aria-label="Middleman — names the middleman: Two blue prints in one block turn orange the instant the same wallet is found on both sides — an orange hairpin, one wallet's sell turning back into its own buy, between two blue prints">
+  <title>Middleman — naming the middleman</title>
+  <!--
+  STORYBOARD — icon — master dur 6s. Every keyTime below is a fraction of that one dur.
+    beat 1   0-10%   0.00s-0.60s  steady state / POSTER: the named round-trip — the orange hairpin between two blue prints,
+                                   identical to icon.svg. Frame 0 is a usable still.
+    beat 2  10-35%   0.60s-2.10s  trigger: the named state DISSOLVES (opacity only, uniform — a scene cut, never the join
+                                   in reverse) and the tape as everyone reads it fades in: every print blue and alike.
+    beat 3  35-55%   2.10s-3.30s  mechanism — Two blue prints in one block turn orange the instant the same wallet is found on both sides.
+                                   The bend draws in from the sell leg into the buy leg (one stroke, one wallet); the legs
+                                   crossfade blue -> orange; the arrowhead lands.
+    beat 4  55-80%   3.30s-4.80s  resolution: the named state persists; the organic price and the route light up.
+    beat 5  80-100%  4.80s-6.00s  breathe + seam: hold. Frame 6s == frame 0s, the +-0.2s either side all hold, so the
+                                   loop closes at zero velocity. Exactly one collapse and one recovery of orange per loop.
+  -->
+  <style>
+    /* prefers-reduced-motion: SMIL ignores CSS animation:none, so the guard swaps the animated story
+       layer for a static duplicate of the poster frame. The still layer is hidden by a display="none"
+       ATTRIBUTE (GitHub may drop this block when it sanitises README SVGs; the attribute survives). */
+    @media (prefers-reduced-motion: reduce) { .anim { display: none; } .still { display: inline; } * { animation: none !important; } }
+  </style>
+  <rect width="512" height="512" rx="112" fill="#0C0F14"/>
+  <rect x="8" y="8" width="496" height="496" rx="105" fill="none" stroke="#3A4759" stroke-width="6"/>
+  <line x1="120" y1="128" x2="392" y2="128" stroke="#5AC8FA" stroke-width="40" stroke-linecap="round"/>
+  <line x1="120" y1="384" x2="392" y2="384" stroke="#5AC8FA" stroke-width="40" stroke-linecap="round"/>
+  <g class="anim">
+    <g data-story="beat-2" opacity="0">
+      <line x1="120" y1="214" x2="392" y2="214" stroke="#5AC8FA" stroke-width="40" stroke-linecap="round"/>
+      <line x1="120" y1="298" x2="392" y2="298" stroke="#5AC8FA" stroke-width="40" stroke-linecap="round"/>
+      <animate attributeName="opacity" values="0;0;0;1;1;0;0" keyTimes="0;0.1;0.18;0.22;0.39999999999999997;0.5;1" dur="6s" repeatCount="indefinite"/>
+    </g>
+    <path d="M120 214 H350 A42 42 0 0 1 350 298 H160" fill="none" stroke="#FF7A45" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0">
+      <animate attributeName="opacity" values="1;1;0;0;1;1" keyTimes="0;0.1;0.18;0.35;0.36;1" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dashoffset" values="0;0;0;100;100;0;0" keyTimes="0;0.1;0.18;0.181;0.35;0.5;1" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M144 274 L120 298 L144 322" fill="none" stroke="#FF7A45" stroke-width="40" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="opacity" values="1;1;0;0;0;1;1" keyTimes="0;0.1;0.18;0.35;0.5;0.52;1" dur="6s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <g class="still" display="none">
+    <path d="M120 214 H350 A42 42 0 0 1 350 298 H160" fill="none" stroke="#FF7A45" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M144 274 L120 298 L144 322" fill="none" stroke="#FF7A45" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
