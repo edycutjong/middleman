@@ -107,6 +107,20 @@ renders the capture with the raw rows one click away, every request behind it on
 engine live on any token. One page for judges, no key and no setup:
 [/judge](https://middleman-cmc.vercel.app/judge).
 
+<table>
+  <tr>
+    <td width="50%"><a href="docs/screenshots/01-landing-hero-1440.png"><img src="docs/screenshots/01-landing-hero-1440.png" alt="The page: 66.2 % headline, the pool table, the route line" width="100%"></a><br/><sub><b>The table.</b> 66.2 % · three pools · the route line</sub></td>
+    <td width="50%"><a href="docs/screenshots/04-uni-sandwich.png"><img src="docs/screenshots/04-uni-sandwich.png" alt="UNI: 19 pools ranked by organic quote-to-fill, route via Uniswap v3 / WETH, cap 0.20 %, and the sandwich block" width="100%"></a><br/><sub><b>UNI, live.</b> 19 pools, the route, and the one sandwich</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><a href="docs/screenshots/07-evidence.png"><img src="docs/screenshots/07-evidence.png" alt="/evidence: 108 hashed requests, the rules verbatim, the re-derive commands" width="100%"></a><br/><sub><b>/evidence.</b> 108 requests, hashed, credits 0</sub></td>
+    <td width="50%"><a href="docs/screenshots/05-paste-box-live-shib.png"><img src="docs/screenshots/05-paste-box-live-shib.png" alt="The paste box running the engine live on SHIB through the keyless proxy" width="100%"></a><br/><sub><b>Paste a token.</b> SHIB, live, through the keyless proxy</sub></td>
+  </tr>
+</table>
+
+Nine screenshots of live execution, including the raw-rows panel and the 390 px mobile view,
+are in [`docs/screenshots/`](docs/screenshots/).
+
 ---
 
 ## 💡 The Problem & Solution
@@ -502,6 +516,8 @@ middleman/
 | **Evidence** | **[/evidence](https://middleman-cmc.vercel.app/evidence)** — every request, hashed. |
 | **The receipts** | **[DEMO.md](DEMO.md)** — three real transcripts, with [`docs/proof/`](docs/proof/) behind them. |
 | **Social card** | [`docs/assets/og-image.png`](docs/assets/og-image.png) — the mark: two blue prints, one orange hairpin. |
+| **Screenshots** | [`docs/screenshots/`](docs/screenshots/) — nine, of live execution: the table, the raw rows, the UNI sandwich, the paste box mid-fetch, `/evidence`, mobile. |
+| **How it differs** | **[docs/COMPARISON.md](docs/COMPARISON.md)** — the six nearest entries in this hackathon's gallery, by name, and the exact boundary with each. |
 
 The three transcripts disagree — 66.2 %, 27.5 %, 0 % — because the 800-print window moved
 between the runs. Same pair, same rule, same engine. A number that moves with the market is the
