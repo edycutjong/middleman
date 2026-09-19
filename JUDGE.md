@@ -31,6 +31,8 @@ The page at **[middleman-cmc.vercel.app](https://middleman-cmc.vercel.app)** sho
 table for the same token, rendered from a committed run, with the raw rows one click away and
 every request behind it on **[/evidence](https://middleman-cmc.vercel.app/evidence)**. Paste
 any token into its box and the browser runs the same engine, live, through a keyless proxy.
+This guide is also served at **[/judge](https://middleman-cmc.vercel.app/judge)** — rendered
+from the same receipts, no key, no cookie, no session — if you would rather not clone at all.
 
 1. **Read the headline.** *66.2 % of the #1 Uniswap v2 pair's volume is 3 wallets buying back
    what they just sold, in the same transaction.* CoinMarketCap ranks the pair first by
@@ -56,13 +58,14 @@ any token into its box and the browser runs the same engine, live, through a key
 | Sandwiches | 0 on this pair · **2 in 8,000 prints** across the ten-token census, both by one wallet |
 | Quote-to-fill | organic **15.5 bps** median, p90 60.9 — the raw tape says 55.3 |
 | Route | Uniswap v2 / WETH · **cap slippage at 0.65 %** |
-| Tests | **145** (139 offline, 6 live) · property-based: 1,000 generated blocks, 0 violations · JS ↔ Python parity on every tape |
+| Tests | **145** (139 offline, 6 live) · property-based: 1,000 generated blocks, 0 violations · JS ↔ Python parity on every tape · the proxy's boundary pinned by test |
 | Engine latency | p50 **3.3 ms** per 800 prints (p95 3.7 ms, n=200) |
 | Live fetch latency | p50 **1.5 s** per page (p95 16.4 s — one iteration sat through the throttle backoff) |
 | Raw receipts | [`docs/proof/moto.json`](docs/proof/moto.json) · [`census.json`](docs/proof/census.json) · [`live_run.json`](docs/proof/live_run.json) · [`spike.json`](docs/proof/spike.json) · [`bench_live.json`](docs/proof/bench_live.json) · [`bench_replay.json`](docs/proof/bench_replay.json) |
 
-The same command 24 minutes later measured **27.5 %** — the wallets had gone quiet. A number
-that moves with the market is the proof it is measured, not asserted. Both transcripts are in
+The same command 24 minutes later measured **27.5 %** — the wallets had gone quiet; the next
+morning the window was **clean**, zero round-trips, and the tool said so. A number that moves
+with the market is the proof it is measured, not asserted. All three transcripts are in
 [DEMO.md](DEMO.md).
 
 ## Reproduce
@@ -123,9 +126,9 @@ retraction is dated in the README.
 
 | | |
 |---|---|
-| **Run it** | [DEMO.md](DEMO.md) — two real transcripts with receipts |
+| **Run it** | [DEMO.md](DEMO.md) — three real transcripts with receipts |
 | **How it works** | [ARCHITECTURE.md](ARCHITECTURE.md) — derived from the code · [docs/METHOD.md](docs/METHOD.md) — the definitions |
 | **API feedback for CMC** | [FEEDBACK.md](FEEDBACK.md) — eight dated, evidenced findings |
 | **The engine** | [`middleman/`](middleman/) — six stdlib modules · [`scripts/middleman.py`](scripts/middleman.py) — the door |
 | **The tests** | [`tests/`](tests/) — 145, each regression named for the defect it pins |
-| **Live page** | [middleman-cmc.vercel.app](https://middleman-cmc.vercel.app) · [/evidence](https://middleman-cmc.vercel.app/evidence) |
+| **Live page** | [middleman-cmc.vercel.app](https://middleman-cmc.vercel.app) · [/judge](https://middleman-cmc.vercel.app/judge) · [/evidence](https://middleman-cmc.vercel.app/evidence) |
