@@ -701,6 +701,10 @@ MOTO · ethereum · 800 prints · 3.6 h · blocks 26006339–26007416 · capture
   if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 3000 }); else setTimeout(warm, 1500);
   buildOverview(); fit();
   var h = parseInt((location.hash || '#1').slice(1), 10); show(isNaN(h) ? 0 : h - 1, true);
+  // A hash typed into the address bar of the open deck (#9) is a same-document navigation — no
+  // reload, so the line above never runs again. Follow it; show() writes the hash back with
+  // replaceState, which fires no hashchange, so this cannot loop.
+  window.addEventListener('hashchange', function(){ var k = parseInt((location.hash || '#1').slice(1), 10); if (!isNaN(k) && k - 1 !== cur) show(k - 1); });
   setTimeout(function(){ hint.classList.add('gone'); }, 6000);
 })();
 </script>
