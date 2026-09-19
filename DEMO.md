@@ -106,9 +106,11 @@ from the API; the tape carries all 800.
 
 ## Receipt 2 — the zero-flag command, 2026-09-18T23:00:18Z
 
-The same run, 24 minutes later, exactly as the first line of this file has it. **The number
-moved** — the three wallets had gone quiet, one of them still printing — which is what a live
-measurement does and a fixture cannot. Receipt: [`docs/proof/live_run.json`](docs/proof/live_run.json).
+The same run, 24 minutes later, as the first line of this file has it — with `--json
+docs/proof/live_run.json` appended so the receipt was kept (the bare command prints the same
+table and writes nothing). **The number moved** — the three wallets had gone quiet, one of
+them still printing — which is what a live measurement does and a fixture cannot. Receipt:
+[`docs/proof/live_run.json`](docs/proof/live_run.json).
 
 ```
 middleman 0.1.0 — keyless, live
@@ -141,9 +143,58 @@ MOTO · ethereum · 800 prints · 3.86 h · blocks 26006381–26007537 · captur
 wrote docs/proof/live_run.json  (11.3s wall clock, 0 credits — keyless)
 ```
 
-Three windows on the same pair, one afternoon: **80.0 %** of volume round-tripped at 22:12 UTC
-([`docs/proof/spike.json`](docs/proof/spike.json), the day-1 spike), **66.2 %** at 22:36, **27.5 %**
-at 23:00. The wallets come and go; the ranking that put the pair at #1 does not.
+## Receipt 3 — the same command, and a clean window, 2026-09-19T00:28:45Z
+
+Run again the next morning as the R10 gate of the engineering pass — keyless, from this tree,
+with `--json docs/proof/live_run_clean.json` so the receipt was kept. **Zero round-trips.** The
+three wallets were gone, every one of the 800 prints was organic, and the tool said so on the
+line the headline usually occupies — then routed and capped from the pool's own p90, which is
+what the fallback is for. Receipt: [`docs/proof/live_run_clean.json`](docs/proof/live_run_clean.json).
+
+```
+middleman 0.1.0 — keyless, live
+
+hero rule: the base token of the #1 Ethereum Uniswap v2 pair by 24h transactions at capture time
+  → MOTO/WETH  0xbd965230588eaa536de6aa45e8ebbc01638535e0
+
+MOTO · ethereum · 800 prints · 4.17 h · blocks 26006729–26007978 · captured 2026-09-19T00:28:46Z · keyless
+
+  no middleman found in this window — every print organic; the cap is the pool's own p90
+
+  pool                         prints organic  round-trips                sandw  q→fill p50 / p90     tax     liq
+  ----------------------------------------------------------------------------------------------------------------
+  Uniswap v2 / WETH               779     779  —                              0  7.4 / 60.7 bps         —   $943k  ◀ route
+  Uniswap v2 / USDC                12      12  —                              0  46.2 / 98.0 bps        —    $37k
+  Uniswap v2 / USDT                 8       8  —                              0  47.3 / 115.9 bps       —    $34k
+  Uniswap v4 (Ethereum) / ETH       1       1  —                              0  — / — bps              —    $109
+
+  ▶ route via Uniswap v2 / WETH · cap slippage at 0.65 %   (organic p90 60.7 bps, 1 candidate pool(s))
+    rule: lowest organic p90 quote-to-fill among pools with ≥ 50 organic prints
+    coverage: this window is 15% of the routed pool's 24h transactions (5236: 2855 buys / 2381 sells)
+
+  block 26006729 — raw rows (organic)
+    lgid   538  0xf06e3c5535…  buy  a0        10,248.8270  a1       0.014111  a1/a0 1.3769e-06
+    lgid   556  0x8965d2b3ef…  buy  a0           232.9306  a1       0.000321  a1/a0 1.3770e-06  ◀ leg
+    previous print  lgid 538  buy  a1/a0 = 1.3768550773349123e-06
+    this print      lgid 556  buy  a1/a0 = 1.376964652537947e-06
+    q/q_prev − 1 = 0.8 bps adverse
+
+wrote docs/proof/live_run_clean.json  (11.0s wall clock, 0 credits — keyless)
+```
+
+| | |
+|---|---|
+| **Wall clock** | **11.0 s** — 8 keyless pages + 3 labelling calls, no backoff fired |
+| **Prints** | **800** · blocks 26006729–26007978 · **4.17 h** · 15% of the pair's 5,236 transactions that day |
+| **API calls** | 11 · every one HTTP 200 |
+| **Credits used** | **0** — keyless; `CMC_API_KEY` unset |
+| **Round-trips** | **0** · sandwiches 0 · organic p50 **7.4 bps**, p90 60.7 |
+
+Four windows on the same pair, one night: **80.0 %** of volume round-tripped at 22:12 UTC
+([`docs/proof/spike.json`](docs/proof/spike.json), the day-1 spike), **66.2 %** at 22:36,
+**27.5 %** at 23:00, **0 %** at 00:28. The wallets come and go; the ranking that put the pair
+at #1 does not — and a tool that can print *zero* on its own headline is the one whose non-zero
+you can believe.
 
 ## The census — ten tokens, whatever they said
 
