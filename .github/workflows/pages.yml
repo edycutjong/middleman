@@ -1,0 +1,72 @@
+name: pages
+
+# Deploys site/ (the landing page at /, /judge, /evidence and the deck at /pitch/) to GitHub
+# Pages at middleman.edycu.dev. Static only: the pages render from committed receipts, and the
+# paste box calls the Vercel functions under api/ by absolute URL (site/middleman.js), because
+# CoinMarketCap sends no Access-Control-Allow-Origin and a browser cannot fetch it directly.
+#
+# GitHub Pages does not build a PRIVATE repository on the free plan (the API answers 422 "Your
+# current plan does not support GitHub Pages for this repository" — probed 2026-09-19). This
+# workflow first succeeds after the repository is flipped public and Pages is enabled with
+# `gh api -X POST repos/edycutjong/middleman/pages -f build_type=workflow`.
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "site/**"
+      - ".github/workflows/pages.yml"
+  # release.yml tags from the commit subjects AFTER a push, so a deploy triggered by that same
+  # push would stamp the PREVIOUS release into the deck and sit one version behind forever.
+  # Re-deploying when release finishes closes that: the tag exists by then.
+  workflow_run:
+    workflows: ["release"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Serialised, not cancel-in-progress: a push fires this once, and release.yml fires it again
+# through workflow_run so the deck can carry the tag that push created. Queueing costs one
+# extra deploy per push and leaves no "cancelled" runs in the history.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      # The deck shows the release version on its cover and in the chrome of every slide. It is
+      # stamped HERE rather than at render time because the committed HTML is gated against
+      # its templates by a CI job that clones shallow with no tags, so render_site.py fills the
+      # slot with the honest fallback `v0.0.0-dev` (no release exists yet) and this step
+      # substitutes the real tag over it. The README's Release badge, the deck and the live
+      # app then show the same string.
+      - name: Stamp the current release into the deck
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="$(gh release view --json tagName -q .tagName 2>/dev/null || true)"
+          if [ -n "${TAG:-}" ]; then
+            sed -i "s|>v0\.0\.0-dev<|>${TAG}<|g" site/pitch/index.html
+            echo "stamped ${TAG} into the deck"
+          else
+            echo "no published release yet — the deck keeps v0.0.0-dev"
+          fi
+
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./site
+      - id: deployment
+        uses: actions/deploy-pages@v5
