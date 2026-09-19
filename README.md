@@ -26,6 +26,7 @@ the legs out and an organic fill there pays 15.5 bps, not the 55.3 the raw tape 
 [![Live page](https://img.shields.io/badge/middleman--cmc.vercel.app-Live-FF7A45?style=for-the-badge)](https://middleman-cmc.vercel.app)
 [![For judges](https://img.shields.io/badge/⚖️_/judge-no_key,_no_setup-3DDC97?style=for-the-badge)](https://middleman-cmc.vercel.app/judge)
 [![Evidence](https://img.shields.io/badge/every_call-Evidence-5AC8FA?style=for-the-badge)](https://middleman-cmc.vercel.app/evidence)
+[![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-FFB020?style=for-the-badge)](https://middleman-cmc.vercel.app/pitch/)
 [![API Feedback](https://img.shields.io/badge/📮_CMC_API-Feedback-4C9AFF?style=for-the-badge)](FEEDBACK.md)
 [![Built for Build with CMC](https://img.shields.io/badge/DoraHacks-Build_with_CMC-8b5cf6?style=for-the-badge)](https://dorahacks.io/hackathon/coinmarketcap-api-202609/detail)
 
@@ -291,13 +292,20 @@ submitted on chain; the product reads prints that already landed.
 | [middleman-cmc.vercel.app](https://middleman-cmc.vercel.app) | the table, the route line, the raw rows, the census strip, the receipt, the paste box — rendered from the committed capture, JavaScript-off safe |
 | [/judge](https://middleman-cmc.vercel.app/judge) | one page for one reader: the claim, the 30-second path, the receipt block, the real reproduce command, the limitations — no key, no cookie, no session |
 | [/evidence](https://middleman-cmc.vercel.app/evidence) | every request behind every receipt: URL, HTTP status, UTC, sha256 of the body, credits |
+| [/pitch/](https://middleman-cmc.vercel.app/pitch/) | the pitch deck — 12 slides, arrow keys, `P` for speaker notes, `Cmd+P` for a PDF; every number a slot from the same receipts |
 | `/api/swaps?platform=&address=` | the identical keyless CMC URL with the one header CMC omits (`Access-Control-Allow-Origin`) and a 60 s CDN cache — [`api/swaps.js`](api/swaps.js), 60 lines, holds no secret and can reach no other host |
 | [/api/health](https://middleman-cmc.vercel.app/api/health) | the server clock, the receipts' capture time, the census totals; no upstream call |
 
-The three pages are **generated, never hand-edited**: `scripts/render_site.py` renders them
+The four pages are **generated, never hand-edited**: `scripts/render_site.py` renders them
 from `docs/proof/*.json` through `{{slot}}` templates, aborts if any slot is unfilled, and
 `make check` fails if the committed HTML is not what the receipts render. `node scripts/serve.js`
-serves the same five routes from a fresh clone on port 8101.
+serves the same routes from a fresh clone on port 8101.
+
+`site/` is also deployed as-is to GitHub Pages at **[middleman.edycu.dev](https://middleman.edycu.dev)**
+(`.github/workflows/pages.yml`, `site/CNAME`): the pages are static, and the paste box reaches
+the two functions on Vercel by absolute URL when it is not served from there (`site/middleman.js`,
+`API_BASE`). Pages cannot build a private repository on the free plan, so that host goes live
+with the public flip.
 
 ---
 
@@ -429,7 +437,7 @@ make demo            # the judged capability, live, no key
 make verify          # every committed receipt re-derived from its tape, offline
 make bench           # deterministic p50/p95 over the committed tape — a replay, not the product
 make bench-live      # p50/p95 over the real keyless fetch
-make site            # re-render /, /evidence and /judge from docs/proof/*.json
+make site            # re-render /, /evidence, /judge and /pitch from docs/proof/*.json
 make serve           # site/ + api/ on http://localhost:8101, the way Vercel routes them
 make audit           # pip-audit + gitleaks over the full history
 make check           # refuse to ship a placeholder, a stale count, or a page that drifted
@@ -477,8 +485,8 @@ middleman/
 │   ├── render_site.py            docs/proof/*.json → site/ through slot templates; --check gates drift
 │   ├── check_submission_readiness.py   placeholders and stale test counts on every judge-facing surface
 │   ├── serve.js                  site/ + api/ locally, the way Vercel routes them
-│   └── site_templates/           index.html · evidence.html · judge.html — {{slot}} templates
-├── site/                         generated: / · /evidence · /judge · middleman.js (the engine, ported)
+│   └── site_templates/           index.html · evidence.html · judge.html · deck.html — {{slot}} templates
+├── site/                         generated: / · /evidence · /judge · /pitch · middleman.js (the engine, ported) · CNAME
 ├── api/                          swaps.js (keyless proxy) · health.js — the two Vercel functions
 ├── tests/                        145 tests: the join, the fetch contract, the CLI, parity, the boundary, the surfaces
 ├── data/                         tape_<sym>.json ×10 — rows verbatim with page hashes; nothing judged reads them
@@ -514,6 +522,7 @@ middleman/
 | **For judges** | **[JUDGE.md](JUDGE.md)** · **[/judge](https://middleman-cmc.vercel.app/judge)** — the claim, the 30-second path, the receipt, the real reproduce command. |
 | **Live page** | **[middleman-cmc.vercel.app](https://middleman-cmc.vercel.app)** — the capture beside its raw rows, a dated snapshot that says so on every number, and a paste box that runs the engine live. |
 | **Evidence** | **[/evidence](https://middleman-cmc.vercel.app/evidence)** — every request, hashed. |
+| **Pitch deck** | **[/pitch/](https://middleman-cmc.vercel.app/pitch/)** — 12 slides, arrow keys, `P` for notes; the frozen slide is two raw rows and one division. |
 | **The receipts** | **[DEMO.md](DEMO.md)** — three real transcripts, with [`docs/proof/`](docs/proof/) behind them. |
 | **Social card** | [`docs/assets/og-image.png`](docs/assets/og-image.png) — the mark: two blue prints, one orange hairpin. |
 | **Screenshots** | [`docs/screenshots/`](docs/screenshots/) — nine, of live execution: the table, the raw rows, the UNI sandwich, the paste box mid-fetch, `/evidence`, mobile. |
