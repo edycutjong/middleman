@@ -520,6 +520,7 @@ def evidence_page(census, platforms, receipts):
         "site": SITE_URL,
         "author": AUTHOR,
         "x_handle": X_HANDLE,
+        "og.v": og_version(),
     }
     return render((TEMPLATES / "evidence.html").read_text(), ctx)
 
@@ -595,6 +596,7 @@ def judge_page(census, platforms, receipts):
         "event": EVENT,
         "author": AUTHOR,
         "x_handle": X_HANDLE,
+        "og.v": og_version(),
     }
     return render((TEMPLATES / "judge.html").read_text(), ctx)
 

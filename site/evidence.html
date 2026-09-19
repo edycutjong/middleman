@@ -9,14 +9,35 @@
 <link rel="canonical" href="https://middleman-cmc.vercel.app/evidence">
 <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
 <meta name="theme-color" content="#0C0F14">
-<meta name="robots" content="noindex">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Middleman">
+<meta property="og:url" content="https://middleman-cmc.vercel.app/evidence">
+<meta property="og:title" content="Middleman — evidence: every call behind the page">
+<meta property="og:description" content="Every CoinMarketCap request behind the numbers: URL, HTTP status, UTC, sha256 of the body, credits. Keyless.">
+<meta property="og:image" content="https://middleman-cmc.vercel.app/assets/og-image.png?v=71b0ea85">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Middleman — who stands between your quote and your fill, per pool, from real DEX prints on the CoinMarketCap API.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@edycutjong">
+<meta name="twitter:creator" content="@edycutjong">
+<meta name="twitter:title" content="Middleman — evidence: every call behind the page">
+<meta name="twitter:description" content="Every CoinMarketCap request behind the numbers: URL, HTTP status, UTC, sha256 of the body, credits. Keyless.">
+<meta name="twitter:image" content="https://middleman-cmc.vercel.app/assets/og-image.png?v=71b0ea85">
+<link rel="preload" href="assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin-var.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* metric-matched fallback so the swap to Inter moves no line (CLS); metrics are Inter's, as next/font ships them */
+@font-face{font-family:'Inter Fallback';src:local('Arial'),local('Helvetica');ascent-override:90.2%;descent-override:22.48%;line-gap-override:0%;size-adjust:107.4%}
 @font-face{font-family:'Inter';font-style:normal;font-weight:400 700;font-display:swap;src:url(assets/fonts/inter-latin-var.woff2) format('woff2')}
 @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 700;font-display:swap;src:url(assets/fonts/jetbrains-mono-latin-var.woff2) format('woff2')}
 :root{--bg:#0C0F14;--surface:#151A22;--border:#26303F;--text:#E8EDF2;--muted:#8A97A8;--middle:#FF7A45;--organic:#5AC8FA;--route:#3DDC97;--danger:#FF5C5C;color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 'Inter',system-ui,sans-serif}
-a{color:var(--organic);text-decoration:none}a:hover{text-decoration:underline}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 'Inter','Inter Fallback',system-ui,sans-serif}
+/* inline links carry an underline, so they read as links without colour (axe link-in-text-block) */
+a{color:var(--organic);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:rgba(90,200,250,.55)}
+a:hover,a:focus-visible{text-decoration-color:currentColor}
+:focus-visible{outline:2px solid var(--organic);outline-offset:3px;border-radius:4px}
 .wrap{max-width:1180px;margin:0 auto;padding:24px 20px 60px}
 h1{font-size:26px;margin:0 0 6px}h2{font-size:18px;margin:30px 0 8px}
 .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
