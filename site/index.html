@@ -75,7 +75,7 @@ p{margin:0 0 1rem}
 .orange{color:var(--accent)}.blue{color:var(--data)}.green{color:var(--verdict)}.red{color:var(--flag)}
 .wrap{width:min(var(--maxw),calc(100% - 40px));margin:0 auto;position:relative;z-index:1}
 section{padding:clamp(56px,8vw,104px) 0;scroll-margin-top:84px}
-.rows,.paste,#hero,#receipt{scroll-margin-top:84px}
+.rows,.paste,#hero,#receipt-grid{scroll-margin-top:84px}
 .eyebrow{font-family:var(--font-mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
 .eyebrow .cmc-wrap{display:inline-flex;align-items:center;gap:5px}
 .eyebrow .cmc{width:13px;height:13px;flex:none;opacity:.9}
@@ -144,7 +144,7 @@ header.top.scrolled{border-bottom-color:var(--border);background:rgba(11,14,20,.
 .lead h1{margin-top:18px}
 .lead h1 .line1{display:block;color:var(--muted);font-weight:700}
 .lead h1 .line2{display:block}
-.lead h1 .big{color:var(--accent);font-feature-settings:var(--num);display:inline-block;min-width:3.6ch;text-align:left}
+.lead h1 .big{color:var(--accent);font-feature-settings:var(--num);display:inline-block;min-width:4.44ch;text-align:left}   /* 4.44ch = the measured width of "66.2%" — 3.6ch was one digit short and moved the line at 10.0% */
 .lead .lede{margin:22px 0 30px;max-width:52ch}
 .cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .hero-viz{margin-top:clamp(36px,5vw,64px);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:clamp(16px,2.6vw,32px);position:relative;overflow:hidden}
@@ -279,6 +279,7 @@ pre.json{margin:0 14px 14px;background:var(--bg);border:1px solid var(--border);
 .stat{background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--border);border-radius:var(--r-md);padding:20px 14px;text-align:center;min-width:0}
 .stat-v{display:block;font-family:var(--font-display);font-size:2.15rem;font-weight:800;letter-spacing:-.02em;line-height:1;color:var(--text);font-feature-settings:var(--num)}
 .stat-l{display:block;color:var(--muted);font-size:.86rem;margin-top:8px;line-height:1.35}
+.stat-v.orange{color:var(--accent)}.stat-v.blue{color:var(--data)}.stat-v.green{color:var(--verdict)}.stat-v.red{color:var(--flag)}   /* compound, after .stat-v: the bare hue utilities above lose to it at equal specificity */
 .receipt{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 22px;margin-top:32px;font-size:.92rem}
 .receipt .k{font-family:var(--font-mono);color:var(--muted);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
 .receipt .v{margin-top:3px;overflow-wrap:anywhere}
@@ -352,6 +353,7 @@ footer .bottom .ver{color:var(--accent)}
 @media (max-width:960px){.statband{grid-template-columns:repeat(3,1fr)}.findings{grid-template-columns:1fr}.proof,.runs{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:820px){footer .cols{grid-template-columns:1fr 1fr}}
 @media (max-width:720px){
+  /* hide the columns a phone reader does not decide on; keep the one that says what was found */
   table.pools th:nth-child(3),table.pools td:nth-child(3),table.pools th:nth-child(5),table.pools td:nth-child(5),table.pools th:nth-child(7),table.pools td:nth-child(7),table.pools th:nth-child(8),table.pools td:nth-child(8){display:none}
   .hero .claim{max-width:none}
 }
@@ -399,7 +401,14 @@ footer .bottom .ver{color:var(--accent)}
   footer .cols{grid-template-columns:1fr 1fr;gap:18px}
   footer .cols>div:first-child{grid-column:1/-1}
 }
-@media (max-width:480px){.statband{grid-template-columns:1fr 1fr}footer .cols{grid-template-columns:1fr}}
+@media (max-width:480px){
+  .statband{grid-template-columns:1fr 1fr}footer .cols{grid-template-columns:1fr}
+  /* a two-word brand and the judge pill share 335px: neither may wrap */
+  .nav{gap:8px}.brand{font-size:.95rem;gap:9px;white-space:nowrap}.brand svg{width:26px;height:26px}
+  .nav-links a.judge{padding:7px 10px;font-size:.8rem;white-space:nowrap}
+  .tokens button small{display:block;margin:2px 0 0}
+}
+@media (max-width:360px){.brand{font-size:.84rem;gap:7px}.brand svg{width:22px;height:22px}.nav-links{gap:2px}.nav-links a.judge{padding:6px 8px;font-size:.72rem}.gh{width:32px;height:32px}}
 </style>
 </head>
 <body>
@@ -711,7 +720,7 @@ footer .bottom .ver{color:var(--accent)}
     <div class="kicker reveal">The receipt</div>
     <h2 class="reveal d1">Every number on this page came from a call you can replay.</h2>
     <p class="lede reveal d2" style="margin-top:16px">Each request behind the table — URL, HTTP status, UTC, sha256 of the body, credits — is listed on <a href="evidence.html">/evidence</a>. The block below follows the table: switch a token or paste one and it updates.</p>
-    <div class="receipt" id="receipt"><div><div class="k">endpoint</div><div class="v"><span class="mono">/public-api/v1/dex/tokens/transactions</span></div></div><div><div class="k">calls</div><div class="v">11 · 8 pages of 100 · HTTP 200</div></div><div><div class="k">credits used</div><div class="v"><span class="mono">0</span> — none — CoinMarketCap keyless /public-api surface</div></div><div><div class="k">captured</div><div class="v"><span class="mono">2026-09-18T22:36:19Z</span> · 8.56 s wall clock</div></div><div><div class="k">first page sha256</div><div class="v"><span class="mono">7171f3b8ef10dc0e177b85e91d228285c456f9972308c96ae087ef792361ed0d</span></div></div><div><div class="k">first request</div><div class="v"><a class="mono" href="https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&amp;address=0xbd965230588eaa536de6aa45e8ebbc01638535e0&amp;limit=100" target="_blank" rel="noopener noreferrer">https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&amp;address=0xbd965230588eaa536de6aa45e8ebbc01638535e0&amp;limit=100</a></div></div><div><div class="k">re-derive</div><div class="v"><span class="mono">python3 scripts/verify_tape.py</span> · <a href="https://github.com/edycutjong/middleman/blob/main/docs/proof/" target="_blank" rel="noopener noreferrer">docs/proof/ ↗</a> · <a href="evidence.html">every call →</a></div></div></div>
+    <div class="receipt" id="receipt-grid"><div><div class="k">endpoint</div><div class="v"><span class="mono">/public-api/v1/dex/tokens/transactions</span></div></div><div><div class="k">calls</div><div class="v">11 · 8 pages of 100 · HTTP 200</div></div><div><div class="k">credits used</div><div class="v"><span class="mono">0</span> — none — CoinMarketCap keyless /public-api surface</div></div><div><div class="k">captured</div><div class="v"><span class="mono">2026-09-18T22:36:19Z</span> · 8.56 s wall clock</div></div><div><div class="k">first page sha256</div><div class="v"><span class="mono">7171f3b8ef10dc0e177b85e91d228285c456f9972308c96ae087ef792361ed0d</span></div></div><div><div class="k">first request</div><div class="v"><a class="mono" href="https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&amp;address=0xbd965230588eaa536de6aa45e8ebbc01638535e0&amp;limit=100" target="_blank" rel="noopener noreferrer">https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&amp;address=0xbd965230588eaa536de6aa45e8ebbc01638535e0&amp;limit=100</a></div></div><div><div class="k">re-derive</div><div class="v"><span class="mono">python3 scripts/verify_tape.py</span> · <a href="https://github.com/edycutjong/middleman/blob/main/docs/proof/" target="_blank" rel="noopener noreferrer">docs/proof/ ↗</a> · <a href="evidence.html">every call →</a></div></div></div>
     <div class="proof reveal"><a href="https://github.com/edycutjong/middleman/blob/main/docs/proof/moto.json" target="_blank" rel="noopener noreferrer"><div class="f">docs/proof/moto.json<span class="arrow arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></div><div class="m">MOTO · 800 prints · 66.2 % round-tripped · 2026-09-18 22:36:19 UTC</div></a><a href="https://github.com/edycutjong/middleman/blob/main/docs/proof/census.json" target="_blank" rel="noopener noreferrer"><div class="f">docs/proof/census.json<span class="arrow arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></div><div class="m">10 tokens · 8,000 prints · 2 sandwiches · 45 round-trips</div></a><a href="https://github.com/edycutjong/middleman/blob/main/docs/proof/live_run.json" target="_blank" rel="noopener noreferrer"><div class="f">docs/proof/live_run.json<span class="arrow arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></div><div class="m">the bare command · 27.5 % · 2026-09-18 23:00:18 UTC</div></a><a href="https://github.com/edycutjong/middleman/blob/main/docs/proof/live_run_quiet.json" target="_blank" rel="noopener noreferrer"><div class="f">docs/proof/live_run_quiet.json<span class="arrow arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></div><div class="m">the bare command · 0.0 % · 2026-09-19 00:28:45 UTC</div></a></div>
   </div>
 </section>

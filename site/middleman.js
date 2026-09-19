@@ -267,7 +267,7 @@
   function renderReceipt(result) {
     if (!result.calls_n && !result.first_url) return;
     const items = [['endpoint', '<span class="mono">/public-api/v1/dex/tokens/transactions</span>'], ['calls', result.calls_n + (live ? ' · through /api/swaps, just now' : '')], ['credits used', '<span class="mono">0</span> — none, keyless'], ['captured', '<span class="mono">' + esc(result.captured_utc) + '</span>' + (result.wall_s != null ? ' · ' + result.wall_s + ' s wall clock' : '')], ['first page sha256', '<span class="mono">' + esc(result.first_sha256 || '— (browser fetches carry no hash)') + '</span>'], ['first request', result.first_url ? '<a class="mono" href="' + esc(result.first_url) + '" target="_blank" rel="noopener noreferrer">' + esc(result.first_url) + '</a>' : '—'], ['re-derive', '<span class="mono">python3 scripts/verify_tape.py</span> · <a href="evidence.html">every call →</a>']];
-    $('receipt').innerHTML = items.map(([k, v]) => '<div><div class="k">' + k + '</div><div class="v">' + v + '</div></div>').join('');
+    $('receipt-grid').innerHTML = items.map(([k, v]) => '<div><div class="k">' + k + '</div><div class="v">' + v + '</div></div>').join('');
   }
   function show(result) {
     current = result; generation++;
@@ -359,12 +359,14 @@
     ? new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 })
     : null;
   document.querySelectorAll('.reveal').forEach((el) => { if (io) io.observe(el); else el.classList.add('in'); });
-  const block = document.querySelector('svg.block');
+  // every svg.block gets .go (a project with a phone variant has two); the visible one is observed
+  const blocks = [...document.querySelectorAll('svg.block')], block = blocks.find((b) => b.getClientRects().length) || blocks[0];
+  const release = () => blocks.forEach((b) => b.classList.add('go'));
   // safety: nothing stays hidden if the observer never fires (print, full-page capture, odd embeds)
-  setTimeout(() => { document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in', 'now')); if (block) block.classList.add('go'); }, 2500);
+  setTimeout(() => { document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in', 'now')); if (block) release(); }, 2500);
   if (block) {
-    if (reduce || !('IntersectionObserver' in window)) block.classList.add('go');
-    else { const bo = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { block.classList.add('go'); bo.disconnect(); } }); }, { threshold: 0.35 }); bo.observe(block); }
+    if (reduce || !('IntersectionObserver' in window)) release();
+    else { const bo = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { release(); bo.disconnect(); } }); }, { threshold: 0.35 }); bo.observe(block); }
   }
   // the headline number counts up once, when it is in view; the span reserves its width in CSS
   const big = document.querySelector('h1 [data-count]');
