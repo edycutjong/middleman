@@ -13,16 +13,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Middleman — pitch deck</title>
-<meta name="description" content="Pitch deck for Middleman: who stands between your DEX quote and your fill, per pool, from real prints on CoinMarketCap's keyless API. Build with CMC API Hackathon, Markets and Trading Tools.">
+<meta name="description" content="Middleman's pitch deck: who stands between your DEX quote and your fill, per pool, from real prints on CoinMarketCap's keyless API. Twelve slides.">
 <meta name="author" content="{{author}}">
 <link rel="canonical" href="{{site}}/pitch/">
 <link rel="icon" type="image/svg+xml" href="../assets/icon.svg">
-<meta name="theme-color" content="#0C0F14">
+<meta name="theme-color" content="#0B0E14">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Middleman">
 <meta property="og:url" content="{{site}}/pitch/">
 <meta property="og:title" content="Middleman — pitch deck">
-<meta property="og:description" content="{{hero.share}} of the #1 Uniswap v2 pair's volume was {{hero.wallets_n}} wallets buying back what they just sold. Twelve slides, every number from a keyless run.">
+<meta property="og:description" content="{{hero.share}} of the #1 Uniswap v2 pair's volume was {{hero.wallets_n}} wallets buying back what they just sold. Twelve slides, one keyless run.">
 <meta property="og:image" content="{{site}}/assets/og-image.png?v={{og.v}}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -43,10 +43,12 @@
 @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 700;font-display:swap;src:url(../assets/fonts/jetbrains-mono-latin-var.woff2) format('woff2')}
 @font-face{font-family:'Inter Fallback';src:local('Arial'),local('Helvetica');ascent-override:90.2%;descent-override:22.48%;line-gap-override:0%;size-adjust:107.4%}
 
-/* ── design tokens (assets/_tokens.css) — full rebrand in 30 s ─────────────── */
+/* ── family tokens (LANDING_DESIGN.md §2): the neutrals, type and timings are fixed across the
+      Build-with-CMC pages and decks; the four hues on the second line are this project's ── */
 :root{
-  --bg:#0C0F14; --surface:#151A22; --surface-2:#1B2230; --border:#26303F; --text:#E8EDF2; --muted:#8A97A8;
-  --organic:#5AC8FA; --middle:#FF7A45; --route:#3DDC97; --danger:#FF5C5C;
+  --bg:#0B0E14; --surface:#141A24; --surface-2:#1A2230; --border:#243044; --text:#E6EDF3; --muted:#8B98A9; --dim:#5E6C80;
+  --accent:#FF7A45; --data:#5AC8FA; --verdict:#3DDC97; --flag:#FF5C5C;            /* ← per project, from §1 only */
+  --organic:var(--data); --middle:var(--accent); --route:var(--verdict); --danger:var(--flag);   /* the deck's own names for the same four */
   --color-bg:var(--bg); --color-primary:var(--organic); --color-accent:var(--middle);
   --font-display:'Inter Tight','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI Variable','Segoe UI',system-ui,sans-serif;
   --font-body:'Inter','Inter Fallback',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
@@ -103,25 +105,25 @@ th,td{text-align:left;padding:16px 14px;border-bottom:1px solid var(--border);fo
 th{font-family:var(--font-mono);font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
 td.num,th.num{text-align:right;font-feature-settings:var(--num)}
 pre{margin:0;font-family:var(--font-mono);font-size:20px;line-height:1.55;background:#0A0D12;border:1px solid var(--border);border-radius:18px;padding:28px 32px;color:#B9C4D2;overflow:hidden;font-feature-settings:var(--num)}
-pre .c{color:#7E8CA0}pre .k{color:var(--organic)}pre .o{color:var(--middle)}pre .g{color:var(--route)}pre .dim{color:#5E6C80}
+pre .c{color:#7E8CA0}pre .k{color:var(--organic)}pre .o{color:var(--middle)}pre .g{color:var(--route)}pre .dim{color:#7E8CA0}
 pre .leg{display:inline-block;width:calc(100% + 24px);background:rgba(255,122,69,.10);color:#FFB08A;border-radius:6px;margin:0 -12px;padding:0 12px;outline:1px solid rgba(255,122,69,.28)}
 .term{background:#0A0D12;border:1px solid var(--border);border-radius:20px;overflow:hidden}
 .term .bar{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface)}
 .term .bar i{width:13px;height:13px;border-radius:50%;background:#2c3646;display:inline-block}
 .term .bar span{margin-left:10px;font-family:var(--font-mono);font-size:16px;color:var(--muted)}
 .term pre{border:0;border-radius:0}
-.term .p{color:#7E8CA0}.term .cmd{color:#E8EDF2}
+.term .p{color:#7E8CA0}.term .cmd{color:var(--text)}
 
 /* browser frame — the product is a web page */
 .browser{background:#0A0D12;border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55)}
 .browser .bar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);background:var(--surface)}
 .browser .bar i{width:12px;height:12px;border-radius:50%;background:#2c3646;display:inline-block}
-.browser .bar .url{margin-left:12px;flex:1;font-family:var(--font-mono);font-size:15px;color:var(--muted);background:#0C0F14;border:1px solid var(--border);border-radius:8px;padding:5px 12px}
+.browser .bar .url{margin-left:12px;flex:1;font-family:var(--font-mono);font-size:15px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 12px}
 .browser img{display:block;width:100%;height:auto}
 .shot{position:relative}
 .callout{position:absolute;display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--text);pointer-events:none}
-.callout i{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--middle);color:#0C0F14;font-style:normal;font-family:var(--font-mono);font-size:18px;box-shadow:0 0 0 6px rgba(255,122,69,.25)}
-.callout span{background:rgba(12,15,20,.88);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:18px;white-space:nowrap}
+.callout i{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--middle);color:var(--bg);font-style:normal;font-family:var(--font-mono);font-size:18px;box-shadow:0 0 0 6px rgba(255,122,69,.25)}
+.callout span{background:rgba(11,14,20,.88);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:18px;white-space:nowrap}
 
 /* cover */
 .cover{display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:60px;height:100%}
@@ -247,7 +249,7 @@ table.api td{font-size:22px;padding:13px 14px}
 /* speaker notes / presenter (P) */
 .speaker-notes{display:none}
 body.presenter #notes{display:block}
-#notes{display:none;position:fixed;left:0;right:0;bottom:0;height:22vh;background:rgba(12,15,20,.96);border-top:1px solid var(--middle);color:var(--text);padding:18px 32px;font-size:clamp(14px,1.6vw,22px);line-height:1.5;overflow:auto;z-index:50;font-family:var(--font-body)}
+#notes{display:none;position:fixed;left:0;right:0;bottom:0;height:22vh;background:rgba(11,14,20,.96);border-top:1px solid var(--middle);color:var(--text);padding:18px 32px;font-size:clamp(14px,1.6vw,22px);line-height:1.5;overflow:auto;z-index:50;font-family:var(--font-body)}
 #notes .h{font-family:var(--font-mono);font-size:.8em;color:var(--middle);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
 body.presenter #chrome{opacity:.35}
 body.idle{cursor:none}
@@ -257,13 +259,13 @@ body.overview #viewport{display:none}
 #overview{display:none;position:fixed;inset:0;overflow:auto;padding:32px;background:var(--bg);z-index:40}
 body.overview #overview{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-content:start}
 #overview .thumb{position:relative;aspect-ratio:16/9;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);cursor:pointer;transition:border-color var(--t-fast),transform var(--t-fast) var(--ease)}
-#overview .thumb:hover,#overview .thumb:focus-visible{border-color:var(--middle);transform:translateY(-2px);outline:none}
+#overview .thumb:hover,#overview .thumb:focus-visible{border-color:var(--middle);transform:translateY(-2px)}
 #overview .thumb.cur{border-color:var(--middle)}
 #overview .thumb .n{position:absolute;left:10px;top:8px;font-family:var(--font-mono);font-size:12px;color:var(--middle)}
 #overview .thumb .t{position:absolute;left:12px;right:12px;bottom:10px;font-family:var(--font-display);font-weight:700;font-size:clamp(12px,1.3vw,18px);letter-spacing:-.01em}
 
 /* keyboard hint (first slide only, fades) */
-#hint{position:fixed;right:24px;top:20px;font-family:var(--font-mono);font-size:13px;color:var(--muted);background:rgba(21,26,34,.85);border:1px solid var(--border);border-radius:999px;padding:8px 14px;z-index:30;transition:opacity .6s}
+#hint{position:fixed;right:24px;top:20px;font-family:var(--font-mono);font-size:13px;color:var(--muted);background:rgba(20,26,36,.85);border:1px solid var(--border);border-radius:999px;padding:8px 14px;z-index:30;transition:opacity .6s}
 #hint.gone{opacity:0;pointer-events:none}
 #hint kbd{color:var(--text)}
 
@@ -326,11 +328,11 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid 
   <h2>Three suspects.<br>No witness.</h2>
   <div class="problem">
     <div>
-      <p class="lede">Rina routes $8,000 of a mid-cap through the pool her wallet picked and is filled <b>1.4 % under the quote</b>. She spends the evening convinced a bot ate her.</p>
+      <p class="lede">Rina routes a mid-cap through the pool her wallet picked and is filled <b>under the quote</b>. She spends the evening convinced a bot ate her.</p>
       <p class="lede" style="margin-top:22px">Every tool shows her <b>volume and 24 h transactions</b> — exactly the two numbers a wallet trading with itself inflates. So she picks the busiest pool and sets a loose cap "to be safe".</p>
     </div>
     <svg class="suspects" viewBox="0 0 820 560" role="img" aria-label="A quote flows into a fill through a gap marked with a question mark; three dashed suspects surround the gap: a sandwicher, a wash bot, and the pool itself">
-      <defs><marker id="sarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8A97A8"/></marker></defs>
+      <defs><marker id="sarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8B98A9"/></marker></defs>
       <rect class="box" x="10" y="220" width="200" height="120" rx="16"/>
       <text class="lbl" x="110" y="272" text-anchor="middle">quote</text>
       <text class="sub" x="110" y="304" text-anchor="middle">the price she saw</text>
@@ -577,11 +579,11 @@ MOTO · ethereum · 800 prints · 3.6 h · blocks 26006339–26007416 · capture
       <div class="timeline">
         <div><div class="t">{{captured}}</div><div class="v orange">{{hero.share}}</div><div class="s">{{hero.pairs}} round-trips · {{hero.wallets_n}} wallets — the capture behind the page</div></div>
         <div><div class="t">{{run2.captured}}</div><div class="v orange">{{run2.share}}</div><div class="s">{{run2.pairs}} round-trips · {{run2.wallets}} wallet — 24 minutes later, {{run2.wall_s}} s</div></div>
-        <div><div class="t">{{run3.captured}}</div><div class="v green">clean</div><div class="s">0 round-trips — and the tool said so, {{run3.wall_s}} s</div></div>
+        <div><div class="t">{{run3.captured}}</div><div class="v green">{{run3.share}}</div><div class="s">0 round-trips, a quiet window — and the tool said so, {{run3.wall_s}} s</div></div>
       </div>
     </div>
   </div>
-  <aside class="speaker-notes">One command from a fresh clone, no install, no key, about ten seconds. Three runs, three different answers — sixty-six percent, then twenty-seven, then a clean window — because the number comes from the market, not from a file. A number that moves is the proof it is measured. The property test is the one worth reading: a thousand generated blocks and the join never violated its own definition.</aside>
+  <aside class="speaker-notes">One command from a fresh clone, no install, no key, about ten seconds. Three runs, three different answers — sixty-six percent, then twenty-seven, then a quiet window — because the number comes from the market, not from a file. A number that moves is the proof it is measured. The property test is the one worth reading: a thousand generated blocks and the join never violated its own definition.</aside>
 </section>
 
 <!-- 11 HONEST LIMITS ═══════════════════════════════════════════════════════════ -->
@@ -612,7 +614,7 @@ MOTO · ethereum · 800 prints · 3.6 h · blocks 26006339–26007416 · capture
     </div>
     <div>
       <div class="term">
-        <div class="bar"><i></i><i></i><i></i><span>about ten seconds on a clean run · no key · no install</span></div>
+        <div class="bar"><i></i><i></i><i></i><span>about ten seconds from a fresh clone · no key · no install</span></div>
         <pre style="font-size:22px"><span class="p">$</span> <span class="cmd">git clone {{repo}}.git</span>
 <span class="p">$</span> <span class="cmd">cd middleman</span>
 <span class="p">$</span> <span class="cmd">python3 scripts/middleman.py</span>
@@ -621,7 +623,7 @@ MOTO · ethereum · 800 prints · 3.6 h · blocks 26006339–26007416 · capture
       <p class="closer" style="margin-top:44px">Between your quote and your fill:<br><b>two rows and one division.</b></p>
     </div>
   </div>
-  <aside class="speaker-notes">One command, no key, no install. Your number will differ because the window moves — if the same wallets still dominate the finding is persistent, and if the window is clean the tool says so. Either way you watched the sponsor's own ranking explained by the rows underneath it.</aside>
+  <aside class="speaker-notes">One command, no key, no install. Your number will differ because the window moves — if the same wallets still dominate the finding is persistent, and if the window is quiet the tool says so. Either way you watched the sponsor's own ranking explained by the rows underneath it.</aside>
 </section>
 
 <div id="chrome">
