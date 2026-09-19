@@ -1,0 +1,14 @@
+name: gitleaks
+# Secret scanning over the FULL history — the mechanical form of the rule "scan history for
+# secrets before any private→public flip". GitHub's own secret scanning covers known provider
+# patterns on pushed commits; this catches project-shaped strings and scans the past.
+on: [push, pull_request, workflow_dispatch]
+permissions: { contents: read }
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v3
+        env: { GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }

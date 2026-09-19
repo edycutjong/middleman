@@ -10,79 +10,95 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # ── STAGE 1 · Quality (lint, types, tests) — parallel with Stage 2 ─────────
   lint:
-    name: "Stage 1 · Lint"
+    name: "Stage 1 · Lint + typecheck"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: '3.11' }
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: { python-version: '3.11', cache: pip, cache-dependency-path: requirements-dev.txt }
       - run: pip install -r requirements-dev.txt
       - run: ruff check --output-format=github .
       - run: ruff format --check .
+      # config in pyproject.toml: middleman/, scripts/, tests/ with explicit package bases
+      - run: mypy
 
   test:
     name: "Stage 1 · Tests"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.11', '3.12', '3.13']
+        # Full matrix on main push, one Python on PRs.
+        python-version: ${{ github.event_name == 'push' && fromJSON('["3.11","3.12","3.13"]') || fromJSON('["3.11"]') }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: '${{ matrix.python-version }}' }
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: { python-version: '${{ matrix.python-version }}', cache: pip, cache-dependency-path: requirements-dev.txt }
+      - uses: actions/setup-node@v7
+        with: { node-version: '22' }
       - run: pip install -r requirements-dev.txt
-      # Offline only, including the JavaScript/Python parity test (node is installed above).
-      # The live tests run in the live-api job, where a CMC rate limit is diagnosed as a rate
-      # limit rather than reported as a test failure.
-      - run: pytest -q -m "not live" --cov=middleman --cov=scripts --cov-report=term-missing
+      # Offline only, including the JavaScript/Python parity test and the proxy boundary test
+      # (node is installed above). The live tests run in the live-api job, where a CMC rate
+      # limit is diagnosed as a rate limit rather than reported as a test failure.
+      # Branch coverage of the engine (middleman/) is gated at 95% — `make test-coverage`.
+      - run: >-
+          pytest -q -m "not live" --cov=middleman --cov-report=term-missing
+          --cov-report=xml --cov-fail-under=95
+      - uses: actions/upload-artifact@v7
+        if: matrix.python-version == '3.11'
+        with: { name: coverage-xml, path: coverage.xml, retention-days: 7, if-no-files-found: ignore }
 
-  check:
-    name: "Stage 2 · Receipts, page and placeholders"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: '3.11' }
-      - run: pip install -r requirements-dev.txt
-      # No placeholders and no stale test count on any judge-facing file.
-      - run: python3 scripts/check_submission_readiness.py
-      # The committed pages are what the committed receipts render.
-      - run: python3 scripts/render_site.py --check
-      # Every published number re-derives from its tape, offline.
-      - run: python3 scripts/verify_tape.py
-
+  # ── STAGE 2 · Security + receipts — parallel with Stage 1 ──────────────────
   audit:
     name: "Stage 2 · Dependency audit"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with: { python-version: '3.11' }
+      # The product has zero runtime dependencies; the dev toolchain is what gets audited.
       - run: pip install pip-audit && pip-audit -r requirements-dev.txt
 
+  check:
+    name: "Stage 2 · Receipts, pages and placeholders"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: { python-version: '3.11' }
+      - run: pip install -r requirements-dev.txt
+      # No placeholders and no stale test count on any judge-facing file.
+      - run: python3 scripts/check_submission_readiness.py
+      # The committed pages (/, /evidence, /judge) are what the committed receipts render.
+      - run: python3 scripts/render_site.py --check
+      # Every published number re-derives from its tape, offline.
+      - run: python3 scripts/verify_tape.py
+
+  # ── STAGE 3 · Deterministic benchmark (CI only — a replay, not the product) ─
   bench:
     name: "Stage 3 · Deterministic benchmark"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with: { python-version: '3.11' }
       # Replay over the committed hero tape: no network, comparable across runs.
       - run: python3 scripts/bench.py --replay --iterations 200
 
+  # ── STAGE 4 · The judged capability, live, keyless ─────────────────────────
   live-api:
     name: "Stage 4 · The judged capability, for real"
     needs: [lint, test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with: { python-version: '3.11' }
       - run: pip install -r requirements-dev.txt
-      # No secret is configured for this job, deliberately: the judged path is keyless.
+      # No secret is configured for this job, deliberately: the judged path is keyless, so
+      # this runs on forks and PRs too. If CMC changes the contract, it breaks here rather
+      # than in front of a judge.
       # Exit 75 is EX_TEMPFAIL — CMC throttled this runner's shared IP. Not a product failure.
       - name: Name the middleman on a real tape with no credentials
         run: |
@@ -97,3 +113,41 @@ jobs:
           exit "$code"
       - name: Live contract tests
         run: pytest -q -m live
+
+  # ── STAGE 5 · Judge surface — /judge served with no credentials ────────────
+  judge-surface:
+    name: "Stage 5 · /judge with no credentials"
+    needs: [check]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: '22' }
+      # Serve site/ + api/ exactly the way Vercel routes them, then fetch /judge, /, /evidence
+      # and /api/health with no cookies, no key, no session. 200 + the claim sentence, or fail.
+      - name: Serve and probe
+        run: |
+          set -euo pipefail
+          PORT=8101 node scripts/serve.js & sleep 1
+          for p in /judge / /evidence /api/health; do
+            code=$(curl -s -o /tmp/body -w '%{http_code}' "http://localhost:8101$p")
+            echo "$p -> $code"; [ "$code" = "200" ]
+          done
+          curl -s http://localhost:8101/judge | grep -q "cannot tell what stood between them"
+          echo "the claim sentence is on /judge"
+
+  # ── STAGE 6 · Deploy gate (main only) ──────────────────────────────────────
+  gate:
+    name: "Stage 6 · Deploy gate"
+    needs: [lint, test, audit, check, bench, live-api, judge-surface]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "All gates passed."
+          echo "  Stage 1 · lint + mypy + tests on 3.11/3.12/3.13 (engine branch coverage ≥ 95%)"
+          echo "  Stage 2 · pip-audit · placeholders · page drift · tape re-derivation"
+          echo "  Stage 3 · deterministic benchmark (replay, CI only)"
+          echo "  Stage 4 · the judged capability, live and keyless"
+          echo "  Stage 5 · /judge reachable with no credentials"
+          echo "Vercel deploys main on its own; this job is the record that it was safe to."
