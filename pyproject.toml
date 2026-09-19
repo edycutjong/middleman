@@ -10,6 +10,24 @@ select = ["E", "F", "W", "I", "UP", "B", "SIM"]
 # than it helps, and the output is checked by rendering it, not by reading it
 "scripts/render_site.py" = ["E501"]
 
+[tool.mypy]
+# scripts/middleman.py is the door and the package is middleman/ — without explicit package
+# bases mypy sees two modules named "middleman" and stops before checking anything.
+files = ["middleman", "scripts", "tests"]
+explicit_package_bases = true
+ignore_missing_imports = true
+python_version = "3.11"
+warn_unused_ignores = true
+warn_redundant_casts = true
+
+[tool.coverage.run]
+branch = true
+omit = ["tests/*"]
+
+[tool.coverage.report]
+skip_covered = false
+show_missing = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
