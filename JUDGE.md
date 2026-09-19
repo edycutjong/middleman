@@ -56,7 +56,7 @@ any token into its box and the browser runs the same engine, live, through a key
 | Sandwiches | 0 on this pair · **2 in 8,000 prints** across the ten-token census, both by one wallet |
 | Quote-to-fill | organic **15.5 bps** median, p90 60.9 — the raw tape says 55.3 |
 | Route | Uniswap v2 / WETH · **cap slippage at 0.65 %** |
-| Tests | **139** (133 offline, 6 live) · property-based: 1,000 generated blocks, 0 violations · JS ↔ Python parity on every tape |
+| Tests | **145** (139 offline, 6 live) · property-based: 1,000 generated blocks, 0 violations · JS ↔ Python parity on every tape |
 | Engine latency | p50 **3.3 ms** per 800 prints (p95 3.7 ms, n=200) |
 | Live fetch latency | p50 **1.5 s** per page (p95 16.4 s — one iteration sat through the throttle backoff) |
 | Raw receipts | [`docs/proof/moto.json`](docs/proof/moto.json) · [`census.json`](docs/proof/census.json) · [`live_run.json`](docs/proof/live_run.json) · [`spike.json`](docs/proof/spike.json) · [`bench_live.json`](docs/proof/bench_live.json) · [`bench_replay.json`](docs/proof/bench_replay.json) |
@@ -71,7 +71,7 @@ that moves with the market is the proof it is measured, not asserted. Both trans
 python3 scripts/middleman.py                                   # the hero by rule, live, keyless
 python3 scripts/middleman.py --address 0xbd965230588eaa536de6aa45e8ebbc01638535e0 --symbol MOTO --pages 8 --json moto.json
 python3 scripts/verify_tape.py                                 # every receipt vs its tape, offline
-make test                                                      # 133 offline tests
+make test                                                      # 139 offline tests
 make test-live                                                 # 6 tests against the real contract
 make bench                                                     # the engine over the committed tape
 node scripts/serve.js                                          # the page + proxy on :8101
@@ -127,5 +127,5 @@ retraction is dated in the README.
 | **How it works** | [ARCHITECTURE.md](ARCHITECTURE.md) — derived from the code · [docs/METHOD.md](docs/METHOD.md) — the definitions |
 | **API feedback for CMC** | [FEEDBACK.md](FEEDBACK.md) — eight dated, evidenced findings |
 | **The engine** | [`middleman/`](middleman/) — six stdlib modules · [`scripts/middleman.py`](scripts/middleman.py) — the door |
-| **The tests** | [`tests/`](tests/) — 139, each regression named for the defect it pins |
+| **The tests** | [`tests/`](tests/) — 145, each regression named for the defect it pins |
 | **Live page** | [middleman-cmc.vercel.app](https://middleman-cmc.vercel.app) · [/evidence](https://middleman-cmc.vercel.app/evidence) |

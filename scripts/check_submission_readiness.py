@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 # Files a judge actually opens. Deliberately narrow: a TODO in a source comment is ordinary
 # engineering, a TODO in the README is an unfinished submission.
-TARGETS = ["README.md", "DEMO.md", "JUDGE.md", "FEEDBACK.md", "ARCHITECTURE.md"]
+TARGETS = ["README.md", "DEMO.md", "JUDGE.md", "FEEDBACK.md", "ARCHITECTURE.md", "site/judge.html"]
 TARGET_GLOBS = ["docs/*.md", ".github/*.md"]
 
 PATTERNS = [

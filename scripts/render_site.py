@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Render site/index.html and site/evidence.html from the committed receipts.
+"""Render site/index.html, site/evidence.html and site/judge.html from the committed receipts.
 
     python3 scripts/render_site.py            # write site/
     python3 scripts/render_site.py --check    # exit 1 if what is on disk is not this render
 
-Every number on either page comes from docs/proof/*.json — real keyless runs recorded by
+Every number on any of the three pages comes from docs/proof/*.json — real keyless runs recorded by
 scripts/seed.py. The templates in scripts/site_templates/ use {{slot}} tokens and the render
 fails if any slot is left unfilled, so a placeholder can never reach the committed HTML and
 a number can never be typed in by hand. The HTML under site/ is generated output: edit the
@@ -35,6 +35,10 @@ SITE = BUILD / "site"
 REPO = "https://github.com/edycutjong/middleman"
 REPO_SHORT = "github.com/edycutjong/middleman"
 SITE_URL = "https://middleman-cmc.vercel.app"
+SITE_SHORT = "middleman-cmc.vercel.app"
+# The counts /judge publishes. tests/test_published_counts.py fails if they drift from the suite.
+TESTS_TOTAL, TESTS_OFFLINE, TESTS_LIVE = 145, 139, 6
+PROPERTY_CASES = 1000
 EVENT = "https://dorahacks.io/hackathon/coinmarketcap-api-202609/detail"
 AUTHOR = "Edy Cu"
 X_HANDLE = "@edycutjong"
@@ -520,6 +524,81 @@ def evidence_page(census, platforms, receipts):
     return render((TEMPLATES / "evidence.html").read_text(), ctx)
 
 
+# ── the judge page ───────────────────────────────────────────────────────────
+
+
+def judge_page(census, platforms, receipts):
+    """One page for one reader: the claim, the 30-second path, the receipt, the real
+    reproduce command, the limitations. Every number from the receipts, like the other two."""
+    r = hero_receipt(census, receipts)
+    hp = census["hero"]["pool"]
+    pool = next(p for p in r["pools"] if p["venue"] == hp["venue"] and p["quote"] == hp["quote"])
+    rt = pool["round_trips"]
+    d = r["decision"]
+    cov = r.get("coverage") or {}
+    replay = json.loads((PROOF / "bench_replay.json").read_text())
+    live = json.loads((PROOF / "bench_live.json").read_text())
+    tx_calls = [c for c in r["calls"] if "tokens/transactions" in str(c.get("url", ""))]
+    ctx = {
+        "hero.symbol": esc(r["symbol"]),
+        "hero.address": esc(r["address"]),
+        "hero.venue": esc(pool["venue"]),
+        "hero.quote": esc(pool["quote"]),
+        "hero.share": f"{rt['share_volume'] * 100:.1f} %",
+        "hero.wallets_n": len(rt["wallets"]),
+        "hero.pairs": rt["pairs"],
+        "hero.rt_usd": f"${rt['volume_usd']:,.0f}",
+        "hero.pool_usd": f"${pool['volume_usd']:,.0f}",
+        "hero.sandwiches": pool["sandwiches"]["count"],
+        "hero.organic_p50": bps(pool["q2f"]["p50_bps"]),
+        "hero.organic_p90": bps(pool["q2f"]["p90_bps"]),
+        "hero.naive_p50": bps(pool["naive"]["p50_bps"]),
+        "hero.span": r["window"]["span_hours"],
+        "hero.coverage": (
+            f"{cov['window_share_of_24h']:.0%}" if cov.get("window_share_of_24h") else "unknown"
+        ),
+        "hero.file": esc(Path(r.get("tape", "tape_x.json")).stem.replace("tape_", "") + ".json"),
+        "hero_calls": len(r["calls"]),
+        "captured": utc_short(r["captured_utc"]),
+        "wall_s": r["wall_s"],
+        "pages": len(tx_calls),
+        "prints": r["window"]["prints"],
+        "platform": esc(r["platform"].title()),
+        "rule": esc(census["hero"]["rule"] or enrich.HERO_RULE),
+        "auth": esc(r["auth"]),
+        "route": (
+            f"{esc(d['venue'])} / {esc(d['quote'])} · cap slippage at {d['cap_pct']:.2f} % "
+            f"(organic p90 {bps(d['p90_bps'])} bps)"
+            if d["pool"]
+            else f"no route — {esc(d['why'])}"
+        ),
+        "census.sandwiches": census["sandwiches"],
+        "census.prints": f"{census['prints']:,}",
+        "census.tokens": census["tokens"],
+        "calls_n": sum(len(x["calls"]) for x in receipts),
+        "tokens_n": len(receipts),
+        "tests_total": TESTS_TOTAL,
+        "tests_offline": TESTS_OFFLINE,
+        "tests_live": TESTS_LIVE,
+        "property_cases": f"{PROPERTY_CASES:,}",
+        "bench.replay_p50": f"{replay['detect']['p50']:.1f}",
+        "bench.replay_p95": f"{replay['detect']['p95']:.1f}",
+        "bench.replay_n": replay["detect"]["n"],
+        "bench.replay_prints": replay["prints"],
+        "bench.live_p50": f"{live['fetch']['p50'] / 1000:.1f}",
+        "bench.live_p95": f"{live['fetch']['p95'] / 1000:.1f}",
+        "bench.live_n": live["fetch"]["n"],
+        "repo": REPO,
+        "repo_short": REPO_SHORT,
+        "site": SITE_URL,
+        "site_short": SITE_SHORT,
+        "event": EVENT,
+        "author": AUTHOR,
+        "x_handle": X_HANDLE,
+    }
+    return render((TEMPLATES / "judge.html").read_text(), ctx)
+
+
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
     check = "--check" in argv
@@ -527,6 +606,7 @@ def main(argv=None):
     pages = {
         SITE / "index.html": front_page(census, platforms, receipts),
         SITE / "evidence.html": evidence_page(census, platforms, receipts),
+        SITE / "judge.html": judge_page(census, platforms, receipts),
     }
     drift = []
     for path, content in pages.items():

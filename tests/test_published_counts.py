@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT))
 
 import check_submission_readiness as readiness  # noqa: E402
 
-SURFACES = ["README.md", "DEMO.md", "JUDGE.md", "ARCHITECTURE.md"]
+SURFACES = ["README.md", "DEMO.md", "JUDGE.md", "ARCHITECTURE.md", "site/judge.html"]
 
 
 def test_every_surface_publishes_the_same_test_count_as_the_suite():
@@ -32,8 +32,11 @@ def test_the_readiness_scan_is_clean_on_this_submission():
 def test_the_property_case_count_the_docs_quote_is_the_one_the_suite_runs():
     from test_property import PROPERTY_CASES
 
-    for name in ("README.md", "DEMO.md", "JUDGE.md"):
+    for name in ("README.md", "DEMO.md", "JUDGE.md", "site/judge.html"):
         assert f"{PROPERTY_CASES:,} generated blocks" in (ROOT / name).read_text(), name
+    import render_site
+
+    assert render_site.PROPERTY_CASES == PROPERTY_CASES
 
 
 def test_every_endpoint_the_code_calls_is_named_on_the_readme_and_the_page():

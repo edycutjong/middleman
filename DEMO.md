@@ -216,14 +216,14 @@ keyless demo, and it is why the backoff exists.
 
 | | Count |
 |---|---|
-| Total tests | **139** (133 offline, 6 live) |
+| Total tests | **145** (139 offline, 6 live) |
 | Regression tests, each named for the defect it pins | 39 |
 | Property-based verification of the join | **1,000 generated blocks, 0 violations** |
 | JavaScript ↔ Python parity | every committed tape, every pool row |
 | Offline re-derivation of every published number | `python3 scripts/verify_tape.py` |
 
 ```bash
-make test         # 133 offline tests, no internet
+make test         # 139 offline tests, no internet
 make test-live    # 6 tests against the real CMC contract, keyless
 ```
 

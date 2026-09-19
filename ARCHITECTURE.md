@@ -42,10 +42,10 @@ flowchart TD
   SEED --> TAPE[("data/tape_*.json<br/>rows verbatim + page hashes")]
   SEED --> PROOF[("docs/proof/*.json<br/>numbers · URLs · statuses · hashes")]
   TAPE -->|"verify_tape.py<br/>offline re-derivation"| PROOF
-  PROOF --> RENDER["scripts/render_site.py"] --> SITE["site/index.html · site/evidence.html"]
+  PROOF --> RENDER["scripts/render_site.py"] --> SITE["site/index.html · site/evidence.html · site/judge.html"]
 
   subgraph vercel["Vercel · middleman-cmc"]
-    SITE --> PAGE["/ and /evidence — static"]
+    SITE --> PAGE["/, /evidence and /judge — static"]
     PAGE -->|"paste a token"| JS["site/middleman.js<br/>the engine, ported"]
     JS --> FN["/api/swaps<br/>keyless passthrough + CORS + 60 s cache"] --> TX
     HEALTH["/api/health"]
@@ -127,11 +127,16 @@ the body.
 |---|---|---|
 | `/` | static | `site/index.html` — the table, the route line, the raw rows, the census strip, the receipt, the paste box. Rendered for the hero token; the Ethereum receipts are embedded so the token buttons switch tables with zero requests. |
 | `/evidence` | static | `site/evidence.html` — every call behind every receipt: URL, HTTP status, UTC, hash, credits; the rules verbatim; the endpoints table. |
+| `/judge` | static | `site/judge.html` — one page for one reader: the claim, the 30-second path, the receipt block, the real reproduce command with the replay labelled apart, the limitations, the links. Rendered from the same receipts; mirrors `JUDGE.md`, and `tests/test_judge_surface.py` serves it and asserts 200 + the claim with no credentials. |
 | `/api/swaps` | serverless (`api/swaps.js`) | `GET ?platform=&address=[&lastId=]` → the identical keyless CMC URL, body returned untouched under `raw`, plus `Access-Control-Allow-Origin: *` and `Cache-Control: s-maxage=60`. Upstream status passed through; a 429 comes back as a 429 with the CLI command as `hint`. Validates the platform and the address shape; holds no key. |
 | `/api/health` | serverless (`api/health.js`) | Server clock, the receipts' capture time, the census totals. No upstream call. |
 
-`scripts/serve.js` serves the same four locally on port 8101, so the paste box runs from a
-fresh clone without Vercel.
+`scripts/serve.js` serves the same five locally on port 8101, so the paste box runs from a
+fresh clone without Vercel. `api/swaps.js` is the only code with any privilege — a public,
+unauthenticated function on a shared IP — and `tests/test_proxy_boundary.py` drives it under
+node with `fetch` stubbed to prove its boundary: it can reach exactly one keyless
+CoinMarketCap URL, refuses any other host, path, platform or cursor without a call, and never
+forwards a caller's key, token, cookie or forwarded-host header upstream.
 
 ## Repository layout
 
@@ -152,9 +157,9 @@ scripts/
   render_site.py  docs/proof/*.json → site/ through slot templates; --check gates drift
   check_submission_readiness.py   placeholders and stale test counts
   serve.js        site/ + api/ locally, the way Vercel routes them
-  site_templates/ index.html · evidence.html
+  site_templates/ index.html · evidence.html · judge.html
 site/
-  index.html · evidence.html   generated — edit the templates or the receipts, never the page
+  index.html · evidence.html · judge.html   generated — edit the templates or the receipts, never the page
   middleman.js    the engine ported to the browser + the page's interactions
   assets/         icon, social card, three OFL fonts
 api/
@@ -165,7 +170,7 @@ docs/
   METHOD.md                   the definitions, the invariant, the exclusions
   proof/                      spike.json · live_run.json · <sym>.json ×10 · census.json ·
                               platforms.json · bench_live.json · bench_replay.json
-tests/                        139 tests: 133 offline, 6 live
+tests/                        145 tests: 139 offline, 6 live
 ```
 
 ## Dependencies

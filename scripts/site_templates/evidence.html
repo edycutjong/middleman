@@ -35,7 +35,7 @@ dt{color:var(--muted)}dd{margin:0}
 </head>
 <body>
 <div class="wrap">
-<p><a href="index.html">← back to the table</a></p>
+<p><a href="index.html">← back to the table</a> · <a href="judge.html">for judges →</a></p>
 <h1>Evidence — every call behind the page</h1>
 <p class="muted">{{calls_n}} requests to CoinMarketCap's keyless <span class="mono">/public-api</span>, {{tokens_n}} tokens, captured {{captured}}. Credits used: <b class="mono">0</b> — no key exists to charge. Every response body is hashed; the tapes in <a href="{{repo}}/tree/main/data" target="_blank" rel="noopener noreferrer">data/</a> carry the same hashes, and <span class="mono">python3 scripts/verify_tape.py</span> re-derives every number on the front page from them with the network unplugged.</p>
 

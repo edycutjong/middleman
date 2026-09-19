@@ -36,7 +36,7 @@ the legs out and an organic fill there pays 15.5 bps, not the 55.3 the raw tape 
 ![CoinMarketCap](https://img.shields.io/badge/CoinMarketCap_DEX_API-3861FB?style=flat&logo=coinmarketcap&logoColor=white)
 ![No API key](https://img.shields.io/badge/API_key-not_required-4C9AFF?style=flat)
 ![Zero dependencies](https://img.shields.io/badge/runtime_deps-zero-5E6C80?style=flat)
-![Tests](https://img.shields.io/badge/tests-139-3DDC97?style=flat)
+![Tests](https://img.shields.io/badge/tests-145-3DDC97?style=flat)
 [![License](https://img.shields.io/badge/License-MIT-FFB020?style=flat)](LICENSE)
 
 </div>
@@ -210,7 +210,7 @@ python3 scripts/middleman.py                                   # the hero by rul
 python3 scripts/middleman.py --address 0x… --symbol X --pages 8 --json x.json   # any token; --platform bsc|solana
 python3 scripts/middleman.py --watchlist                       # SHIB · PEPE · UNI
 
-make setup && make test                                        # 133 offline tests
+make setup && make test                                        # 139 offline tests
 make test-live                                                 # 6 tests against the real contract, keyless
 python3 scripts/verify_tape.py                                 # every receipt re-derived from its tape, offline
 make bench                                                     # the engine over the committed tape, p50/p95
@@ -234,7 +234,7 @@ for key, rows in detect.group(prints).items():
 
 | | |
 |---|---|
-| Tests | **139** — 133 offline, 6 live; each regression named for the defect it pins |
+| Tests | **145** — 139 offline, 6 live; each regression named for the defect it pins |
 | Property-based | `middlemen()` over **1,000 generated blocks**, 0 violations of its own definition |
 | Parity | the browser engine (`site/middleman.js`) vs the Python engine, every pool row of every committed tape |
 | Re-derivation | `scripts/verify_tape.py` — every published number from its tape, offline; `make check` fails on drift |
