@@ -146,10 +146,10 @@ wrote docs/proof/live_run.json  (11.3s wall clock, 0 credits — keyless)
 ## Receipt 3 — the same command, and a clean window, 2026-09-19T00:28:45Z
 
 Run again the next morning as the R10 gate of the engineering pass — keyless, from this tree,
-with `--json docs/proof/live_run_clean.json` so the receipt was kept. **Zero round-trips.** The
+with `--json docs/proof/live_run_quiet.json` so the receipt was kept. **Zero round-trips.** The
 three wallets were gone, every one of the 800 prints was organic, and the tool said so on the
 line the headline usually occupies — then routed and capped from the pool's own p90, which is
-what the fallback is for. Receipt: [`docs/proof/live_run_clean.json`](docs/proof/live_run_clean.json).
+what the fallback is for. Receipt: [`docs/proof/live_run_quiet.json`](docs/proof/live_run_quiet.json).
 
 ```
 middleman 0.1.0 — keyless, live
@@ -179,7 +179,7 @@ MOTO · ethereum · 800 prints · 4.17 h · blocks 26006729–26007978 · captur
     this print      lgid 556  buy  a1/a0 = 1.376964652537947e-06
     q/q_prev − 1 = 0.8 bps adverse
 
-wrote docs/proof/live_run_clean.json  (11.0s wall clock, 0 credits — keyless)
+wrote docs/proof/live_run_quiet.json  (11.0s wall clock, 0 credits — keyless)
 ```
 
 | | |

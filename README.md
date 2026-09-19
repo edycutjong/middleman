@@ -91,7 +91,7 @@ wrote docs/proof/live_run.json  (11.3s wall clock, 0 credits — keyless)
 > ([`docs/proof/moto.json`](docs/proof/moto.json), the 800 raw prints in
 > [`data/tape_moto.json`](data/tape_moto.json)). Between the two runs they went quiet; a third
 > run the next morning found the window **clean** — zero round-trips, and the tool said so
-> ([`docs/proof/live_run_clean.json`](docs/proof/live_run_clean.json)). Run it yourself and the
+> ([`docs/proof/live_run_quiet.json`](docs/proof/live_run_quiet.json)). Run it yourself and the
 > number will differ again, because it comes from the market rather than from this file — and
 > `python3 scripts/verify_tape.py` re-derives every committed receipt from its tape with the
 > network unplugged. All three transcripts are in **[DEMO.md](DEMO.md)**.
