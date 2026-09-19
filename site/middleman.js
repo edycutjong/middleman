@@ -159,6 +159,8 @@
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const short = (a, n = 6) => { a = String(a || ''); return a.length > n + 4 ? a.slice(0, n) + '…' + a.slice(-4) : a; };
+  // every off-site link says so — the same string scripts/render_site.py (EXT) writes into the committed page
+  const EXT = '<span class="arrow arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>';
   const usd = (v) => v == null ? '—' : v >= 1e6 ? '$' + (v / 1e6).toFixed(1) + 'M' : v >= 1e3 ? '$' + Math.round(v / 1e3) + 'k' : '$' + Math.round(v);
   const bps = (v) => v == null ? '—' : v.toFixed(1);
   const data = JSON.parse($('receipts').textContent);
@@ -240,12 +242,12 @@
     if (!ex) { $('rowscap').textContent = 'this pool has a single print in the window; nothing to compare'; $('rowlist').innerHTML = ''; $('arith').innerHTML = ''; $('rawpre').textContent = '[]'; return; }
     const legs = new Set(ex.highlight), victims = new Set(ex.victims || []);
     const what = { 'round-trip': 'the block that holds the first round-trip — both legs in orange', sandwich: 'the block that holds the first sandwich — the legs in orange, the victim in red', organic: 'two consecutive organic prints in one block — the bps between them, computed inline' }[ex.kind];
-    $('rowscap').innerHTML = 'block ' + esc(ex.h) + ' · ' + what + ' · endpoint <span class="mono">/public-api/v1/dex/tokens/transactions</span>' + (result.tape ? ' · <a href="' + esc(data.repo || REPO) + '/blob/main/' + esc(result.tape) + '" target="_blank" rel="noopener noreferrer">the whole tape ↗</a>' : live ? ' · fetched live through /api/swaps just now' : '');
+    $('rowscap').innerHTML = 'block ' + esc(ex.h) + ' · ' + what + ' · endpoint <span class="mono">/public-api/v1/dex/tokens/transactions</span>' + (result.tape ? ' · <a href="' + esc(data.repo || REPO) + '/blob/main/' + esc(result.tape) + '" target="_blank" rel="noopener noreferrer">the whole tape' + EXT + '</a>' : live ? ' · fetched live through /api/swaps just now' : '');
     $('rowlist').innerHTML = '<table><thead><tr><th>lgid</th><th>maker</th><th>side</th><th>a0 (base)</th><th>a1 (quote)</th><th>a1 / a0</th><th>tx</th></tr></thead><tbody>'
       + ex.rows.slice(0, 14).map((r) => {
         const cls = legs.has(r.lgid) ? 'leg' : victims.has(r.lgid) ? 'victim' : ex.kind === 'organic' ? 'fill' : '';
         const q = price(r), tx = r.tx || '';
-        const link = txuf && tx ? '<a href="' + esc(txuf.replace('%s', tx)) + '" target="_blank" rel="noopener noreferrer" class="mono">' + esc(short(tx, 8)) + ' ↗</a>' : '<span class="mono">' + esc(short(tx, 8)) + '</span>';
+        const link = txuf && tx ? '<a href="' + esc(txuf.replace('%s', tx)) + '" target="_blank" rel="noopener noreferrer" class="mono">' + esc(short(tx, 8)) + EXT + '</a>' : '<span class="mono">' + esc(short(tx, 8)) + '</span>';
         return '<tr class="' + cls + '"><td class="mono">' + esc(r.lgid) + '</td><td class="mono" title="' + esc(r.ma) + '">' + esc(short(r.ma, 10)) + '</td><td>' + esc(r.tp) + '</td>'
           + (q == null ? '<td colspan="4">unpriceable row</td>' : '<td class="mono">' + Number(r.a0).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 }) + '</td><td class="mono">' + Number(r.a1).toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 }) + '</td><td class="mono">' + q.toExponential(4) + '</td><td>' + link + '</td>') + '</tr>';
       }).join('') + '</tbody></table>';
@@ -266,7 +268,7 @@
   }
   function renderReceipt(result) {
     if (!result.calls_n && !result.first_url) return;
-    const items = [['endpoint', '<span class="mono">/public-api/v1/dex/tokens/transactions</span>'], ['calls', result.calls_n + (live ? ' · through /api/swaps, just now' : '')], ['credits used', '<span class="mono">0</span> — none, keyless'], ['captured', '<span class="mono">' + esc(result.captured_utc) + '</span>' + (result.wall_s != null ? ' · ' + result.wall_s + ' s wall clock' : '')], ['first page sha256', '<span class="mono">' + esc(result.first_sha256 || '— (browser fetches carry no hash)') + '</span>'], ['first request', result.first_url ? '<a class="mono" href="' + esc(result.first_url) + '" target="_blank" rel="noopener noreferrer">' + esc(result.first_url) + '</a>' : '—'], ['re-derive', '<span class="mono">python3 scripts/verify_tape.py</span> · <a href="evidence.html">every call →</a>']];
+    const items = [['endpoint', '<span class="mono">/public-api/v1/dex/tokens/transactions</span>'], ['calls', result.calls_n + (live ? ' · through /api/swaps, just now' : '')], ['credits used', '<span class="mono">0</span> — none, keyless'], ['captured', '<span class="mono">' + esc(result.captured_utc) + '</span>' + (result.wall_s != null ? ' · ' + result.wall_s + ' s wall clock' : '')], ['first page sha256', '<span class="mono">' + esc(result.first_sha256 || '— (browser fetches carry no hash)') + '</span>'], ['first request', result.first_url ? '<a class="mono" href="' + esc(result.first_url) + '" target="_blank" rel="noopener noreferrer">' + esc(result.first_url) + EXT + '</a>' : '—'], ['re-derive', '<span class="mono">python3 scripts/verify_tape.py</span> · <a href="evidence.html">every call →</a>']];
     $('receipt-grid').innerHTML = items.map(([k, v]) => '<div><div class="k">' + k + '</div><div class="v">' + v + '</div></div>').join('');
   }
   function show(result) {

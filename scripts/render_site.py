@@ -35,6 +35,13 @@ SITE = BUILD / "site"
 
 REPO = "https://github.com/edycutjong/middleman"
 REPO_SHORT = "github.com/edycutjong/middleman"
+# Every off-site link says so: the ↗ mark and the screen-reader text, pasted after the link's
+# own text. The rendered rows, the receipt and the runs emit it; site/middleman.js carries the
+# same string for the rows it re-renders on a token switch or a live fetch.
+EXT = (
+    '<span class="arrow arrow-ext" aria-hidden="true">↗</span>'
+    '<span class="sr-only"> (opens in a new tab)</span>'
+)
 SITE_URL = "https://middleman-cmc.vercel.app"
 SITE_SHORT = "middleman-cmc.vercel.app"
 # The version stamp on the deck's cover and in the landing page's footer. The committed HTML
@@ -483,7 +490,7 @@ def example_ctx(r, platforms, pool=None):
         q = price(row)
         tx = row.get("tx") or ""
         link = (
-            f'<a href="{esc(txuf.replace("%s", tx))}" target="_blank" rel="noopener noreferrer" class="mono">{esc(short(tx, 8))} ↗</a>'
+            f'<a href="{esc(txuf.replace("%s", tx))}" target="_blank" rel="noopener noreferrer" class="mono">{esc(short(tx, 8))}{EXT}</a>'
             if txuf and tx
             else f'<span class="mono">{esc(short(tx, 8))}</span>'
         )
@@ -502,7 +509,7 @@ def example_ctx(r, platforms, pool=None):
     }[kind]
     cap = (
         f'block {esc(ex["h"])} · {what} · endpoint <span class="mono">/public-api/v1/dex/tokens/transactions</span> · '
-        f'<a href="{REPO}/blob/main/{esc(r.get("tape", "data/"))}" target="_blank" rel="noopener noreferrer">the whole tape ↗</a>'
+        f'<a href="{REPO}/blob/main/{esc(r.get("tape", "data/"))}" target="_blank" rel="noopener noreferrer">the whole tape{EXT}</a>'
     )
     return {
         "title": f"{esc(pool['venue'])} / {esc(pool['quote'])} — raw rows ({kind})",
@@ -578,11 +585,11 @@ def receipt_ctx(r):
         ("first page sha256", f'<span class="mono">{esc(first.get("sha256", "—"))}</span>'),
         (
             "first request",
-            f'<a class="mono" href="{esc(first.get("url", "#"))}" target="_blank" rel="noopener noreferrer">{esc(first.get("url", "—"))}</a>',
+            f'<a class="mono" href="{esc(first.get("url", "#"))}" target="_blank" rel="noopener noreferrer">{esc(first.get("url", "—"))}{EXT}</a>',
         ),
         (
             "re-derive",
-            f'<span class="mono">python3 scripts/verify_tape.py</span> · <a href="{REPO}/blob/main/docs/proof/" target="_blank" rel="noopener noreferrer">docs/proof/ ↗</a> · <a href="evidence.html">every call →</a>',
+            f'<span class="mono">python3 scripts/verify_tape.py</span> · <a href="{REPO}/blob/main/docs/proof/" target="_blank" rel="noopener noreferrer">docs/proof/{EXT}</a> · <a href="evidence.html">every call →</a>',
         ),
     ]
     return "".join(f'<div><div class="k">{k}</div><div class="v">{v}</div></div>' for k, v in items)
@@ -608,7 +615,7 @@ def proof_links(census, r):
     ]
     return "".join(
         f'<a href="{REPO}/blob/main/docs/proof/{esc(f)}" target="_blank" rel="noopener noreferrer">'
-        f'<div class="f">docs/proof/{esc(f)}<span class="arrow arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></div>'
+        f'<div class="f">docs/proof/{esc(f)}{EXT}</div>'
         f'<div class="m">{esc(m)}</div></a>'
         for f, m in items
     )
@@ -706,7 +713,7 @@ def runs_ctx(census, receipts):
         cards.append(
             f'<div class="run"><div class="t">{esc(w["t"])} UTC</div>'
             f'<div class="v{quiet}">{w["share"] * 100:.1f}%</div>'
-            f'<div class="m">{esc(w["m"])} · <a href="{REPO}/blob/main/docs/proof/{esc(w["f"])}" target="_blank" rel="noopener noreferrer">{esc(w["f"])} ↗</a></div></div>'
+            f'<div class="m">{esc(w["m"])} · <a href="{REPO}/blob/main/docs/proof/{esc(w["f"])}" target="_blank" rel="noopener noreferrer">{esc(w["f"])}{EXT}</a></div></div>'
         )
     return {"cards": "".join(cards), "n": len(windows)}
 
