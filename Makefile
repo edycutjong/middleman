@@ -41,7 +41,7 @@ bench-live:  ## benchmark the real keyless fetch, p50/p95
 verify:  ## re-derive every published number from the committed tapes, offline
 	python3 scripts/verify_tape.py
 
-site:  ## re-render site/ (/, /evidence, /judge) from docs/proof/*.json
+site:  ## re-render site/ (/, /evidence, /judge, /pitch) from docs/proof/*.json
 	python3 scripts/render_site.py
 
 serve:  ## serve site/ + api/ locally the way Vercel routes them (port 8101)

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Render site/index.html, site/evidence.html and site/judge.html from the committed receipts.
+"""Render site/index.html, site/evidence.html, site/judge.html and site/pitch/index.html
+from the committed receipts.
 
     python3 scripts/render_site.py            # write site/
     python3 scripts/render_site.py --check    # exit 1 if what is on disk is not this render
 
-Every number on any of the three pages comes from docs/proof/*.json — real keyless runs recorded by
+Every number on any of the four pages comes from docs/proof/*.json — real keyless runs recorded by
 scripts/seed.py. The templates in scripts/site_templates/ use {{slot}} tokens and the render
 fails if any slot is left unfilled, so a placeholder can never reach the committed HTML and
 a number can never be typed in by hand. The HTML under site/ is generated output: edit the
@@ -36,6 +37,12 @@ REPO = "https://github.com/edycutjong/middleman"
 REPO_SHORT = "github.com/edycutjong/middleman"
 SITE_URL = "https://middleman-cmc.vercel.app"
 SITE_SHORT = "middleman-cmc.vercel.app"
+# The deck's version stamp. The committed HTML carries the honest fallback — no release exists
+# until release.yml tags one — and .github/workflows/pages.yml substitutes the repository's
+# latest tag over it at deploy, so the deck, the README badge and the live app agree. It is
+# not read from `git describe` here because the CI job that gates site/ against its templates
+# clones shallow with no tags, and a render that depended on tags would drift there.
+DECK_VERSION = "v0.0.0-dev"
 # The counts /judge publishes. tests/test_published_counts.py fails if they drift from the suite.
 TESTS_TOTAL, TESTS_OFFLINE, TESTS_LIVE = 145, 139, 6
 PROPERTY_CASES = 1000
@@ -528,9 +535,9 @@ def evidence_page(census, platforms, receipts):
 # ── the judge page ───────────────────────────────────────────────────────────
 
 
-def judge_page(census, platforms, receipts):
-    """One page for one reader: the claim, the 30-second path, the receipt, the real
-    reproduce command, the limitations. Every number from the receipts, like the other two."""
+def judge_ctx(census, platforms, receipts):
+    """The receipt-derived slots /judge and the deck share: the hero pool's numbers, the
+    route, the census totals, the published counts and the benchmarks."""
     r = hero_receipt(census, receipts)
     hp = census["hero"]["pool"]
     pool = next(p for p in r["pools"] if p["venue"] == hp["venue"] and p["quote"] == hp["quote"])
@@ -598,7 +605,73 @@ def judge_page(census, platforms, receipts):
         "x_handle": X_HANDLE,
         "og.v": og_version(),
     }
-    return render((TEMPLATES / "judge.html").read_text(), ctx)
+    return ctx
+
+
+def judge_page(census, platforms, receipts):
+    """One page for one reader: the claim, the 30-second path, the receipt, the real
+    reproduce command, the limitations. Every number from the receipts, like the other two."""
+    return render((TEMPLATES / "judge.html").read_text(), judge_ctx(census, platforms, receipts))
+
+
+# ── the deck ─────────────────────────────────────────────────────────────────
+
+
+def _run_ctx(name):
+    """The zero-flag receipts DEMO.md transcribes (scripts/middleman.py --json): the routed
+    pool's round-trip share, wall clock and capture time — the "number moves" timeline."""
+    m = json.loads((PROOF / f"{name}.json").read_text())
+    res = m["results"][0]
+    pool = next(
+        (p for p in res["pools"] if p["key"] == res["decision"]["pool"]),
+        res["pools"][0],
+    )
+    rt = pool["round_trips"]
+    return {
+        "captured": utc_short(m["captured_utc"]),
+        "share": f"{rt['share_volume'] * 100:.1f} %",
+        "pairs": rt["pairs"],
+        "wallets": len(rt["wallets"]),
+        "wall_s": f"{m['wall_clock_s']:.1f}",
+    }
+
+
+def deck_page(census, platforms, receipts):
+    """The pitch deck at /pitch — twelve slides, every number a slot from the same receipts
+    as /judge, formatted the way DEMO.md prints them (one decimal on the wall clock)."""
+    ctx = judge_ctx(census, platforms, receipts)
+    r = hero_receipt(census, receipts)
+    cov = r.get("coverage") or {}
+    spread = census.get("widest_spread") or {}
+    replay = json.loads((PROOF / "bench_replay.json").read_text())
+    ctx.update(
+        {
+            "version": DECK_VERSION,
+            "wall_s": f"{r['wall_s']:.1f}",
+            "hero.share_tight": ctx["hero.share"].replace(" %", "%"),
+            "hero.coverage_1": (
+                f"{cov['window_share_of_24h'] * 100:.1f} %"
+                if cov.get("window_share_of_24h")
+                else "an unknown share"
+            ),
+            "hero.txs_24h": f"{cov.get('num_transactions_24h') or 0:,}",
+            "cap_pct": f"{r['decision']['cap_pct']:.2f}",
+            "census.pools": census["pools"],
+            "census.round_trips": census["round_trip_pairs"],
+            "census.rt_wallets": len(census["round_trip_wallets"]),
+            "census.sandwich_rate": f"{census['sandwiches'] / census['prints'] * 100:.3f}\u00a0%",
+            "spread.symbol": esc(spread.get("symbol", "—")),
+            "spread.ratio": f"{spread.get('ratio', 0):.1f}",
+            "spread.low": bps((spread.get("low") or {}).get("p50_bps")),
+            "spread.high": bps((spread.get("high") or {}).get("p50_bps")),
+            "spread.low_pool": esc((spread.get("low") or {}).get("pool", "—")),
+            "spread.high_pool": esc((spread.get("high") or {}).get("pool", "—")),
+            "bench.replay_prints": replay["prints"],
+        }
+    )
+    ctx.update({f"run2.{k}": v for k, v in _run_ctx("live_run").items()})
+    ctx.update({f"run3.{k}": v for k, v in _run_ctx("live_run_quiet").items()})
+    return render((TEMPLATES / "deck.html").read_text(), ctx)
 
 
 def main(argv=None):
@@ -609,6 +682,7 @@ def main(argv=None):
         SITE / "index.html": front_page(census, platforms, receipts),
         SITE / "evidence.html": evidence_page(census, platforms, receipts),
         SITE / "judge.html": judge_page(census, platforms, receipts),
+        SITE / "pitch" / "index.html": deck_page(census, platforms, receipts),
     }
     drift = []
     for path, content in pages.items():
