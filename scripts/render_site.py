@@ -37,11 +37,12 @@ REPO = "https://github.com/edycutjong/middleman"
 REPO_SHORT = "github.com/edycutjong/middleman"
 SITE_URL = "https://middleman-cmc.vercel.app"
 SITE_SHORT = "middleman-cmc.vercel.app"
-# The deck's version stamp. The committed HTML carries the honest fallback — no release exists
-# until release.yml tags one — and .github/workflows/pages.yml substitutes the repository's
-# latest tag over it at deploy, so the deck, the README badge and the live app agree. It is
-# not read from `git describe` here because the CI job that gates site/ against its templates
-# clones shallow with no tags, and a render that depended on tags would drift there.
+# The version stamp on the deck's cover and in the landing page's footer. The committed HTML
+# carries the honest fallback — no release exists until release.yml tags one — and
+# .github/workflows/pages.yml substitutes the repository's latest tag over it at deploy, so the
+# deck, the page, the README badge and the live app agree. It is not read from `git describe`
+# here because the CI job that gates site/ against its templates clones shallow with no tags,
+# and a render that depended on tags would drift there.
 DECK_VERSION = "v0.0.0-dev"
 # The counts /judge publishes. tests/test_published_counts.py fails if they drift from the suite.
 TESTS_TOTAL, TESTS_OFFLINE, TESTS_LIVE = 145, 139, 6
@@ -50,6 +51,7 @@ EVENT = "https://dorahacks.io/hackathon/coinmarketcap-api-202609/detail"
 AUTHOR = "Edy Cu"
 X_HANDLE = "@edycutjong"
 OG_IMAGE = SITE / "assets" / "og-image.png"
+TAGLINE = "Who stands between your quote and your fill, per pool."
 
 ENDPOINTS = [
     (
@@ -75,6 +77,10 @@ def short(addr, n=6):
 
 def utc_short(ts):
     return str(ts).replace("T", " ").replace("Z", " UTC")
+
+
+def utc_hhmm(ts):
+    return str(ts)[11:16]
 
 
 def usd(v):
@@ -202,6 +208,171 @@ def hero_ctx(r, census):
         "coverage": coverage,
         "address": r["address"],
     }
+
+
+def lead_ctx(r, census, hero, pool):
+    """The first viewport: the title tags, the two-line h1 with the count-up, the lede, and
+    the block drawn from the receipt's own example rows. Word-light on purpose — a judge
+    decides in one viewport whether to scroll, and the rows are one scroll down."""
+    kind = hero["kind"]
+    venue = census["hero"]["pool"]["venue"] if kind == "middle" else pool["venue"]
+    platform = r["platform"].title()
+    if kind == "middle":
+        n = hero["wallets_n"]
+        line1 = f"The #1 {esc(venue)} pair on {esc(platform)}, by transactions."
+        line2 = (
+            f'<span class="big" data-count="{hero["share_num"]}">{hero["share_text"]}</span> of it is '
+            f"{n} wallet{'s' if n != 1 else ''} trading with themselves."
+        )
+        title = (
+            f"Middleman — {hero['share_int']}% of the #1 {venue} pair is "
+            f"{n} wallets trading with themselves"
+        )
+        og_desc = (
+            f"{hero['share']} of the #1 {venue} pair's volume was {n} wallets buying back what they "
+            f"just sold. From real DEX prints, keyless."
+        )
+        og_alt = (
+            f"Middleman — {hero['share']} of {r['symbol']}/{hero['quote']} volume is {n} wallets "
+            f"buying back what they just sold, in the same transaction. Two blue prints, one orange hairpin."
+        )
+    elif kind == "spread":
+        sp = census["widest_spread"]
+        line1 = "Same token, same hours, two pools."
+        line2 = (
+            f'<span class="big" data-count="{hero["share_num"]}">{hero["share_text"]}</span> more per fill '
+            f"in one of them."
+        )
+        title = f"Middleman — {hero['share_int']}× more per fill in one {esc(sp['symbol'])} pool than its sibling"
+        og_desc = f"{hero['share']} more per fill in one pool than its sibling — same token, same hours. Per-pool, from real DEX prints, keyless."
+        og_alt = f"Middleman — {hero['share']} between two pools of one token. Two blue prints, one orange hairpin."
+    else:
+        line1 = "No middleman in this window."
+        line2 = f'<span class="big" data-count="0">0</span> of {hero["prints"]} prints had a wallet on both sides.'
+        title = "Middleman — who stands between your quote and your fill, per pool"
+        og_desc = "Every print organic in this window; the cap is the pool's own p90. Per-pool, from real DEX prints, keyless."
+        og_alt = "Middleman — a window with no middleman. Blue prints, no hairpin."
+    description = (
+        f"{TAGLINE} From real prints on the keyless CoinMarketCap API. "
+        f"{r['symbol']}: {hero['share']} of volume is {hero['wallets_n']} wallets round-tripping."
+        if kind == "middle"
+        else f"{TAGLINE} From real prints on the keyless CoinMarketCap API. {r['symbol']}, {hero['prints']} prints, {hero['span']} h."
+    )
+    viz, key = hero_viz(r, pool)
+    tx_pages = len([c for c in r["calls"] if "tokens/transactions" in str(c.get("url", ""))])
+    return {
+        "title": esc(title),
+        "description": esc(description),
+        "og_description": esc(og_desc),
+        "og_alt": esc(og_alt),
+        "line1": line1,
+        "line2": line2,
+        "lede": TAGLINE,
+        "date": str(r["captured_utc"])[:10],
+        "captured": utc_short(r["captured_utc"]),
+        "viz": viz,
+        "viz_key": key,
+        "viz_foot": (
+            f"{esc(r['symbol'])} · {esc(r['platform'])} · {r['window']['prints']} prints · "
+            f"{tx_pages} pages · {r['wall_s']} s"
+        ),
+        "organic_p90": bps(pool["q2f"]["p90_bps"]),
+    }
+
+
+def hero_viz(r, pool):
+    """The block, drawn from the receipt: one bar per print in the example block, its length
+    the print's base amount; the two legs of the first middleman are the orange ones, joined
+    by the hairpin. No text inside the SVG — the key beneath it carries the numbers, so the
+    first viewport stays a picture and the words stay countable."""
+    ex = pool.get("example") or {}
+    rows = (ex.get("rows") or [])[:6]
+    legs = [lg for lg in (ex.get("highlight") or []) if any(x.get("lgid") == lg for x in rows)]
+    victims = set(ex.get("victims") or [])
+    kind = ex.get("kind", "organic")
+    sym = esc(r["symbol"])
+    if not rows:
+        svg = (
+            '<svg class="block" viewBox="0 0 1200 120" role="img" aria-label="No example block in this window" '
+            'xmlns="http://www.w3.org/2000/svg"><line class="rail" x1="40" y1="20" x2="40" y2="100"/></svg>'
+        )
+        return svg, f"<span><i></i>{sym}: a single print in the window — nothing to compare</span>"
+    a0s = [abs(float(x.get("a0") or 0)) for x in rows]
+    mx = max(a0s) or 1.0
+    top, rowh, x0, barmax = 16, 44, 70, 1090
+    height = top * 2 + rowh * len(rows)
+    leg_rows = [x for x in rows if x.get("lgid") in legs]
+    label = {
+        "round-trip": (
+            f"Block {esc(ex.get('h'))}: {len(rows)} prints of {sym}. The two orange bars are the same wallet "
+            f"selling and buying back the same size — a round-trip."
+        ),
+        "sandwich": (
+            f"Block {esc(ex.get('h'))}: {len(rows)} prints of {sym}. The two orange bars are one wallet's legs "
+            f"around a victim's print in red — a sandwich."
+        ),
+        "organic": (
+            f"Block {esc(ex.get('h'))}: consecutive organic prints of {sym}; the bps between them is the "
+            f"quote-to-fill."
+        ),
+    }[kind]
+    parts = [
+        f'<svg class="block" viewBox="0 0 1200 {height}" role="img" aria-label="{label}" '
+        f'xmlns="http://www.w3.org/2000/svg">',
+        f"<title>{label}</title>",
+        f'<line class="rail" x1="40" y1="{top}" x2="40" y2="{height - top}"/>',
+    ]
+    ys = {}
+    for i, (row, a0) in enumerate(zip(rows, a0s, strict=True)):
+        y = top + i * rowh
+        w = max(28.0, a0 / mx * barmax)
+        lg = row.get("lgid")
+        cls = "print"
+        if lg in legs:
+            cls = f"leg l{legs.index(lg) + 1}"
+        elif lg in victims:
+            cls = "victim"
+        elif kind == "organic" and lg in (ex.get("highlight") or []):
+            cls = "fill"
+        ys[lg] = (y, w)
+        parts.append(
+            f'<g class="row {cls}"><line class="tick" x1="34" y1="{y + 22}" x2="46" y2="{y + 22}"/>'
+            f'<rect x="{x0}" y="{y + 9}" width="{w:.0f}" height="26" rx="5"/></g>'
+        )
+    if len(legs) == 2 and all(lg in ys for lg in legs):
+        (y1, w1), (y2, w2) = ys[legs[0]], ys[legs[1]]
+        xe1, xe2 = x0 + w1, x0 + w2
+        xr = min(1180, max(xe1, xe2) + 34)
+        r_ = abs(y2 - y1) / 2
+        parts.append(
+            f'<path class="hairpin" d="M{xe1:.0f} {y1 + 22} H{xr - r_:.0f} A{r_:.0f} {r_:.0f} 0 0 1 {xr - r_:.0f} {y2 + 22} '
+            f'H{xe2 + 12:.0f} m10 -8 l-10 8 l10 8"/>'
+        )
+    parts.append("</svg>")
+    if kind in ("round-trip", "sandwich") and len(leg_rows) == 2:
+        a, b = leg_rows
+        d = abs(float(b["a0"]) - float(a["a0"])) / float(a["a0"])
+        key = (
+            f"<span><i></i><span>a print in block {esc(ex.get('h'))} — bar length is its {sym} amount; "
+            f"{len(rows)} of the block's prints are drawn</span></span>"
+            f'<span><i class="leg"></i><span><b class="orange">lgid {esc(a["lgid"])} {esc(a["tp"])} '
+            f'{float(a["a0"]):,.2f}</b> → <b class="orange">lgid {esc(b["lgid"])} {esc(b["tp"])} '
+            f"{float(b['a0']):,.2f}</b> {sym}: the same wallet <b>{esc(short(a['ma'], 8))}</b>, "
+            f"{'same transaction' if ex.get('same_tx') or a.get('tx') == b.get('tx') else 'same block'}, "
+            f"sizes {d * 100:.1f} % apart"
+            + (
+                f' · <b class="red">{len(victims)} victim print{"s" if len(victims) != 1 else ""}</b> between the legs'
+                if kind == "sandwich"
+                else ""
+            )
+            + "</span></span>"
+        )
+    else:
+        key = (
+            f"<span><i></i><span>a print in block {esc(ex.get('h'))} — bar length is its {sym} amount</span></span>"
+            f"<span><i></i><span>two consecutive organic prints — the bps between them is what a fill paid, computed in the rows below</span></span>"
+        )
+    return "\n".join(parts), key
 
 
 def context_line(r, census):
@@ -343,39 +514,52 @@ def example_ctx(r, platforms, pool=None):
 
 
 def census_ctx(census, receipts):
-    w = census.get("widest_spread")
-    strip = (
-        f"<span><b>{census['tokens']}</b> tokens</span>"
-        f"<span><b>{census['prints']:,}</b> prints</span>"
-        f'<span><b class="d">{census["sandwiches"]}</b> sandwiches</span>'
-        f'<span><b class="m">{census["round_trip_pairs"]}</b> round-trips by <b class="m">{len(census["round_trip_wallets"])}</b> wallets</span>'
-    )
-    if w:
-        strip += (
-            f'<span>widest sibling spread <b class="o">{esc(w["symbol"])} {w["ratio"]:.1f}×</b> '
-            f"({esc(w['low']['pool'])} {bps(w['low']['p50_bps'])} vs {esc(w['high']['pool'])} {bps(w['high']['p50_bps'])} bps)</span>"
-        )
+    """The census as the page shows it: the token switcher, the stat band and the spread line."""
+    w = census.get("widest_spread") or {}
     others = [h for h in census.get("heroes") or [] if h and h["platform"] != "ethereum"]
-    if others:
-        strip += (
-            "<span>also measured by the same rule: "
-            + ", ".join(
-                f"{esc(h['pair'])} on {esc(h['platform'].upper() if h['platform'] == 'bsc' else h['platform'].title())}"
-                for h in others
-            )
-            + "</span>"
+    others_txt = (
+        "Also measured by the same rule: "
+        + ", ".join(
+            f"{esc(h['pair'])} on {esc(h['platform'].upper() if h['platform'] == 'bsc' else h['platform'].title())}"
+            for h in others
         )
+        + "."
+        if others
+        else ""
+    )
     buttons = []
     # indexes into the embedded list, which holds the Ethereum receipts only (see slim())
     for i, r in enumerate([x for x in receipts if x["platform"] == "ethereum"]):
         rt = sum(p["round_trips"]["pairs"] for p in r["pools"])
         sw = sum(p["sandwiches"]["count"] for p in r["pools"])
-        note = f"{rt} rt" if rt else (f"{sw} sw" if sw else "clean")
+        note = f"{rt} rt" if rt else (f"{sw} sw" if sw else "quiet")
         pressed = "true" if r["symbol"] == census["hero"]["symbol"] else "false"
         buttons.append(
             f'<button type="button" data-i="{i}" aria-pressed="{pressed}">{esc(r["symbol"])}<small>{note}</small></button>'
         )
-    return {"strip": strip, "tokens": "\n".join(buttons)}
+    rows = census["rows"]
+    longest = max(rows, key=lambda x: x["span_hours"])
+    return {
+        "tokens": "\n".join(buttons),
+        "tokens_n": census["tokens"],
+        "chains": len({x["platform"] for x in rows}),
+        "pinned": len([x for x in rows if x["platform"] == "ethereum"]) - 1,
+        "prints": f"{census['prints']:,}",
+        "pools": f"{census['pools']:,}",
+        "sandwiches": census["sandwiches"],
+        "sandwich_rate": f"{census['sandwiches'] / census['prints'] * 100:.3f} %",
+        "round_trips": census["round_trip_pairs"],
+        "rt_wallets": len(census["round_trip_wallets"]),
+        "others": others_txt,
+        "longest_symbol": esc(longest["symbol"]),
+        "longest_span": f"{longest['span_hours']:.0f}",
+        "spread.symbol": esc(w.get("symbol", "—")),
+        "spread.ratio": f"{w.get('ratio', 0):.1f}",
+        "spread.low": bps((w.get("low") or {}).get("p50_bps")),
+        "spread.high": bps((w.get("high") or {}).get("p50_bps")),
+        "spread.low_pool": esc((w.get("low") or {}).get("pool", "—")),
+        "spread.high_pool": esc((w.get("high") or {}).get("pool", "—")),
+    }
 
 
 def receipt_ctx(r):
@@ -402,6 +586,187 @@ def receipt_ctx(r):
         ),
     ]
     return "".join(f'<div><div class="k">{k}</div><div class="v">{v}</div></div>' for k, v in items)
+
+
+def proof_links(census, r):
+    """Four receipt files a judge opens first, in the family's proof-grid shape."""
+    hp = census["hero"]["pool"]
+    pool = next(p for p in r["pools"] if p["venue"] == hp["venue"] and p["quote"] == hp["quote"])
+    run2 = _run_ctx("live_run")
+    run3 = _run_ctx("live_run_quiet")
+    items = [
+        (
+            Path(r.get("tape", "tape_x.json")).stem.replace("tape_", "") + ".json",
+            f"{r['symbol']} · {r['window']['prints']} prints · {pool['round_trips']['share_volume'] * 100:.1f} % round-tripped · {utc_short(r['captured_utc'])}",
+        ),
+        (
+            "census.json",
+            f"{census['tokens']} tokens · {census['prints']:,} prints · {census['sandwiches']} sandwiches · {census['round_trip_pairs']} round-trips",
+        ),
+        ("live_run.json", f"the bare command · {run2['share']} · {run2['captured']}"),
+        ("live_run_quiet.json", f"the bare command · {run3['share']} · {run3['captured']}"),
+    ]
+    return "".join(
+        f'<a href="{REPO}/blob/main/docs/proof/{esc(f)}" target="_blank" rel="noopener noreferrer">'
+        f'<div class="f">docs/proof/{esc(f)}<span class="arrow arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></div>'
+        f'<div class="m">{esc(m)}</div></a>'
+        for f, m in items
+    )
+
+
+def endpoint_counts(receipts):
+    counts = dict.fromkeys((e for e, _ in ENDPOINTS), 0)
+    for r in receipts:
+        for c in r["calls"]:
+            url = str(c.get("url", ""))
+            for e in counts:
+                if e in url:
+                    counts[e] += 1
+    return counts
+
+
+def api_ctx(receipts):
+    counts = endpoint_counts(receipts)
+    rows = []
+    for i, (e, role) in enumerate(ENDPOINTS):
+        cls = ' class="engine"' if i == 0 else ""
+        rows.append(
+            f"<tr{cls}><td><code>/public-api{esc(e)}</code></td><td>{esc(role)}</td>"
+            f'<td>none</td><td class="n">{counts[e]}</td></tr>'
+        )
+    return {"rows": "".join(rows), "count": len(ENDPOINTS)}
+
+
+def findings_ctx():
+    """The three API findings the page shows, each with its number from the spike receipt."""
+    spike = json.loads((PROOF / "spike.json").read_text())
+    cors = spike.get("cors") or {}
+    tapes = spike.get("tapes") or {}
+    sym, fields = max(
+        ((s, t.get("fields") or {}) for s, t in tapes.items()),
+        key=lambda st: sum((st[1].get("q_mismatch_by_venue") or {}).values()),
+    )
+    mism = fields.get("q_mismatch_by_venue") or {}
+    return {
+        "cors_sent": len(cors.get("headers_sent") or {}),
+        "cors_allow_origin": "sent" if cors.get("allow_origin_present") else "not sent",
+        "q_symbol": esc(sym),
+        "q_rows": fields.get("rows", 0),
+        "q_ok": fields.get("q_equals_a1_over_a0_within_1e-6", 0),
+        "q_bad": sum(mism.values()),
+        "q_v4": sum(v for k, v in mism.items() if "v4" in k),
+        "q_v3": sum(v for k, v in mism.items() if "v3" in k),
+    }
+
+
+def feedback_n():
+    """How many numbered findings FEEDBACK.md carries — counted, not typed."""
+    text = (BUILD / "FEEDBACK.md").read_text()
+    return len(re.findall(r"^## \d+\. ", text, re.M))
+
+
+def runs_ctx(census, receipts):
+    """The same pair, one night: the spike, the capture behind the page, and the two bare
+    runs — the round-trip share of the hero pool in each, from its own receipt."""
+    r = hero_receipt(census, receipts)
+    hp = census["hero"]["pool"]
+    pool = next(p for p in r["pools"] if p["venue"] == hp["venue"] and p["quote"] == hp["quote"])
+    spike = json.loads((PROOF / "spike.json").read_text())
+    sp = spike["answer"]["hero_pool"]
+    run2, run3 = _run_ctx("live_run"), _run_ctx("live_run_quiet")
+    windows = [
+        {
+            "t": utc_hhmm(spike["captured_utc"]),
+            "share": sp["round_trip_share_of_volume"],
+            "m": f"{sp['round_trips_A_A']} round-trips · {len(sp['round_trip_wallets'])} wallets · the day-1 spike",
+            "f": "spike.json",
+        },
+        {
+            "t": utc_hhmm(r["captured_utc"]),
+            "share": pool["round_trips"]["share_volume"],
+            "m": f"{pool['round_trips']['pairs']} round-trips · {len(pool['round_trips']['wallets'])} wallets · the capture behind this page",
+            "f": Path(r.get("tape", "tape_x.json")).stem.replace("tape_", "") + ".json",
+        },
+        {
+            "t": utc_hhmm(run2["captured_utc"]),
+            "share": run2["share_num"],
+            "m": f"{run2['pairs']} round-trips · {run2['wallets']} wallet{'s' if run2['wallets'] != 1 else ''} · the bare command, {run2['wall_s']} s",
+            "f": "live_run.json",
+        },
+        {
+            "t": utc_hhmm(run3["captured_utc"]),
+            "share": run3["share_num"],
+            "m": f"{run3['pairs']} round-trips · every print organic · the bare command, {run3['wall_s']} s",
+            "f": "live_run_quiet.json",
+        },
+    ]
+    cards = []
+    for w in windows:
+        quiet = " quiet" if not w["share"] else ""
+        cards.append(
+            f'<div class="run"><div class="t">{esc(w["t"])} UTC</div>'
+            f'<div class="v{quiet}">{w["share"] * 100:.1f}%</div>'
+            f'<div class="m">{esc(w["m"])} · <a href="{REPO}/blob/main/docs/proof/{esc(w["f"])}" target="_blank" rel="noopener noreferrer">{esc(w["f"])} ↗</a></div></div>'
+        )
+    return {"cards": "".join(cards), "n": len(windows)}
+
+
+def term_ctx():
+    """The terminal: the bare command and the lines it printed, from the receipt it kept."""
+    m = json.loads((PROOF / "live_run.json").read_text())
+    res = m["results"][0]
+    hr = m["hero_rule"]
+    d = res["decision"]
+    hero = next((p for p in res["pools"] if p["round_trips"]["pairs"]), res["pools"][0])
+    rt = hero["round_trips"]
+    lines = [
+        '<span class="p">$</span> <span class="cmd">git clone https://github.com/edycutjong/middleman.git &amp;&amp; cd middleman</span>',
+        '<span class="p">$</span> <span class="cmd">python3 scripts/middleman.py</span>',
+        "",
+        f'<span class="dim">{esc(res["engine"])} — keyless, live</span>',
+        "",
+        f'<span class="dim">hero rule: {esc(hr["rule"])}</span>',
+        f'<span class="dim">  → {esc(hr["name"])}  {esc(hr["address"])}</span>',
+        "",
+        f'<span class="cmd">{esc(res["symbol"])} · {esc(res["platform"])} · {res["window"]["prints"]} prints · {res["window"]["span_hours"]} h · blocks {esc(res["window"]["first_block"])}–{esc(res["window"]["last_block"])} · captured {esc(res["captured_utc"])} · keyless</span>',
+        "",
+    ]
+    if rt["pairs"]:
+        lines.append(
+            f'  <span class="hi">{rt["share_volume"] * 100:.1f}% of {esc(hero["venue"])} / {esc(hero["quote"])} volume is '
+            f'{len(rt["wallets"])} wallet(s) buying back what they just sold</span> <span class="dim">({rt["pairs"]} round-trips'
+            f"{', same transaction' if (rt.get('same_tx_share') or 0) >= 0.5 else ''})</span>"
+        )
+    else:
+        lines.append(
+            '  <span class="ok">no middleman found in this window — every print organic</span>'
+        )
+    lines.append("")
+    for p in res["pools"]:
+        prt = p["round_trips"]
+        rt_txt = (
+            f'<span class="hi">{prt["pairs"]} · {len(prt["wallets"])} wallet(s) · {prt["share_volume"] * 100:.1f}%</span>'
+            if prt["pairs"]
+            else '<span class="dim">—</span>'
+        )
+        mark = '  <span class="ok">◀ route</span>' if p["key"] == d["pool"] else ""
+        lines.append(
+            f'  {esc(p["venue"])} / {esc(p["quote"])}  <span class="dim">{p["n"]} prints · {p["n_organic"]} organic ·</span> '
+            f'{rt_txt} <span class="dim">·</span> <span class="bl">{bps(p["q2f"]["p50_bps"])} / {bps(p["q2f"]["p90_bps"])} bps</span>{mark}'
+        )
+    lines.append("")
+    if d["pool"]:
+        lines.append(
+            f'  <span class="ok">▶ route via {esc(d["venue"])} / {esc(d["quote"])} · cap slippage at {d["cap_pct"]:.2f} %</span>   '
+            f'<span class="dim">(organic p90 {bps(d["p90_bps"])} bps)</span>'
+        )
+    lines.append(
+        f'<span class="dim">wrote docs/proof/live_run.json  ({m["wall_clock_s"]:.1f}s wall clock, {m["credits_used"]} credits — keyless)</span>'
+    )
+    return {
+        "term": "\n".join(lines),
+        "cmd": "git clone https://github.com/edycutjong/middleman.git && cd middleman && python3 scripts/middleman.py",
+    }
 
 
 def slim(r):
@@ -448,15 +813,31 @@ def render(template, ctx):
 def front_page(census, platforms, receipts):
     r = hero_receipt(census, receipts)
     hero = hero_ctx(r, census)
+    pool = hero_pool(r)
+    judge = judge_ctx(census, platforms, receipts)
     ctx = {f"hero.{k}": v for k, v in hero.items()}
+    ctx.update({f"hero.{k}": v for k, v in lead_ctx(r, census, hero, pool).items()})
     ctx.update({f"route.{k}": v for k, v in route_ctx(r).items()})
-    ctx.update({f"rows.{k}": v for k, v in example_ctx(r, platforms).items()})
-    ctx.update({f"census.{k}": v for k, v in census_ctx(census, receipts).items()})
+    ctx.update({f"rows.{k}": v for k, v in example_ctx(r, platforms, pool).items()})
+    cen = census_ctx(census, receipts)
+    ctx.update({(k if k.startswith("spread.") else f"census.{k}"): v for k, v in cen.items()})
+    api = api_ctx(receipts)
+    ctx.update({f"api.{k}": v for k, v in api.items()})
+    ctx.update({f"find.{k}": v for k, v in findings_ctx().items()})
+    runs = runs_ctx(census, receipts)
+    term = term_ctx()
     ctx.update(
         {
             "context": context_line(r, census),
             "table_rows": table_rows(r),
             "receipt": receipt_ctx(r),
+            "proof_links": proof_links(census, r),
+            "runs": runs["cards"],
+            "runs.n": runs["n"],
+            "term": term["term"],
+            "cmd": esc(term["cmd"]),
+            "feedback.n": feedback_n(),
+            "version": DECK_VERSION,
             "receipts_json": json.dumps(
                 {
                     "hero": census["hero"],
@@ -475,6 +856,21 @@ def front_page(census, platforms, receipts):
             "og.v": og_version(),
         }
     )
+    # the published counts and the benchmarks, the same slots /judge and the deck fill
+    for k in (
+        "tests_total",
+        "tests_offline",
+        "tests_live",
+        "property_cases",
+        "bench.replay_p50",
+        "bench.replay_p95",
+        "bench.replay_n",
+        "bench.replay_prints",
+        "bench.live_p50",
+        "bench.live_p95",
+        "bench.live_n",
+    ):
+        ctx[k] = judge[k]
     return render((TEMPLATES / "index.html").read_text(), ctx)
 
 
@@ -484,15 +880,12 @@ def front_page(census, platforms, receipts):
 def evidence_page(census, platforms, receipts):
     hero = hero_receipt(census, receipts)
     sections, total = [], 0
-    counts = dict.fromkeys((e for e, _ in ENDPOINTS), 0)
+    counts = endpoint_counts(receipts)
     for r in receipts:
         rows = []
         for c in r["calls"]:
             total += 1
             url = str(c.get("url", ""))
-            for e in counts:
-                if e in url:
-                    counts[e] += 1
             ok = c.get("ok")
             rows.append(
                 f'<tr><td class="{"ok" if ok else "err"} mono">{esc(c.get("status") or "—")}</td>'
@@ -629,7 +1022,9 @@ def _run_ctx(name):
     rt = pool["round_trips"]
     return {
         "captured": utc_short(m["captured_utc"]),
+        "captured_utc": m["captured_utc"],
         "share": f"{rt['share_volume'] * 100:.1f} %",
+        "share_num": rt["share_volume"],
         "pairs": rt["pairs"],
         "wallets": len(rt["wallets"]),
         "wall_s": f"{m['wall_clock_s']:.1f}",
@@ -659,7 +1054,7 @@ def deck_page(census, platforms, receipts):
             "census.pools": census["pools"],
             "census.round_trips": census["round_trip_pairs"],
             "census.rt_wallets": len(census["round_trip_wallets"]),
-            "census.sandwich_rate": f"{census['sandwiches'] / census['prints'] * 100:.3f}\u00a0%",
+            "census.sandwich_rate": f"{census['sandwiches'] / census['prints'] * 100:.3f} %",
             "spread.symbol": esc(spread.get("symbol", "—")),
             "spread.ratio": f"{spread.get('ratio', 0):.1f}",
             "spread.low": bps((spread.get("low") or {}).get("p50_bps")),

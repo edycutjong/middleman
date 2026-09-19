@@ -344,4 +344,59 @@
       status.innerHTML = (err.status === 429 ? 'HTTP 429 - CoinMarketCap\'s anonymous tier is rate-limited per IP, and every visitor of this page shares one. ' + (err.pages ? err.pages + ' page(s) landed before it tripped. ' : '') + 'Run the same measurement from a fresh clone, keyless:' : esc(err.message) + '. Run it locally, keyless:') + '<span class="cmd">' + esc(cmd) + '</span>';
     } finally { go.disabled = false; }
   });
+
+  // ── the family layer (LANDING_DESIGN.md §7): sticky header, reveal on scroll, the h1
+  //    count-up, the block's one animation, the folds, the copy button. Every motion here
+  //    is a no-op under prefers-reduced-motion — the CSS carries the final state there. ──
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const top = $('top');
+  if (top) {
+    const onScroll = () => top.classList.toggle('scrolled', window.scrollY > 8);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    requestAnimationFrame(onScroll);
+  }
+  const io = 'IntersectionObserver' in window
+    ? new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 })
+    : null;
+  document.querySelectorAll('.reveal').forEach((el) => { if (io) io.observe(el); else el.classList.add('in'); });
+  const block = document.querySelector('svg.block');
+  // safety: nothing stays hidden if the observer never fires (print, full-page capture, odd embeds)
+  setTimeout(() => { document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in', 'now')); if (block) block.classList.add('go'); }, 2500);
+  if (block) {
+    if (reduce || !('IntersectionObserver' in window)) block.classList.add('go');
+    else { const bo = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { block.classList.add('go'); bo.disconnect(); } }); }, { threshold: 0.35 }); bo.observe(block); }
+  }
+  // the headline number counts up once, when it is in view; the span reserves its width in CSS
+  const big = document.querySelector('h1 [data-count]');
+  if (big && !reduce && 'IntersectionObserver' in window) {
+    const target = parseFloat(big.dataset.count), suffix = big.textContent.replace(/^[0-9.]+/, ''), dec = (big.dataset.count.split('.')[1] || '').length;
+    let t0 = null; const dur = 1100;
+    const tick = (ts) => { if (!t0) t0 = ts; let p = Math.min(1, (ts - t0) / dur); p = 1 - Math.pow(1 - p, 3); big.textContent = (target * p).toFixed(dec) + suffix; if (p < 1) requestAnimationFrame(tick); else big.textContent = big.dataset.count + suffix; };
+    const co = new IntersectionObserver((es) => { if (es[0].isIntersecting) { requestAnimationFrame(tick); co.disconnect(); } }, { threshold: 0.5 });
+    co.observe(big);
+  }
+  // folds: open first, then release the track (0fr → 1fr); on close run the track back and only
+  // then close the element. Under reduced motion the native snap is the whole behaviour.
+  if (!reduce) document.querySelectorAll('details').forEach((d) => {
+    const sum = d.querySelector(':scope > summary'), fold = d.querySelector(':scope > .fold');
+    if (!sum || !fold) return;
+    d.classList.add('fx');
+    let closing = null;
+    const settle = () => { if (closing) { clearTimeout(closing); closing = null; d.open = false; } };
+    fold.addEventListener('transitionend', (e) => { if (e.target === fold && !d.classList.contains('is-open')) settle(); });
+    sum.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (d.open && !closing) { d.classList.remove('is-open'); closing = setTimeout(settle, 320); }
+      else if (!d.open) { d.open = true; void fold.offsetHeight; d.classList.add('is-open'); }
+    });
+    d.addEventListener('toggle', () => {
+      if (d.open && !d.classList.contains('is-open') && !closing) { void fold.offsetHeight; d.classList.add('is-open'); }
+      if (!d.open) d.classList.remove('is-open');
+    });
+  });
+  // copy the reproduce command
+  document.querySelectorAll('button.copy[data-copy]').forEach((btn) => btn.addEventListener('click', () => {
+    const done = () => { btn.textContent = 'copied'; btn.classList.add('done'); setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('done'); }, 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(btn.dataset.copy).then(done, done); else done();
+  }));
 })();

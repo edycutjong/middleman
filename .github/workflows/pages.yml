@@ -45,23 +45,23 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # The deck shows the release version on its cover and in the chrome of every slide. It is
-      # stamped HERE rather than at render time because the committed HTML is gated against
-      # its templates by a CI job that clones shallow with no tags, so render_site.py fills the
-      # slot with the honest fallback `v0.0.0-dev` (no release exists yet) and this step
-      # substitutes the real tag over it. The README's Release badge, the deck and the live
-      # app then show the same string.
-      - name: Stamp the current release into the deck
+      # The deck shows the release version on its cover and in the chrome of every slide, and
+      # the landing page carries it in its footer. It is stamped HERE rather than at render
+      # time because the committed HTML is gated against its templates by a CI job that clones
+      # shallow with no tags, so render_site.py fills the slot with the honest fallback
+      # `v0.0.0-dev` (no release exists yet) and this step substitutes the real tag over it.
+      # The README's Release badge, the deck, the page and the live app then show the same string.
+      - name: Stamp the current release into the deck and the page
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           TAG="$(gh release view --json tagName -q .tagName 2>/dev/null || true)"
           if [ -n "${TAG:-}" ]; then
-            sed -i "s|>v0\.0\.0-dev<|>${TAG}<|g" site/pitch/index.html
-            echo "stamped ${TAG} into the deck"
+            sed -i "s|>v0\.0\.0-dev<|>${TAG}<|g" site/pitch/index.html site/index.html
+            echo "stamped ${TAG} into the deck and the page"
           else
-            echo "no published release yet — the deck keeps v0.0.0-dev"
+            echo "no published release yet — the deck and the page keep v0.0.0-dev"
           fi
 
       - uses: actions/configure-pages@v6
