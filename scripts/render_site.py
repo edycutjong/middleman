@@ -590,7 +590,7 @@ def receipt_ctx(r):
         ),
         (
             "re-derive",
-            f'<span class="mono">python3 scripts/verify_tape.py</span> · <a href="{REPO}/blob/main/docs/proof/" target="_blank" rel="noopener noreferrer">docs/proof/{EXT}</a> · <a href="evidence.html">every call →</a>',
+            f'<span class="mono">python3 scripts/verify_tape.py</span> · <a href="{REPO}/tree/main/docs/proof/" target="_blank" rel="noopener noreferrer">docs/proof/{EXT}</a> · <a href="evidence.html">every call →</a>',
         ),
     ]
     return "".join(f'<div><div class="k">{k}</div><div class="v">{v}</div></div>' for k, v in items)
