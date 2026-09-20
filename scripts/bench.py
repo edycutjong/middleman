@@ -90,7 +90,7 @@ def main(argv=None):
         out["tape"] = str(path.relative_to(ROOT))
         cost_txt = "no network"
     else:
-        var = tape.api_key_var()
+        var = tape.escape_hatch_var()
         surface = f"keyed fetch via ${var} (escape hatch)" if var else "keyless fetch"
         print(f"live — {surface} + detect, {iterations} iterations against PEPE, one page each\n")
         fetch_ms, detect_ms, counts, credits = [], [], [], 0

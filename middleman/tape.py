@@ -56,7 +56,7 @@ def api_key():
     """The optional escape hatch: the key itself, or None when none is exported.
 
     Read at CALL time from the environment only. The value goes into one request header and
-    nowhere else — anything printed asks api_key_var() for the variable's NAME instead.
+    nowhere else — anything printed asks escape_hatch_var() for the variable's NAME instead.
     """
     for var in KEY_VARS:
         value = os.environ.get(var, "").strip()
@@ -65,8 +65,12 @@ def api_key():
     return None
 
 
-def api_key_var():
-    """The NAME of the variable a key was read from, or None when running keyless."""
+def escape_hatch_var():
+    """The NAME of the environment variable a key was read from, or None when running keyless.
+
+    Only ever the variable name (e.g. "CMC_API_KEY") — safe to print. The value itself comes
+    from api_key() and never leaves the request header.
+    """
     for var in KEY_VARS:
         if os.environ.get(var, "").strip():
             return var
@@ -264,7 +268,7 @@ def pull(platform, address, pages=8, quiet=False):
 
 def throttle_advice(first_error):
     """What happened and what to do, for a run the rate limit killed outright."""
-    var = api_key_var()
+    var = escape_hatch_var()
     waits = " + ".join(f"{BACKOFF_S * 2**i} s" for i in range(RETRIES))
     if var:
         return (

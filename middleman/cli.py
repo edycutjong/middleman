@@ -104,7 +104,8 @@ def compute(prints, meta, platform, address, symbol, pages=8, with_enrich=True, 
         "captured_utc": meta.get("captured_utc") or tape._utc(started),
         "wall_s": round((meta.get("wall_s") or 0.0) + time.time() - started, 2),
         "auth": (
-            f"X-CMC_PRO_API_KEY from ${tape.api_key_var()} — keyed escape hatch, not the default"
+            f"X-CMC_PRO_API_KEY from ${tape.escape_hatch_var()} — keyed escape hatch, "
+            "not the default"
             if keyed
             else "none — CoinMarketCap keyless /public-api surface"
         ),
@@ -294,7 +295,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
 
     started = time.time()
-    var = tape.api_key_var()
+    var = tape.escape_hatch_var()
     mode = f"keyed via ${var} (escape hatch — the default is keyless)" if var else "keyless"
     print(f"middleman {__version__} — {mode}, live\n")
 

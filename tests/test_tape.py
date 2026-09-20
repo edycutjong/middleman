@@ -227,7 +227,7 @@ def test_the_keyless_receipt_reports_the_credit_count_cmc_sends_and_charges_noth
 
 def test_with_every_key_variable_unset_no_credential_header_is_sent():
     """The judged path is keyless. This is the R5 mechanical check as a test."""
-    assert tape.api_key() is None and tape.api_key_var() is None
+    assert tape.api_key() is None and tape.escape_hatch_var() is None
     assert tape.active_base() == tape.BASE
 
 
@@ -240,7 +240,7 @@ def test_an_exported_key_moves_the_same_call_to_the_keyed_host_and_is_never_prin
     assert seen[0].full_url.startswith(tape.BASE_KEYED)
     assert seen[0].get_header("X-cmc_pro_api_key") == "sekrit-value"
     assert meta["keyed"] is True and meta["credits"] == 1
-    assert tape.api_key_var() == "CMC_API_KEY"
+    assert tape.escape_hatch_var() == "CMC_API_KEY"
     advice = tape.throttle_advice("HTTP 429")
     assert "CMC_API_KEY" in advice and "sekrit" not in advice
     assert "sekrit" not in capsys.readouterr().out

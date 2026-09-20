@@ -24,7 +24,11 @@ http.createServer(async (req, res) => {
     if (!fs.existsSync(file)) { res.statusCode = 404; return res.end('{"ok":false,"error":"no such function"}'); }
     req.query = Object.fromEntries(url.searchParams.entries());
     process.chdir(ROOT);
-    try { await require(file)(req, res); } catch (err) { res.statusCode = 500; res.end(JSON.stringify({ ok: false, error: String(err) })); }
+    try { await require(file)(req, res); } catch (err) {
+      console.error('/api/' + name + ' failed:', err); // the detail stays on the server console
+      if (!res.headersSent) { res.statusCode = 500; res.setHeader('Content-Type', 'application/json'); }
+      res.end(JSON.stringify({ ok: false, error: 'internal error in /api/' + name + ' — see the server console' }));
+    }
     return;
   }
   let rel = decodeURIComponent(url.pathname);

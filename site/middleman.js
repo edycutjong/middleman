@@ -186,14 +186,14 @@
       const rt = p.round_trips, sw = p.sandwiches, i = result.pools.indexOf(p);
       const cls = [JSON.stringify(p.key) === routed ? 'routed' : '', rt.pairs || sw.count ? 'middle' : ''].join(' ').trim();
       let name = esc(p.venue) + ' / ' + esc(p.quote);
-      if (p.pools_merged > 1) name += '<small>×' + p.pools_merged + '</small>';
+      if (p.pools_merged > 1) name += '<small>×' + esc(p.pools_merged) + '</small>';
       if (JSON.stringify(p.key) === routed) name += '<small class="mark">◀ route</small>';
-      const rtTxt = rt.pairs ? rt.pairs + ' · ' + rt.wallets.length + ' wallet' + (rt.wallets.length !== 1 ? 's' : '') + ' · ' + (rt.share_volume * 100).toFixed(1) + '%' : '—';
-      const tax = p.buy_tax != null && p.sell_tax != null ? p.buy_tax.toFixed(0) + ' / ' + p.sell_tax.toFixed(0) : '—';
-      return '<tr class="' + cls + '" data-i="' + i + '" tabindex="0" aria-selected="' + (JSON.stringify(p.key) === shown) + '">'
-        + '<td class="pool">' + name + '</td><td class="mono">' + p.n + '</td><td class="mono">' + p.n_organic + '</td>'
-        + '<td class="mono rt' + (rt.pairs ? '' : ' none') + '">' + rtTxt + '</td><td class="mono sw' + (sw.count ? '' : ' none') + '">' + sw.count + '</td>'
-        + '<td class="mono q2f">' + bps(p.q2f.p50_bps) + ' / ' + bps(p.q2f.p90_bps) + ' bps</td><td class="mono">' + tax + '</td><td class="mono">' + usd(p.liq_usd) + '</td></tr>';
+      const rtTxt = rt.pairs ? esc(rt.pairs) + ' · ' + esc(rt.wallets.length) + ' wallet' + (rt.wallets.length !== 1 ? 's' : '') + ' · ' + esc((rt.share_volume * 100).toFixed(1)) + '%' : '—';
+      const tax = p.buy_tax != null && p.sell_tax != null ? esc(p.buy_tax.toFixed(0)) + ' / ' + esc(p.sell_tax.toFixed(0)) : '—';
+      return '<tr class="' + cls + '" data-i="' + esc(i) + '" tabindex="0" aria-selected="' + (JSON.stringify(p.key) === shown) + '">'
+        + '<td class="pool">' + name + '</td><td class="mono">' + esc(p.n) + '</td><td class="mono">' + esc(p.n_organic) + '</td>'
+        + '<td class="mono rt' + (rt.pairs ? '' : ' none') + '">' + rtTxt + '</td><td class="mono sw' + (sw.count ? '' : ' none') + '">' + esc(sw.count) + '</td>'
+        + '<td class="mono q2f">' + esc(bps(p.q2f.p50_bps)) + ' / ' + esc(bps(p.q2f.p90_bps)) + ' bps</td><td class="mono">' + tax + '</td><td class="mono">' + esc(usd(p.liq_usd)) + '</td></tr>';
     }).join('');
     document.querySelectorAll('#pools th').forEach((th) => { if (th.dataset.k === sortKeyName) th.setAttribute('aria-sort', sortAsc ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort'); });
   }
@@ -205,16 +205,16 @@
       const p = withRt.reduce((a, b) => b.round_trips.share_volume > a.round_trips.share_volume ? b : a), rt = p.round_trips;
       hero.className = 'hero middle';
       $('share').textContent = (rt.share_volume * 100).toFixed(1) + '%';
-      $('claim').innerHTML = 'of ' + esc(p.venue) + ' / ' + esc(p.quote) + ' volume is <em>' + rt.wallets.length + ' wallet' + (rt.wallets.length !== 1 ? 's' : '') + '</em> buying back what they just sold' + ((rt.same_tx_share || 0) >= 0.5 ? ', in the same transaction' : '') + '.';
-      $('support').innerHTML = rt.pairs + ' round-trips · ' + p.sandwiches.count + ' sandwiches in ' + p.n + ' prints. Take the legs out and an organic fill here pays <b>' + bps(p.q2f.p50_bps) + ' bps</b> median; the raw tape says ' + bps(p.naive.p50_bps) + '.';
+      $('claim').innerHTML = 'of ' + esc(p.venue) + ' / ' + esc(p.quote) + ' volume is <em>' + esc(rt.wallets.length) + ' wallet' + (rt.wallets.length !== 1 ? 's' : '') + '</em> buying back what they just sold' + ((rt.same_tx_share || 0) >= 0.5 ? ', in the same transaction' : '') + '.';
+      $('support').innerHTML = esc(rt.pairs) + ' round-trips · ' + esc(p.sandwiches.count) + ' sandwiches in ' + esc(p.n) + ' prints. Take the legs out and an organic fill here pays <b>' + esc(bps(p.q2f.p50_bps)) + ' bps</b> median; the raw tape says ' + esc(bps(p.naive.p50_bps)) + '.';
       return;
     }
     if (withSw.length) {
       const p = withSw.reduce((a, b) => b.sandwiches.count > a.sandwiches.count ? b : a);
       hero.className = 'hero middle';
       $('share').textContent = p.sandwiches.count + ' sandwich' + (p.sandwiches.count !== 1 ? 'es' : '');
-      $('claim').innerHTML = 'in ' + esc(p.venue) + ' / ' + esc(p.quote) + ' — <em>' + p.sandwiches.victims + ' fill' + (p.sandwiches.victims !== 1 ? 's' : '') + ' front-run</em> inside one block, by ' + p.sandwiches.wallets.map((w) => short(w)).join(', ') + '.';
-      $('support').innerHTML = 'No round-trips. An organic fill here pays <b>' + bps(p.q2f.p50_bps) + ' bps</b> median, p90 ' + bps(p.q2f.p90_bps) + '.';
+      $('claim').innerHTML = 'in ' + esc(p.venue) + ' / ' + esc(p.quote) + ' — <em>' + esc(p.sandwiches.victims) + ' fill' + (p.sandwiches.victims !== 1 ? 's' : '') + ' front-run</em> inside one block, by ' + esc(p.sandwiches.wallets.map((w) => short(w)).join(', ')) + '.';
+      $('support').innerHTML = 'No round-trips. An organic fill here pays <b>' + esc(bps(p.q2f.p50_bps)) + ' bps</b> median, p90 ' + esc(bps(p.q2f.p90_bps)) + '.';
       return;
     }
     const priced = result.pools.filter((p) => p.n_organic >= MIN_ORGANIC && (p.q2f.p50_bps || 0) > 0);
@@ -223,7 +223,7 @@
       hero.className = 'hero spread';
       $('share').textContent = (hi.q2f.p50_bps / lo.q2f.p50_bps).toFixed(1) + '×';
       $('claim').innerHTML = 'more per fill in <em>' + esc(hi.venue) + ' / ' + esc(hi.quote) + '</em> than in ' + esc(lo.venue) + ' / ' + esc(lo.quote) + ' — same token, same window.';
-      $('support').innerHTML = 'No round-trips and no sandwiches — the middleman is the pool itself. ' + bps(lo.q2f.p50_bps) + ' vs ' + bps(hi.q2f.p50_bps) + ' bps median quote-to-fill.';
+      $('support').innerHTML = 'No round-trips and no sandwiches — the middleman is the pool itself. ' + esc(bps(lo.q2f.p50_bps)) + ' vs ' + esc(bps(hi.q2f.p50_bps)) + ' bps median quote-to-fill.';
       return;
     }
     hero.className = 'hero none';
@@ -250,7 +250,7 @@
         const q = price(r), tx = r.tx || '';
         const link = txuf && tx ? '<a href="' + esc(txuf.replace('%s', tx)) + '" target="_blank" rel="noopener noreferrer" class="mono">' + esc(short(tx, 8)) + EXT + '</a>' : '<span class="mono">' + esc(short(tx, 8)) + '</span>';
         return '<tr class="' + cls + '"><td class="mono">' + esc(r.lgid) + '</td><td class="mono" title="' + esc(r.ma) + '">' + esc(short(r.ma, 10)) + '</td><td>' + esc(r.tp) + '</td>'
-          + (q == null ? '<td colspan="4">unpriceable row</td>' : '<td class="mono">' + Number(r.a0).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 }) + '</td><td class="mono">' + Number(r.a1).toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 }) + '</td><td class="mono">' + q.toExponential(4) + '</td><td>' + link + '</td>') + '</tr>';
+          + (q == null ? '<td colspan="4">unpriceable row</td>' : '<td class="mono">' + esc(Number(r.a0).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })) + '</td><td class="mono">' + esc(Number(r.a1).toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 })) + '</td><td class="mono">' + esc(q.toExponential(4)) + '</td><td>' + link + '</td>') + '</tr>';
       }).join('') + '</tbody></table>';
     const a = ex.rows.find((r) => r.lgid === ex.highlight[0]), b = ex.rows.find((r) => r.lgid === ex.highlight[ex.highlight.length - 1]);
     const lines = [];
@@ -269,13 +269,13 @@
   }
   function renderReceipt(result) {
     if (!result.calls_n && !result.first_url) return;
-    const items = [['endpoint', '<span class="mono">/public-api/v1/dex/tokens/transactions</span>'], ['calls', result.calls_n + (live ? ' · through /api/swaps, just now' : '')], ['credits used', '<span class="mono">0</span> — none, keyless'], ['captured', '<span class="mono">' + esc(result.captured_utc) + '</span>' + (result.wall_s != null ? ' · ' + result.wall_s + ' s wall clock' : '')], ['first page sha256', '<span class="mono">' + esc(result.first_sha256 || '— (browser fetches carry no hash)') + '</span>'], ['first request', result.first_url ? '<a class="mono" href="' + esc(result.first_url) + '" target="_blank" rel="noopener noreferrer">' + esc(result.first_url) + EXT + '</a>' : '—'], ['re-derive', '<span class="mono">python3 scripts/verify_tape.py</span> · <a href="evidence.html">every call →</a>']];
+    const items = [['endpoint', '<span class="mono">/public-api/v1/dex/tokens/transactions</span>'], ['calls', esc(result.calls_n) + (live ? ' · through /api/swaps, just now' : '')], ['credits used', '<span class="mono">0</span> — none, keyless'], ['captured', '<span class="mono">' + esc(result.captured_utc) + '</span>' + (result.wall_s != null ? ' · ' + esc(result.wall_s) + ' s wall clock' : '')], ['first page sha256', '<span class="mono">' + esc(result.first_sha256 || '— (browser fetches carry no hash)') + '</span>'], ['first request', result.first_url ? '<a class="mono" href="' + esc(result.first_url) + '" target="_blank" rel="noopener noreferrer">' + esc(result.first_url) + EXT + '</a>' : '—'], ['re-derive', '<span class="mono">python3 scripts/verify_tape.py</span> · <a href="evidence.html">every call →</a>']];
     $('receipt-grid').innerHTML = items.map(([k, v]) => '<div><div class="k">' + k + '</div><div class="v">' + v + '</div></div>').join('');
   }
   function show(result) {
     current = result; generation++;
     const w = result.window;
-    $('context').innerHTML = '<b>' + esc(result.symbol) + '</b> · ' + esc(result.platform.charAt(0).toUpperCase() + result.platform.slice(1)) + ' · last ' + w.prints + ' prints · ' + w.span_hours + ' h · blocks ' + esc(w.first_block) + '–' + esc(w.last_block) + ' · ' + (live ? 'fetched live just now · keyless' : 'captured ' + esc(String(result.captured_utc).replace('T', ' ').replace('Z', ' UTC')) + ' · keyless') + (live ? '' : ' · <span title="' + esc(data.hero.rule || '') + '">' + (result.symbol === data.hero.symbol ? 'chosen by rule: ' + esc(data.hero.rule || '') : 'pinned watchlist') + '</span>');
+    $('context').innerHTML = '<b>' + esc(result.symbol) + '</b> · ' + esc(result.platform.charAt(0).toUpperCase() + result.platform.slice(1)) + ' · last ' + esc(w.prints) + ' prints · ' + esc(w.span_hours) + ' h · blocks ' + esc(w.first_block) + '–' + esc(w.last_block) + ' · ' + (live ? 'fetched live just now · keyless' : 'captured ' + esc(String(result.captured_utc).replace('T', ' ').replace('Z', ' UTC')) + ' · keyless') + (live ? '' : ' · <span title="' + esc(data.hero.rule || '') + '">' + (result.symbol === data.hero.symbol ? 'chosen by rule: ' + esc(data.hero.rule || '') : 'pinned watchlist') + '</span>');
     renderHero(result); renderTable(result); renderRoute(result);
     if (result.pools.length) renderRows(result, heroPool(result));
     renderReceipt(result);
@@ -344,7 +344,7 @@
     } catch (err) {
       mode.textContent = 'HTTP ' + (err.status || '-'); mode.className = 'chip err';
       const cmd = 'python3 scripts/middleman.py --address ' + address + ' --platform ' + platform + ' --pages 8';
-      status.innerHTML = (err.status === 429 ? 'HTTP 429 - CoinMarketCap\'s anonymous tier is rate-limited per IP, and every visitor of this page shares one. ' + (err.pages ? err.pages + ' page(s) landed before it tripped. ' : '') + 'Run the same measurement from a fresh clone, keyless:' : esc(err.message) + '. Run it locally, keyless:') + '<span class="cmd">' + esc(cmd) + '</span>';
+      status.innerHTML = (err.status === 429 ? 'HTTP 429 - CoinMarketCap\'s anonymous tier is rate-limited per IP, and every visitor of this page shares one. ' + (err.pages ? esc(err.pages) + ' page(s) landed before it tripped. ' : '') + 'Run the same measurement from a fresh clone, keyless:' : esc(err.message) + '. Run it locally, keyless:') + '<span class="cmd">' + esc(cmd) + '</span>';
     } finally { go.disabled = false; }
   });
 
