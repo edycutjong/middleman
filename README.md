@@ -475,7 +475,8 @@ make ci              # lint + typecheck + test-coverage + audit + check
 and the three receipt gates → the deterministic benchmark (a replay, labelled as such) → **the
 judged capability, live and keyless** (exit 75 means CMC throttled the shared runner, not that
 the product failed) → `/judge`, `/`, `/evidence` and `/api/health` probed over HTTP with no
-credentials → the deploy gate on `main`. It is keyless, so it runs on forks and PRs too; if
+credentials → the deploy gate on `main`, then the gated production deploy to Vercel (`vercel build` +
+`vercel deploy --prebuilt --prod`, only after every stage above is green). It is keyless, so it runs on forks and PRs too; if
 CMC changes the contract it breaks in CI rather than in front of a judge.
 
 ---
