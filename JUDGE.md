@@ -65,7 +65,8 @@ from the same receipts, no key, no cookie, no session — if you would rather no
 
 The same command 24 minutes later measured **27.5 %** — the wallets had gone quiet; the next
 morning the window was **clean**, zero round-trips, and the tool said so. A number that moves
-with the market is the proof it is measured, not asserted. All three transcripts are in
+with the market is the proof it is measured, not asserted. Two days later the rule picked a
+different pair and the join found **17 sandwiches** in one window. All four transcripts are in
 [DEMO.md](DEMO.md).
 
 ## Reproduce
@@ -106,8 +107,9 @@ This project was decided as *the sandwich rate per pool*. The day-1 spike found 
 same-block sandwiches in 1,200 prints on the busiest pair; the ten-token census found two in
 8,000. The headline changed before the build, not the caveat after: the engine is unchanged,
 the sandwich is one named case of a middleman, and the number on the page is the one the join
-actually found — a round-trip share that the sponsor's own activity ranking is built on. The
-retraction is dated in the README.
+actually found — a round-trip share that the sponsor's own activity ranking is built on. Two
+days later the same command found 17 sandwiches in one window on a different pair — small on
+average is not small everywhere. Both retractions are dated in the README.
 
 ## Honest limitations
 
@@ -126,7 +128,7 @@ retraction is dated in the README.
 
 | | |
 |---|---|
-| **Run it** | [DEMO.md](DEMO.md) — three real transcripts with receipts |
+| **Run it** | [DEMO.md](DEMO.md) — four real transcripts with receipts |
 | **How it works** | [ARCHITECTURE.md](ARCHITECTURE.md) — derived from the code · [docs/METHOD.md](docs/METHOD.md) — the definitions |
 | **API feedback for CMC** | [FEEDBACK.md](FEEDBACK.md) — eight dated, evidenced findings |
 | **The engine** | [`middleman/`](middleman/) — six stdlib modules · [`scripts/middleman.py`](scripts/middleman.py) — the door |

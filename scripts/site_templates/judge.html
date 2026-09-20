@@ -79,7 +79,7 @@ ul.lim li{margin:8px 0}
 <ol class="path">
   <li><a href="index.html">Read the headline on the front page.</a> <em>{{hero.share}} of {{hero.venue}} / {{hero.quote}} volume is {{hero.wallets_n}} wallets buying back what they just sold, in the same transaction.</em> CoinMarketCap ranks that pair #1 on Uniswap v2 by transactions; the join shows why.</li>
   <li><a href="index.html#rows">Open the raw rows.</a> Two orange rows: same maker, same block, same transaction hash, opposite sides, size within 5 %. Divide <span class="mono">a1</span> by <span class="mono">a0</span> and you have the price each leg paid — the panel does the arithmetic inline, the JSON is verbatim from the API.</li>
-  <li><a href="evidence.html">Open /evidence.</a> Every request behind the page — URL, HTTP status, UTC, sha256 of the body, credits (<span class="mono">0</span>). {{calls_n}} calls across {{tokens_n}} tokens.</li>
+  <li><a href="evidence.html">Open /evidence.</a> Every request behind the page — URL, HTTP status, UTC, sha256 of the body, the envelope's <span class="mono">credit_count</span> (1 per keyless call, against no account — 0 charged). {{calls_n}} calls across {{tokens_n}} tokens.</li>
   <li><a href="index.html#paste">Paste any token into the box on the front page.</a> The browser runs the same engine on rows fetched live through a keyless proxy. Or run it from a clone — the command is below and takes about ten seconds.</li>
 </ol>
 
@@ -101,7 +101,7 @@ ul.lim li{margin:8px 0}
 <tr><td>raw receipts</td><td class="mono"><a href="{{repo}}/blob/main/docs/proof/{{hero.file}}" target="_blank" rel="noopener noreferrer">{{hero.file}}</a> · <a href="{{repo}}/blob/main/docs/proof/census.json" target="_blank" rel="noopener noreferrer">census.json</a> · <a href="{{repo}}/blob/main/docs/proof/live_run.json" target="_blank" rel="noopener noreferrer">live_run.json</a> · <a href="{{repo}}/blob/main/docs/proof/live_run_quiet.json" target="_blank" rel="noopener noreferrer">live_run_quiet.json</a> · <a href="{{repo}}/blob/main/docs/proof/bench_live.json" target="_blank" rel="noopener noreferrer">bench_live.json</a> · <a href="{{repo}}/blob/main/docs/proof/bench_replay.json" target="_blank" rel="noopener noreferrer">bench_replay.json</a></td></tr>
 </tbody>
 </table></div>
-<p class="muted">The same command 24 minutes later measured 27.5 % — the wallets had gone quiet; an hour and a half after that the window was clean. A number that moves with the market is the proof it is measured, not asserted. All three transcripts are in <a href="{{repo}}/blob/main/DEMO.md" target="_blank" rel="noopener noreferrer">DEMO.md</a>.</p>
+<p class="muted">The same command 24 minutes later measured 27.5 % — the wallets had gone quiet; an hour and a half after that the window was clean; two days later the rule picked a different pair and the join found 17 sandwiches in one window. A number that moves with the market is the proof it is measured, not asserted. All four transcripts are in <a href="{{repo}}/blob/main/DEMO.md" target="_blank" rel="noopener noreferrer">DEMO.md</a>.</p>
 
 <h2>Reproduce — the real path</h2>
 <pre class="mono">git clone {{repo}}.git && cd middleman
@@ -123,7 +123,7 @@ make test-live                                                 # {{tests_live}} 
 
 <h2>Links</h2>
 <div class="tw"><table><tbody>
-<tr><td>run it</td><td><a href="{{repo}}/blob/main/DEMO.md" target="_blank" rel="noopener noreferrer">DEMO.md</a> — three real transcripts with receipts</td></tr>
+<tr><td>run it</td><td><a href="{{repo}}/blob/main/DEMO.md" target="_blank" rel="noopener noreferrer">DEMO.md</a> — four real transcripts with receipts</td></tr>
 <tr><td>how it works</td><td><a href="{{repo}}/blob/main/ARCHITECTURE.md" target="_blank" rel="noopener noreferrer">ARCHITECTURE.md</a> — derived from the code · <a href="{{repo}}/blob/main/docs/METHOD.md" target="_blank" rel="noopener noreferrer">docs/METHOD.md</a> — the definitions</td></tr>
 <tr><td>API feedback for CMC</td><td><a href="{{repo}}/blob/main/FEEDBACK.md" target="_blank" rel="noopener noreferrer">FEEDBACK.md</a> — eight dated, evidenced findings</td></tr>
 <tr><td>the engine</td><td><a href="{{repo}}/tree/main/middleman" target="_blank" rel="noopener noreferrer"><span class="mono">middleman/</span></a> — six stdlib modules · <a href="{{repo}}/blob/main/scripts/middleman.py" target="_blank" rel="noopener noreferrer"><span class="mono">scripts/middleman.py</span></a> — the door</td></tr>

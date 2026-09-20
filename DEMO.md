@@ -1,7 +1,7 @@
 # Demo — a real run, with its receipt
 
 Everything below is a transcript of actual runs against CoinMarketCap's live API on
-**2026-09-18**. No fixtures, no flags, no key. Re-run it yourself in one command; the numbers
+**2026-09-18, 2026-09-19 and 2026-09-20**. No fixtures, no flags, no key. Re-run it yourself in one command; the numbers
 will differ, because they come from the market rather than from this file — and on this pair
 they moved by the hour, which is the point.
 
@@ -195,6 +195,65 @@ Four windows on the same pair, one night: **80.0 %** of volume round-tripped at 
 **27.5 %** at 23:00, **0 %** at 00:28. The wallets come and go; the ranking that put the pair
 at #1 does not — and a tool that can print *zero* on its own headline is the one whose non-zero
 you can believe.
+
+## Receipt 4 — the same command two days later, and a different hero, 2026-09-20T13:04:08Z
+
+Run again on 2026-09-20 as the pre-submission audit's live gate — keyless, from this tree, with
+`--json docs/proof/live_run_sandwich.json`. The hero rule is a rule, so it moved: CoinMarketCap's
+#1 Uniswap v2 pair on Ethereum by 24 h transactions was **wildebeest/WETH**, not MOTO. And the
+join found the other shape this time — **17 sandwiches, 18 victim prints, 4 wallets**, 0.0176 WETH
+taken in total, in a 4.5 h window. The first wallet listed, `0xae2fc483…`, is the one the census
+caught on UNI and on LINK two days earlier. Receipt:
+[`docs/proof/live_run_sandwich.json`](docs/proof/live_run_sandwich.json).
+
+```
+middleman 0.1.0 — keyless, live
+
+hero rule: the base token of the #1 Ethereum Uniswap v2 pair by 24h transactions at capture time
+  → wildebeest/WETH  0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc
+
+wildebeest · ethereum · 800 prints · 4.51 h · blocks 26017551–26018902 · captured 2026-09-20T13:04:10Z · keyless
+
+  17 sandwich(es) in Uniswap v2 / WETH — 18 victim print(s)
+
+  pool                         prints organic  round-trips                sandw  q→fill p50 / p90     tax     liq
+  ----------------------------------------------------------------------------------------------------------------
+  Uniswap v2 / WETH               611     577  —                             17  55.6 / 208.9 bps     0/0    $89k  ◀ route
+  Uniswap v4 (Ethereum) / USD     158     158  —                              0  51.2 / 644.3 bps     0/0     $9k
+  Uniswap v4 (Ethereum) / ETH      31      31  —                              0  285.8 / 1100.5 bps   0/0     $2k
+
+  ▶ route via Uniswap v2 / WETH · cap slippage at 2.10 %   (organic p90 208.9 bps, 2 candidate pool(s))
+    rule: lowest organic p90 quote-to-fill among pools with ≥ 50 organic prints
+    coverage: this window is 10% of the routed pool's 24h transactions (6203: 3551 buys / 2652 sells)
+
+  block 26017586 — raw rows (sandwich)
+    lgid    13  0xae2fc48352…  sell a0       327,220.9567  a1       0.102028  a1/a0 3.1180e-07  ◀ leg
+    lgid    21  0x8fabe392df…  sell a0       648,728.2848  a1       0.199266  a1/a0 3.0716e-07  ◀ victim
+    lgid    30  0xae2fc48352…  buy  a0       327,220.9629  a1       0.100618  a1/a0 3.0749e-07  ◀ leg
+    lgid   302  0x4337009be4…  sell a0        14,471.3408  a1       0.004444  a1/a0 3.0712e-07
+    leg 1  lgid 13  0xae2fc483527b8ef99eb5d9b44875f005ba1fae13  sell  a1/a0 = 0.10202770797336985 / 327220.95673989167 = 3.1180065295900896e-07
+    leg 2  lgid 30  0xae2fc483527b8ef99eb5d9b44875f005ba1fae13  buy  a1/a0 = 0.10061775610943897 / 327220.96293234115 = 3.074917792789563e-07
+    same wallet · same block 26017586 · |Δa0| / a0 = 0.0000 ≤ 0.05 → sandwich
+    1 other maker(s) printed sell between the legs
+
+wrote docs/proof/live_run_sandwich.json  (11.6s wall clock, 0 credits — keyless)
+```
+
+| | |
+|---|---|
+| **Wall clock** | **11.6 s** — 8 keyless pages + 3 labelling calls, no backoff fired |
+| **Prints** | **800** · blocks 26017551–26018902 · **4.51 h** · 10 % of the pair's 6,203 transactions that day |
+| **API calls** | 11 · every one HTTP 200 |
+| **Credits used** | **0** — keyless; `CMC_API_KEY`, `COINMARKETCAP_API_KEY`, `CMC_PRO_API_KEY` unset |
+| **Sandwiches** | **17** · 18 victims · 4 wallets · take 0.01756 WETH — the largest count the join has recorded in one window |
+| **Round-trips** | 0 · organic p50 **55.6 bps**, p90 208.9 — the raw tape says 57.7 / 215.1 |
+| **Route** | Uniswap v2 / WETH · cap **2.10 %** — a thin pool ($89 k) whose organic prints sit 2.1 % apart at p90 |
+
+Read the raw rows: `0xae2fc483…` sells 327,220.9567 wildebeest at log index 13, a stranger sells
+648,728 at 21, and the same wallet buys 327,220.9629 back at 30 — 0.0000 apart — in the same
+block. That is the A-B-A this project was decided on, and on 2026-09-18 it was two in 8,000
+prints. On this pair, on this day, it was 17 in 800. The engine did not change between the two;
+the market did, which is why the number on the page carries a capture time.
 
 ## The census — ten tokens, whatever they said
 

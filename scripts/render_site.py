@@ -906,7 +906,7 @@ def evidence_page(census, platforms, receipts):
         sections.append(
             f"<h2>{esc(r['symbol'])} · {esc(r['platform'])} · {r['window']['prints']} prints · "
             f'{len(r["calls"])} calls · <a href="{REPO}/blob/main/docs/proof/{esc(Path(r.get("tape", "x")).stem.replace("tape_", ""))}.json" target="_blank" rel="noopener noreferrer">receipt ↗</a></h2>'
-            '<div class="tw"><table><thead><tr><th>HTTP</th><th>UTC</th><th>ms</th><th>sha256 of body</th><th>credits</th><th>request</th></tr></thead>'
+            '<div class="tw"><table><thead><tr><th>HTTP</th><th>UTC</th><th>ms</th><th>sha256 of body</th><th>credit_count</th><th>request</th></tr></thead>'
             f"<tbody>{''.join(rows)}</tbody></table></div>"
         )
     rules = "".join(f"<dt>{esc(k)}</dt><dd>{esc(v)}</dd>" for k, v in hero["rules"].items())

@@ -95,7 +95,8 @@ wrote docs/proof/live_run.json  (11.3s wall clock, 0 credits — keyless)
 > ([`docs/proof/live_run_quiet.json`](docs/proof/live_run_quiet.json)). Run it yourself and the
 > number will differ again, because it comes from the market rather than from this file — and
 > `python3 scripts/verify_tape.py` re-derives every committed receipt from its tape with the
-> network unplugged. All three transcripts are in **[DEMO.md](DEMO.md)**.
+> network unplugged. All four transcripts — the fourth, on 2026-09-20, found a different hero and
+> **17 sandwiches** — are in **[DEMO.md](DEMO.md)**.
 
 **Read the two orange rows.** Same maker, same block, same transaction hash: sell 505,623 MOTO,
 buy 497,596 MOTO back, 1.6 % apart. Divide `a1` by `a0` and you have the price each leg paid.
@@ -196,6 +197,13 @@ for exactly the quote it received, take zero. A sandwich now requires `take > 0`
 return with nothing extracted is a round-trip whether or not other makers printed between the
 legs. The regression test is named for it.
 
+**2026-09-20.** Two days after the census put the sandwich rate at 0.025 %, the bare command found
+**17 sandwiches in one 800-print window** on the day's #1 pair (wildebeest/WETH,
+[Receipt 4](DEMO.md#receipt-4--the-same-command-two-days-later-and-a-different-hero-2026-09-20t130408z)),
+led by the same wallet the census had caught twice. The rate is small on average, not small
+everywhere — so the census number stands as a census number, the headline stays the price an
+organic fill pays, and the sandwich is the named case the join was built to catch.
+
 ---
 
 ## 🏗️ Architecture & Tech Stack
@@ -255,8 +263,10 @@ Full derivation, every failure mode, and the deliberate non-architecture:
 | 6 | `/public-api/v1/dex/platform/list` | explorer URL templates for the transaction links | 🔓 none | [`middleman/enrich.py`](middleman/enrich.py) |
 
 Every call is on [/evidence](https://middleman.edycu.dev/evidence) with its URL, status,
-timestamp, body hash and credit count — **0** on every row, because no key exists to charge —
-and `tests/test_published_counts.py` fails if the code ever calls a path this table does not name.
+timestamp, body hash and the envelope's `credit_count` — CMC reports **1** per keyless call
+against an account that does not exist ([FEEDBACK.md §2](FEEDBACK.md)); no key was sent, so
+**0 credits were charged** on every receipt — and `tests/test_published_counts.py` fails if the
+code ever calls a path this table does not name.
 
 ### Why only CoinMarketCap
 
@@ -313,8 +323,8 @@ canonical host by absolute URL (`API_BASE` in `site/middleman.js`).
 
 | Measurement | Value |
 |---|---|
-| Live run wall clock | **8.6 s** — 800 prints of the hero token, 11 calls, clean path · **11.0 s** on the third run |
-| **Credits used** | **0** — keyless, with every CMC variable explicitly unset, on all three receipts |
+| Live run wall clock | **8.6 s** — 800 prints of the hero token, 11 calls, clean path · **11.0 s** and **11.6 s** on the third and fourth runs |
+| **Credits used** | **0** — keyless, with every CMC variable explicitly unset, on all four receipts |
 | Tests | **145** — 139 offline, 6 live; each regression named for the defect it pins |
 | **Property-based verification of the join** | **1,000 generated blocks, 0 violations** of `middlemen()`'s own definition |
 | Parity | the browser engine (`site/middleman.js`) vs the Python engine, every pool row of every committed tape |
@@ -523,14 +533,14 @@ middleman/
 | **Live page** | **[middleman.edycu.dev](https://middleman.edycu.dev)** — the capture beside its raw rows, a dated snapshot that says so on every number, and a paste box that runs the engine live. |
 | **Evidence** | **[/evidence](https://middleman.edycu.dev/evidence)** — every request, hashed. |
 | **Pitch deck** | **[/pitch/](https://middleman.edycu.dev/pitch/)** — 12 slides, arrow keys, `P` for notes; the frozen slide is two raw rows and one division. |
-| **The receipts** | **[DEMO.md](DEMO.md)** — three real transcripts, with [`docs/proof/`](docs/proof/) behind them. |
+| **The receipts** | **[DEMO.md](DEMO.md)** — four real transcripts, with [`docs/proof/`](docs/proof/) behind them. |
 | **Social card** | [`docs/assets/og-image.png`](docs/assets/og-image.png) — the mark: two blue prints, one orange hairpin. |
 | **Screenshots** | [`docs/screenshots/`](docs/screenshots/) — nine, of live execution: the table, the raw rows, the UNI sandwich, the paste box mid-fetch, `/evidence`, mobile. |
 | **How it differs** | **[docs/COMPARISON.md](docs/COMPARISON.md)** — the six nearest entries in this hackathon's gallery, by name, and the exact boundary with each. |
 
-The three transcripts disagree — 66.2 %, 27.5 %, 0 % — because the 800-print window moved
-between the runs. Same pair, same rule, same engine. A number that moves with the market is the
-evidence it is live.
+The four transcripts disagree — 66.2 %, 27.5 %, 0 %, and then a different pair with 17
+sandwiches — because the 800-print window and the rule's pick moved between the runs. Same
+rule, same engine. A number that moves with the market is the evidence it is live.
 
 ---
 

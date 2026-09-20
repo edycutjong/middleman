@@ -1,0 +1,541 @@
+{
+  "captured_utc": "2026-09-20T13:04:08Z",
+  "credits_used": 0,
+  "errors": [],
+  "hero_call": {
+    "credit_count": 1,
+    "elapsed_ms": 1624.3,
+    "ok": true,
+    "sha256": "469f3f45d67c7e90947481d65e2e5148d3cfa97ae38ee96fe288fbb4f5108c56",
+    "status": 200,
+    "url": "https://pro-api.coinmarketcap.com/public-api/v4/dex/spot-pairs/latest?network_id=1&dex_slug=uniswap-v2&sort=no_of_transactions_24h&sort_dir=desc&limit=1",
+    "utc": "2026-09-20T13:04:08Z"
+  },
+  "hero_rule": {
+    "address": "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+    "dex_slug": "uniswap-v2",
+    "name": "wildebeest/WETH",
+    "pool": "0x40efafe9250b43b7c1be0ec1a75e4e7526559507",
+    "quote_symbol": "WETH",
+    "rows_returned": 100,
+    "rule": "the base token of the #1 Ethereum Uniswap v2 pair by 24h transactions at capture time",
+    "symbol": "wildebeest"
+  },
+  "results": [
+    {
+      "address": "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+      "auth": "none \u2014 CoinMarketCap keyless /public-api surface",
+      "calls": [
+        {
+          "credit_count": 1,
+          "elapsed_ms": 894.2,
+          "ok": true,
+          "sha256": "11f641ab91243b0f66fec89174723d918f90a1da8fe2dd87b0c9230561353630",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc&limit=100",
+          "utc": "2026-09-20T13:04:10Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 827.7,
+          "ok": true,
+          "sha256": "e0d0a6f10fdc6c4339f282bf4977ec1ea4f15ccb1f959691f4be9af150f0b932",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc&limit=100&lastId=AVd6RTNPRGs1TURjek5URXdNREFzTWpZd01UZzNNamdzTkN3M05pd3pPRFk0TmpjMk1qSXhNbDA9",
+          "utc": "2026-09-20T13:04:11Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 1215.1,
+          "ok": true,
+          "sha256": "8258f942540eafcad14ece0f9546d15235acb53a0b0153a788941bbb7778f4fe",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc&limit=100&lastId=AVd6RTNPRGs1TURZd01EY3dNREFzTWpZd01UZzJNVFlzTVRZekxETTRNQ3cwTWprNE16UTFOalF6TkYwPQ%3D%3D",
+          "utc": "2026-09-20T13:04:12Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 720.7,
+          "ok": true,
+          "sha256": "04239cfaecaaf82ffebf16c8904bcf8d93b52398691e8a338b1813e9e068f17b",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc&limit=100&lastId=AVd6RTNPRGs1TURVeE1Ua3dNREFzTWpZd01UZzFORElzTkRJc05qY3NNemcyT0RZM05UZzFOalJk",
+          "utc": "2026-09-20T13:04:13Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 824.4,
+          "ok": true,
+          "sha256": "2bf0ca46179d1cd4c8d64a64dc9f44442d9a711adae86c5af9d71efe8578aaac",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc&limit=100&lastId=AVd6RTNPRGs1TURFMk56VXdNREFzTWpZd01UZ3lOVFlzTWprNUxEZ3dOaXcyTkRRMU56ZzNNRFEyT1YwPQ%3D%3D",
+          "utc": "2026-09-20T13:04:14Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 571.2,
+          "ok": true,
+          "sha256": "388c9a04a824e75393163b1fa8bf770b3feb3b8ba7847560ada52051ac8f5472",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc&limit=100&lastId=AVd6RTNPRGs0T1RnNU9EY3dNREFzTWpZd01UZ3dNeklzTmpnc01qSTFMREkxT0RBek1qYzBNamN5WFE9PQ%3D%3D",
+          "utc": "2026-09-20T13:04:15Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 559.8,
+          "ok": true,
+          "sha256": "9d287cfe9afedd9667cbcaa8774ee17311129e4961866ae6ad3914268fccdfc0",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc&limit=100&lastId=AVd6RTNPRGs0T1Rjek56a3dNREFzTWpZd01UYzRPVGtzTVRneUxEUTRNeXd4TWpreE56UTNPREUxTkYwPQ%3D%3D",
+          "utc": "2026-09-20T13:04:16Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 1166.5,
+          "ok": true,
+          "sha256": "5bdd938d49ec47b2777b94041e1ed48dc988f7e243f1db89f057384a0a922df4",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions?platform=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc&limit=100&lastId=AVd6RTNPRGs0T1RRMU16VXdNREFzTWpZd01UYzJOak1zTVRFc09EVXNOREk1T0RNME5UZzFNelZk",
+          "utc": "2026-09-20T13:04:16Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 800.0,
+          "ok": true,
+          "sha256": "7232f486b648522657bfde8dfd3aeda50c444809f8c2886a6b5adb61273f1e30",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/token/pools?platform=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc&size=50",
+          "utc": "2026-09-20T13:04:18Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 464.4,
+          "ok": true,
+          "sha256": "8a704b0e935bb62b373614910a298ea880105168f0796b5c1eaa8f795e9bbe4f",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v1/dex/security/detail?platformName=ethereum&address=0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+          "utc": "2026-09-20T13:04:19Z"
+        },
+        {
+          "credit_count": 1,
+          "elapsed_ms": 646.9,
+          "ok": true,
+          "sha256": "1f7db7c90035c3b700c59e5d1dd0ce4bcdfbca64e7791a208590698e5799f25e",
+          "status": 200,
+          "url": "https://pro-api.coinmarketcap.com/public-api/v4/dex/pairs/quotes/latest?contract_address=0x40efafe9250b43b7c1be0ec1a75e4e7526559507&aux=24h_no_of_buys%2C24h_no_of_sells%2Cnum_transactions_24h&network_slug=ethereum",
+          "utc": "2026-09-20T13:04:19Z"
+        }
+      ],
+      "captured_utc": "2026-09-20T13:04:10Z",
+      "coverage": {
+        "buys_24h": 3551,
+        "liquidity_usd": 89236.46623114377,
+        "num_transactions_24h": 6203,
+        "price_usd": 0.0005849686082147545,
+        "sells_24h": 2652,
+        "volume_24h_usd": 1773929.8254614298,
+        "window_share_of_24h": 0.0985
+      },
+      "credits_used": 0,
+      "decision": {
+        "candidates": 2,
+        "cap_pct": 2.1,
+        "p90_bps": 208.93,
+        "pool": [
+          "Uniswap v2",
+          "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+          "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+        ],
+        "quote": "WETH",
+        "venue": "Uniswap v2",
+        "why": "lowest organic p90 quote-to-fill among pools with \u2265 50 organic prints"
+      },
+      "engine": "middleman 0.1.0",
+      "platform": "ethereum",
+      "pools": [
+        {
+          "addr": "0x40efafe9250b43b7c1be0ec1a75e4e7526559507",
+          "buy_tax": 0.0,
+          "example": {
+            "arithmetic": [
+              "leg 1  lgid 13  0xae2fc483527b8ef99eb5d9b44875f005ba1fae13  sell  a1/a0 = 0.10202770797336985 / 327220.95673989167 = 3.1180065295900896e-07",
+              "leg 2  lgid 30  0xae2fc483527b8ef99eb5d9b44875f005ba1fae13  buy  a1/a0 = 0.10061775610943897 / 327220.96293234115 = 3.074917792789563e-07",
+              "same wallet \u00b7 same block 26017586 \u00b7 |\u0394a0| / a0 = 0.0000 \u2264 0.05 \u2192 sandwich",
+              "1 other maker(s) printed sell between the legs"
+            ],
+            "h": "26017586",
+            "highlight": [
+              "13",
+              "30"
+            ],
+            "kind": "sandwich",
+            "rows": [
+              {
+                "a0": 327220.95673989167,
+                "a1": 0.10202770797336985,
+                "eid": 1069,
+                "en": "Uniswap v2",
+                "ex": false,
+                "f": "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f",
+                "h": "26017586",
+                "lgid": "13",
+                "ma": "0xae2fc483527b8ef99eb5d9b44875f005ba1fae13",
+                "q": 3.1180065296e-07,
+                "qi": 1,
+                "t0a": "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+                "t0pt": "reduce",
+                "t0pu": 0.0008035589912009672,
+                "t0s": "wildebeest",
+                "t0t": true,
+                "t1a": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                "t1pt": "add",
+                "t1pu": 2577.156216881327,
+                "t1s": "WETH",
+                "t1t": false,
+                "tc": "387",
+                "tp": "sell",
+                "ts": "1789893611000",
+                "tx": "0xc328c945c6373a5bba1833cf5ca0706fce008fbd605879015dd6b3df23530eab",
+                "txId": "2",
+                "txtp": 0,
+                "v": 262.9413418977227
+              },
+              {
+                "a0": 648728.2848065174,
+                "a1": 0.1992663909186573,
+                "eid": 1069,
+                "en": "Uniswap v2",
+                "ex": false,
+                "f": "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f",
+                "h": "26017586",
+                "lgid": "21",
+                "ma": "0x8fabe392df90b06ad610c33f41bb1abd78a5fc20",
+                "q": 3.07164641323e-07,
+                "qi": 1,
+                "t0a": "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+                "t0pt": "reduce",
+                "t0pu": 0.0007916112649916066,
+                "t0s": "wildebeest",
+                "t0t": true,
+                "t1a": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                "t1pt": "add",
+                "t1pu": 2577.156216881327,
+                "t1s": "WETH",
+                "t1t": false,
+                "tc": "12",
+                "tp": "sell",
+                "ts": "1789893611000",
+                "tx": "0x1bd078c0c66abc74e24d2929fd8945e3c7d24a17b5b79cda645ea1f837869ba9",
+                "txId": "4",
+                "txtp": 0,
+                "v": 513.5406181715224
+              },
+              {
+                "a0": 327220.96293234115,
+                "a1": 0.10061775610943897,
+                "eid": 1069,
+                "en": "Uniswap v2",
+                "ex": false,
+                "f": "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f",
+                "h": "26017586",
+                "lgid": "30",
+                "ma": "0xae2fc483527b8ef99eb5d9b44875f005ba1fae13",
+                "q": 3.07491779279e-07,
+                "qi": 1,
+                "t0a": "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+                "t0pt": "add",
+                "t0pu": 0.000792454350608663,
+                "t0s": "wildebeest",
+                "t0t": true,
+                "t1a": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                "t1pt": "reduce",
+                "t1pu": 2577.156216881327,
+                "t1s": "WETH",
+                "t1t": false,
+                "tc": "387",
+                "tp": "buy",
+                "ts": "1789893611000",
+                "tx": "0x0c55b970950b5442157d5a5d907eeff8f1ce2a26562a6b4784a8cf1e8f92b309",
+                "txId": "5",
+                "txtp": 0,
+                "v": 259.3076756860898
+              },
+              {
+                "a0": 14471.34077923488,
+                "a1": 0.004444446822919051,
+                "eid": 1069,
+                "en": "Uniswap v2",
+                "ex": false,
+                "f": "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f",
+                "h": "26017586",
+                "lgid": "302",
+                "ma": "0x4337009be43c7ecc9bfbde0f1780553aa065187e",
+                "q": 3.07120597236e-07,
+                "qi": 1,
+                "t0a": "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+                "t0pt": "reduce",
+                "t0pu": 0.000791497756498129,
+                "t0s": "wildebeest",
+                "t0t": true,
+                "t1a": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                "t1pt": "add",
+                "t1pu": 2577.156216881327,
+                "t1s": "WETH",
+                "t1t": false,
+                "tc": "43",
+                "tp": "sell",
+                "ts": "1789893611000",
+                "tx": "0x81880256e5bca8d3a596c99c6c492b5ff44d9ec0f7ea941afcc60b4acef565f0",
+                "txId": "67",
+                "txtp": 0,
+                "v": 11.454033760284295
+              }
+            ],
+            "same_tx": false,
+            "take_quote": 0.0014099518639308778,
+            "victims": [
+              "21"
+            ]
+          },
+          "key": [
+            "Uniswap v2",
+            "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+            "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+          ],
+          "liq_usd": 89205.87,
+          "makers": 338,
+          "n": 611,
+          "n_organic": 577,
+          "naive": {
+            "n": 610,
+            "p50_bps": 57.68,
+            "p90_bps": 215.06
+          },
+          "pools_merged": 1,
+          "q2f": {
+            "n": 576,
+            "p50_bps": 55.64,
+            "p90_bps": 208.93
+          },
+          "quote": "WETH",
+          "round_trips": {
+            "pairs": 0,
+            "same_tx_share": null,
+            "share_prints": 0.0,
+            "share_volume": 0.0,
+            "volume_usd": 0,
+            "wallets": []
+          },
+          "sandwiches": {
+            "count": 17,
+            "take_quote": 0.01756059,
+            "victims": 18,
+            "wallets": [
+              "0xae2fc483527b8ef99eb5d9b44875f005ba1fae13",
+              "0x11111215b72e894c60f24e91ac2c8ccb1d373911",
+              "0x3ee92cd00993a4488ae153ab41ac7947cbcbc1de",
+              "0x00000000dfe9a4e57631ce11d7854871756b0111"
+            ]
+          },
+          "sell_tax": 0.0,
+          "span_hours": 4.51,
+          "venue": "Uniswap v2",
+          "volume_usd": 143696.02
+        },
+        {
+          "addr": "0xc4df1294ee401c48058320ff80c762cd809f6aa56b30c8226b101b23308ef7bd",
+          "buy_tax": 0.0,
+          "example": {
+            "arithmetic": [
+              "previous print  lgid 344  buy  a1/a0 = 0.0007497978856780222",
+              "this print      lgid 347  buy  a1/a0 = 0.000750555751396738",
+              "q/q_prev \u2212 1 = 10.1 bps adverse"
+            ],
+            "h": "26017551",
+            "highlight": [
+              "347"
+            ],
+            "kind": "organic",
+            "rows": [
+              {
+                "a0": 7316.187608397244,
+                "a1": 5.485662,
+                "eid": 11955,
+                "en": "Uniswap v4 (Ethereum)",
+                "ex": false,
+                "f": "0x000000000004444c5dc75cb358380d2e3de08a90",
+                "h": "26017551",
+                "lgid": "344",
+                "ma": "0xada5bb90d0de0bd1b6f3938708f49295a8d1f7cb",
+                "q": 0.000749797885678023,
+                "qi": 1,
+                "t0a": "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+                "t0pt": "add",
+                "t0pu": 0.0007497730996797808,
+                "t0s": "wildebeest",
+                "t0t": false,
+                "t1a": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "t1pt": "reduce",
+                "t1pu": 0.9999669430939792,
+                "t1s": "USDC",
+                "t1t": false,
+                "tc": "210",
+                "tp": "buy",
+                "ts": "1789893191000",
+                "tx": "0xdbcde10bcac4d16a904af19402d347d63c05e2ae9ca3ba3d1ae76cfb5f18c501",
+                "txId": "113",
+                "txtp": 0,
+                "v": 5.485480660986804
+              },
+              {
+                "a0": 13805.563385154595,
+                "a1": 10.361845,
+                "eid": 11955,
+                "en": "Uniswap v4 (Ethereum)",
+                "ex": false,
+                "f": "0x000000000004444c5dc75cb358380d2e3de08a90",
+                "h": "26017551",
+                "lgid": "347",
+                "ma": "0xada5bb90d0de0bd1b6f3938708f49295a8d1f7cb",
+                "q": 0.000750555751396738,
+                "qi": 1,
+                "t0a": "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+                "t0pt": "add",
+                "t0pu": 0.0007505309403458006,
+                "t0s": "wildebeest",
+                "t0t": true,
+                "t1a": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "t1pt": "reduce",
+                "t1pu": 0.9999669430939792,
+                "t1s": "USDC",
+                "t1t": false,
+                "tc": "210",
+                "tp": "buy",
+                "ts": "1789893191000",
+                "tx": "0xdbcde10bcac4d16a904af19402d347d63c05e2ae9ca3ba3d1ae76cfb5f18c501",
+                "txId": "113",
+                "txtp": 0,
+                "v": 10.361502469463632
+              }
+            ],
+            "victims": []
+          },
+          "key": [
+            "Uniswap v4 (Ethereum)",
+            "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+            "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+          ],
+          "liq_usd": 8830.66,
+          "makers": 71,
+          "n": 158,
+          "n_organic": 158,
+          "naive": {
+            "n": 157,
+            "p50_bps": 51.19,
+            "p90_bps": 644.26
+          },
+          "pools_merged": 16,
+          "q2f": {
+            "n": 157,
+            "p50_bps": 51.19,
+            "p90_bps": 644.26
+          },
+          "quote": "USDC",
+          "round_trips": {
+            "pairs": 0,
+            "same_tx_share": null,
+            "share_prints": 0.0,
+            "share_volume": 0.0,
+            "volume_usd": 0,
+            "wallets": []
+          },
+          "sandwiches": {
+            "count": 0,
+            "take_quote": 0,
+            "victims": 0,
+            "wallets": []
+          },
+          "sell_tax": 0.0,
+          "span_hours": 4.49,
+          "venue": "Uniswap v4 (Ethereum)",
+          "volume_usd": 3238.28
+        },
+        {
+          "addr": "0x41d51b8a3b6a969fb8685a2c5824063a7d52c517503bbae576274d817c026b51",
+          "buy_tax": 0.0,
+          "example": null,
+          "key": [
+            "Uniswap v4 (Ethereum)",
+            "0x57737ded3870e43fed7d80d31e0ced3d5fb0cccc",
+            "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          ],
+          "liq_usd": 2233.87,
+          "makers": 28,
+          "n": 31,
+          "n_organic": 31,
+          "naive": {
+            "n": 30,
+            "p50_bps": 285.81,
+            "p90_bps": 1100.51
+          },
+          "pools_merged": 2,
+          "q2f": {
+            "n": 30,
+            "p50_bps": 285.81,
+            "p90_bps": 1100.51
+          },
+          "quote": "ETH",
+          "round_trips": {
+            "pairs": 0,
+            "same_tx_share": null,
+            "share_prints": 0.0,
+            "share_volume": 0.0,
+            "volume_usd": 0,
+            "wallets": []
+          },
+          "sandwiches": {
+            "count": 0,
+            "take_quote": 0,
+            "victims": 0,
+            "wallets": []
+          },
+          "sell_tax": 0.0,
+          "span_hours": 4.35,
+          "venue": "Uniswap v4 (Ethereum)",
+          "volume_usd": 685.73
+        }
+      ],
+      "rules": {
+        "cap": "that p90 rounded up to the next 0.05 %",
+        "order": "sort prints by (int(h), int(lgid)) \u2014 both fields arrive as strings",
+        "organic": "every print that is neither leg of a match; victims stay organic",
+        "pool": "(en or 'unattributed', t0a, t1a) \u2014 no pool address on a row; v3 fee tiers merge",
+        "quote_to_fill": "bps of a1/a0 against the previous organic print in the pool, adverse-signed: buy q/q_prev \u2212 1, sell 1 \u2212 q/q_prev",
+        "round_trip": "a wallet's next print in the block is the other side, |\u0394a0| / a0 \u2264 5% \u2014 the same wallet buying back what it just sold",
+        "route": "lowest organic p90 quote-to-fill among pools with \u2265 50 organic prints",
+        "sandwich": "a round-trip whose legs enclose 1\u20134 other makers printing in leg 1's direction, with take > 0 \u2014 the prints between were front-run"
+      },
+      "source": "https://pro-api.coinmarketcap.com/public-api/v1/dex/tokens/transactions",
+      "symbol": "wildebeest",
+      "taxes": {
+        "buy_tax": 0.0,
+        "level": "safe",
+        "sell_tax": 0.0
+      },
+      "wall_s": 9.96,
+      "window": {
+        "error": null,
+        "first_block": "26017551",
+        "last_block": "26018902",
+        "pages": 8,
+        "pages_requested": 8,
+        "partial": false,
+        "prints": 800,
+        "span_hours": 4.51,
+        "throttled": false,
+        "unplaceable": 0
+      }
+    }
+  ],
+  "wall_clock_s": 11.59
+}
