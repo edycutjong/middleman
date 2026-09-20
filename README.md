@@ -303,7 +303,7 @@ submitted on chain; the product reads prints that already landed.
 | [/judge](https://middleman.edycu.dev/judge) | one page for one reader: the claim, the 30-second path, the receipt block, the real reproduce command, the limitations — no key, no cookie, no session |
 | [/evidence](https://middleman.edycu.dev/evidence) | every request behind every receipt: URL, HTTP status, UTC, sha256 of the body, credits |
 | [/pitch/](https://middleman.edycu.dev/pitch/) | the pitch deck — 12 slides, arrow keys, `P` for speaker notes, `Cmd+P` for a PDF; every number a slot from the same receipts |
-| `/api/swaps?platform=&address=` | the identical keyless CMC URL with the one header CMC omits (`Access-Control-Allow-Origin`) and a 60 s CDN cache — [`api/swaps.js`](api/swaps.js), 60 lines, holds no secret and can reach no other host |
+| `/api/swaps?platform=&address=` | the identical keyless CMC URL with the one header CMC omits (`Access-Control-Allow-Origin`) and a 60 s CDN cache — [`api/swaps.js`](api/swaps.js), 58 lines, holds no secret and can reach no other host |
 | [/api/health](https://middleman.edycu.dev/api/health) | the server clock, the receipts' capture time, the census totals; no upstream call |
 
 The four pages are **generated, never hand-edited**: `scripts/render_site.py` renders them

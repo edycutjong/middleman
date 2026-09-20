@@ -50,5 +50,9 @@ module.exports = async (req, res) => {
   }
   res.statusCode = 200;
   res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120');
-  res.end(JSON.stringify({ ok: true, source, status: upstream.status, fetched_utc, credit_count: 0, raw }));
+  // credits_charged is 0 because no key was sent and there is no account to bill; the envelope's
+  // own credit_count (1 per keyless call, against no account — FEEDBACK.md §2) is passed through
+  // untouched under raw.status and repeated here so the two are never confused.
+  const reported = raw && raw.status && raw.status.credit_count != null ? raw.status.credit_count : null;
+  res.end(JSON.stringify({ ok: true, source, status: upstream.status, fetched_utc, credits_charged: 0, credit_count_reported: reported, raw }));
 };
