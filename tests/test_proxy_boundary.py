@@ -87,7 +87,7 @@ def test_the_proxy_can_only_ever_reach_one_keyless_coinmarketcap_url():
     assert "platform=ethereum" in url and f"address={GOOD}" in url
     body = json.loads(ok["body"])
     assert body["credits_charged"] == 0  # keyless: nothing was charged to anyone
-    assert body["credit_count_reported"] == 1  # what the envelope says, passed through, not rewritten
+    assert body["credit_count_reported"] == 1  # the envelope's value, passed through, not rewritten
     for name in ("host-in-address", "path-in-address", "platform", "cursor"):
         assert r[name]["status"] == 400, name
         assert r[name]["calls"] == [], f"{name}: the proxy called upstream on a refused input"
