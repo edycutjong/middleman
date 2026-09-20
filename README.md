@@ -34,6 +34,7 @@ the legs out and an organic fill there pays 15.5 bps, not the 55.3 the raw tape 
 
 ![Python](https://img.shields.io/badge/Python_3.11-3776AB?style=flat&logo=python&logoColor=white)
 [![CI](https://github.com/edycutjong/middleman/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/middleman/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/edycutjong/middleman?style=flat&label=release&color=3DDC97)](https://github.com/edycutjong/middleman/releases/latest)
 ![CoinMarketCap](https://img.shields.io/badge/CoinMarketCap_DEX_API-3861FB?style=flat&logo=coinmarketcap&logoColor=white)
 ![No API key](https://img.shields.io/badge/API_key-not_required-4C9AFF?style=flat)
 ![Zero dependencies](https://img.shields.io/badge/runtime_deps-zero-5E6C80?style=flat)
@@ -96,7 +97,10 @@ wrote docs/proof/live_run.json  (11.3s wall clock, 0 credits — keyless)
 > number will differ again, because it comes from the market rather than from this file — and
 > `python3 scripts/verify_tape.py` re-derives every committed receipt from its tape with the
 > network unplugged. All four transcripts — the fourth, on 2026-09-20, found a different hero and
-> **17 sandwiches** — are in **[DEMO.md](DEMO.md)**.
+> **17 sandwiches** — are in **[DEMO.md](DEMO.md)**. Each transcript's first line stamps the version the
+> engine declared when it was captured (`0.1.0`); the first tagged release is
+> [v1.0.0](https://github.com/edycutjong/middleman/releases/latest) (2026-09-20), and every receipt
+> still re-derives from its tape under it.
 
 **Read the two orange rows.** Same maker, same block, same transaction hash: sell 505,623 MOTO,
 buy 497,596 MOTO back, 1.6 % apart. Divide `a1` by `a0` and you have the price each leg paid.

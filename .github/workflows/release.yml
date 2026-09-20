@@ -4,6 +4,8 @@ name: release
 # feat -> minor, fix/perf -> patch, a ! or BREAKING CHANGE -> major, anything else -> no release.
 # The version is a consequence of what the commits say they did — it cannot drift from the
 # changelog because it IS the changelog. Language-agnostic shell: no semantic-release, no npm.
+# v1.0.0 was set deliberately on 2026-09-20 to leave 0.x behind; the bump reads the last tag,
+# so releases from here are 1.x.
 
 on:
   push:

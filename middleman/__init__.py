@@ -12,4 +12,4 @@ Six pure functions over CoinMarketCap's keyless per-swap feed:
 Stdlib only. No key, no install, no network on anything but tape.pull and enrich.*.
 """
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
