@@ -23,10 +23,10 @@ the legs out and an organic fill there pays 15.5 bps, not the 55.3 the raw tape 
 <br/>
 
 [![Judge Guide](https://img.shields.io/badge/⚖️_Start-Here-3DDC97?style=for-the-badge)](JUDGE.md)
-[![Live page](https://img.shields.io/badge/middleman--cmc.vercel.app-Live-FF7A45?style=for-the-badge)](https://middleman-cmc.vercel.app)
-[![For judges](https://img.shields.io/badge/⚖️_/judge-no_key,_no_setup-3DDC97?style=for-the-badge)](https://middleman-cmc.vercel.app/judge)
-[![Evidence](https://img.shields.io/badge/every_call-Evidence-5AC8FA?style=for-the-badge)](https://middleman-cmc.vercel.app/evidence)
-[![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-FFB020?style=for-the-badge)](https://middleman-cmc.vercel.app/pitch/)
+[![Live page](https://img.shields.io/badge/middleman.edycu.dev-Live-FF7A45?style=for-the-badge)](https://middleman.edycu.dev)
+[![For judges](https://img.shields.io/badge/⚖️_/judge-no_key,_no_setup-3DDC97?style=for-the-badge)](https://middleman.edycu.dev/judge)
+[![Evidence](https://img.shields.io/badge/every_call-Evidence-5AC8FA?style=for-the-badge)](https://middleman.edycu.dev/evidence)
+[![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-FFB020?style=for-the-badge)](https://middleman.edycu.dev/pitch/)
 [![API Feedback](https://img.shields.io/badge/📮_CMC_API-Feedback-4C9AFF?style=for-the-badge)](FEEDBACK.md)
 [![Built for Build with CMC](https://img.shields.io/badge/DoraHacks-Build_with_CMC-8b5cf6?style=for-the-badge)](https://dorahacks.io/hackathon/coinmarketcap-api-202609/detail)
 
@@ -102,11 +102,11 @@ buy 497,596 MOTO back, 1.6 % apart. Divide `a1` by `a0` and you have the price e
 In the capture behind the page that wallet and two others did it 29 times — $127,254 of the
 pool's $192,275 — and the pair sits at the top of CoinMarketCap's activity ranking because of them.
 
-**The same table, in a browser:** [middleman-cmc.vercel.app](https://middleman-cmc.vercel.app)
+**The same table, in a browser:** [middleman.edycu.dev](https://middleman.edycu.dev)
 renders the capture with the raw rows one click away, every request behind it on
-[/evidence](https://middleman-cmc.vercel.app/evidence), and a paste box that runs the same
+[/evidence](https://middleman.edycu.dev/evidence), and a paste box that runs the same
 engine live on any token. One page for judges, no key and no setup:
-[/judge](https://middleman-cmc.vercel.app/judge).
+[/judge](https://middleman.edycu.dev/judge).
 
 <table>
   <tr>
@@ -254,7 +254,7 @@ Full derivation, every failure mode, and the deliberate non-architecture:
 | 5 | `/public-api/v4/dex/spot-pairs/latest` | the hero rule — #1 pair by `no_of_transactions_24h`, per chain | 🔓 none | [`middleman/enrich.py`](middleman/enrich.py) |
 | 6 | `/public-api/v1/dex/platform/list` | explorer URL templates for the transaction links | 🔓 none | [`middleman/enrich.py`](middleman/enrich.py) |
 
-Every call is on [/evidence](https://middleman-cmc.vercel.app/evidence) with its URL, status,
+Every call is on [/evidence](https://middleman.edycu.dev/evidence) with its URL, status,
 timestamp, body hash and credit count — **0** on every row, because no key exists to charge —
 and `tests/test_published_counts.py` fails if the code ever calls a path this table does not name.
 
@@ -289,23 +289,23 @@ submitted on chain; the product reads prints that already landed.
 
 | Route | Serves |
 |---|---|
-| [middleman-cmc.vercel.app](https://middleman-cmc.vercel.app) | the table, the route line, the raw rows, the census strip, the receipt, the paste box — rendered from the committed capture, JavaScript-off safe |
-| [/judge](https://middleman-cmc.vercel.app/judge) | one page for one reader: the claim, the 30-second path, the receipt block, the real reproduce command, the limitations — no key, no cookie, no session |
-| [/evidence](https://middleman-cmc.vercel.app/evidence) | every request behind every receipt: URL, HTTP status, UTC, sha256 of the body, credits |
-| [/pitch/](https://middleman-cmc.vercel.app/pitch/) | the pitch deck — 12 slides, arrow keys, `P` for speaker notes, `Cmd+P` for a PDF; every number a slot from the same receipts |
+| [middleman.edycu.dev](https://middleman.edycu.dev) | the table, the route line, the raw rows, the census strip, the receipt, the paste box — rendered from the committed capture, JavaScript-off safe |
+| [/judge](https://middleman.edycu.dev/judge) | one page for one reader: the claim, the 30-second path, the receipt block, the real reproduce command, the limitations — no key, no cookie, no session |
+| [/evidence](https://middleman.edycu.dev/evidence) | every request behind every receipt: URL, HTTP status, UTC, sha256 of the body, credits |
+| [/pitch/](https://middleman.edycu.dev/pitch/) | the pitch deck — 12 slides, arrow keys, `P` for speaker notes, `Cmd+P` for a PDF; every number a slot from the same receipts |
 | `/api/swaps?platform=&address=` | the identical keyless CMC URL with the one header CMC omits (`Access-Control-Allow-Origin`) and a 60 s CDN cache — [`api/swaps.js`](api/swaps.js), 60 lines, holds no secret and can reach no other host |
-| [/api/health](https://middleman-cmc.vercel.app/api/health) | the server clock, the receipts' capture time, the census totals; no upstream call |
+| [/api/health](https://middleman.edycu.dev/api/health) | the server clock, the receipts' capture time, the census totals; no upstream call |
 
 The four pages are **generated, never hand-edited**: `scripts/render_site.py` renders them
 from `docs/proof/*.json` through `{{slot}}` templates, aborts if any slot is unfilled, and
 `make check` fails if the committed HTML is not what the receipts render. `node scripts/serve.js`
 serves the same routes from a fresh clone on port 8101.
 
-`site/` is also deployed as-is to GitHub Pages at **[middleman.edycu.dev](https://middleman.edycu.dev)**
-(`.github/workflows/pages.yml`, `site/CNAME`): the pages are static, and the paste box reaches
-the two functions on Vercel by absolute URL when it is not served from there (`site/middleman.js`,
-`API_BASE`). Pages cannot build a private repository on the free plan, so that host goes live
-with the public flip.
+**[middleman.edycu.dev](https://middleman.edycu.dev)** is the canonical host — a custom domain on
+the same Vercel project, HTTPS enforced (`http://` answers 308); `middleman-cmc.vercel.app` is
+the project's own alias and serves the identical build. On either host the paste box calls
+`/api/swaps` same-origin; served from anywhere else (a file server, a mirror) it reaches the
+canonical host by absolute URL (`API_BASE` in `site/middleman.js`).
 
 ---
 
@@ -395,7 +395,7 @@ python3 scripts/middleman.py
 
 > **For judges:** there is no account to create and no credential to configure — the judged
 > path is keyless by design. Start at **[JUDGE.md](JUDGE.md)** or
-> **[/judge](https://middleman-cmc.vercel.app/judge)**.
+> **[/judge](https://middleman.edycu.dev/judge)**.
 
 > **If CoinMarketCap's anonymous tier is throttling your IP**, the script backs off (15 s, 30 s,
 > 60 s) and, if the quota is exhausted, exits 75 with a message that says so rather than
@@ -486,7 +486,7 @@ middleman/
 │   ├── check_submission_readiness.py   placeholders and stale test counts on every judge-facing surface
 │   ├── serve.js                  site/ + api/ locally, the way Vercel routes them
 │   └── site_templates/           index.html · evidence.html · judge.html · deck.html — {{slot}} templates
-├── site/                         generated: / · /evidence · /judge · /pitch · middleman.js (the engine, ported) · CNAME
+├── site/                         generated: / · /evidence · /judge · /pitch · middleman.js (the engine, ported)
 ├── api/                          swaps.js (keyless proxy) · health.js — the two Vercel functions
 ├── tests/                        145 tests: the join, the fetch contract, the CLI, parity, the boundary, the surfaces
 ├── data/                         tape_<sym>.json ×10 — rows verbatim with page hashes; nothing judged reads them
@@ -519,10 +519,10 @@ middleman/
 
 | | |
 |---|---|
-| **For judges** | **[JUDGE.md](JUDGE.md)** · **[/judge](https://middleman-cmc.vercel.app/judge)** — the claim, the 30-second path, the receipt, the real reproduce command. |
-| **Live page** | **[middleman-cmc.vercel.app](https://middleman-cmc.vercel.app)** — the capture beside its raw rows, a dated snapshot that says so on every number, and a paste box that runs the engine live. |
-| **Evidence** | **[/evidence](https://middleman-cmc.vercel.app/evidence)** — every request, hashed. |
-| **Pitch deck** | **[/pitch/](https://middleman-cmc.vercel.app/pitch/)** — 12 slides, arrow keys, `P` for notes; the frozen slide is two raw rows and one division. |
+| **For judges** | **[JUDGE.md](JUDGE.md)** · **[/judge](https://middleman.edycu.dev/judge)** — the claim, the 30-second path, the receipt, the real reproduce command. |
+| **Live page** | **[middleman.edycu.dev](https://middleman.edycu.dev)** — the capture beside its raw rows, a dated snapshot that says so on every number, and a paste box that runs the engine live. |
+| **Evidence** | **[/evidence](https://middleman.edycu.dev/evidence)** — every request, hashed. |
+| **Pitch deck** | **[/pitch/](https://middleman.edycu.dev/pitch/)** — 12 slides, arrow keys, `P` for notes; the frozen slide is two raw rows and one division. |
 | **The receipts** | **[DEMO.md](DEMO.md)** — three real transcripts, with [`docs/proof/`](docs/proof/) behind them. |
 | **Social card** | [`docs/assets/og-image.png`](docs/assets/og-image.png) — the mark: two blue prints, one orange hairpin. |
 | **Screenshots** | [`docs/screenshots/`](docs/screenshots/) — nine, of live execution: the table, the raw rows, the UNI sandwich, the paste box mid-fetch, `/evidence`, mobile. |

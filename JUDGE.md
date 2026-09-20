@@ -27,11 +27,11 @@ it found — with the arithmetic. About ten seconds. If your IP is being throttl
 anonymous tier the run says so and backs off; an exhausted quota exits 75 with the way through
 (wait, or export a free key as `CMC_API_KEY` — an escape hatch, never a requirement).
 
-The page at **[middleman-cmc.vercel.app](https://middleman-cmc.vercel.app)** shows the same
+The page at **[middleman.edycu.dev](https://middleman.edycu.dev)** shows the same
 table for the same token, rendered from a committed run, with the raw rows one click away and
-every request behind it on **[/evidence](https://middleman-cmc.vercel.app/evidence)**. Paste
+every request behind it on **[/evidence](https://middleman.edycu.dev/evidence)**. Paste
 any token into its box and the browser runs the same engine, live, through a keyless proxy.
-This guide is also served at **[/judge](https://middleman-cmc.vercel.app/judge)** — rendered
+This guide is also served at **[/judge](https://middleman.edycu.dev/judge)** — rendered
 from the same receipts, no key, no cookie, no session — if you would rather not clone at all.
 
 1. **Read the headline.** *66.2 % of the #1 Uniswap v2 pair's volume is 3 wallets buying back
@@ -131,4 +131,4 @@ retraction is dated in the README.
 | **API feedback for CMC** | [FEEDBACK.md](FEEDBACK.md) — eight dated, evidenced findings |
 | **The engine** | [`middleman/`](middleman/) — six stdlib modules · [`scripts/middleman.py`](scripts/middleman.py) — the door |
 | **The tests** | [`tests/`](tests/) — 145, each regression named for the defect it pins |
-| **Live page** | [middleman-cmc.vercel.app](https://middleman-cmc.vercel.app) · [/judge](https://middleman-cmc.vercel.app/judge) · [/evidence](https://middleman-cmc.vercel.app/evidence) |
+| **Live page** | [middleman.edycu.dev](https://middleman.edycu.dev) · [/judge](https://middleman.edycu.dev/judge) · [/evidence](https://middleman.edycu.dev/evidence) |

@@ -5,8 +5,8 @@
   Print: Cmd/Ctrl+P → Save as PDF → landscape. One slide per page, chrome hidden.
   Images: ../assets/shots/*.png are real screenshots of live execution (docs/screenshots/); the mark is ../assets/icon-animated.svg.
   Every number on every slide is a slot filled from the committed receipts — a number cannot be typed in by hand,
-  and `make check` fails if this file is not what the receipts render. Version: v0.0.0-dev — stamped from the
-  repository's latest tag at deploy; v0.0.0-dev means no release exists yet.
+  and `make check` fails if this file is not what the receipts render. Version: v0.1.0 — the package's
+  declared version (middleman.__version__), the string the CLI prints on its first line.
 -->
 <html lang="en" data-theme="dark">
 <head>
@@ -15,15 +15,15 @@
 <title>Middleman — pitch deck</title>
 <meta name="description" content="Middleman's pitch deck: who stands between your DEX quote and your fill, per pool, from real prints on CoinMarketCap's keyless API. Twelve slides.">
 <meta name="author" content="Edy Cu">
-<link rel="canonical" href="https://middleman-cmc.vercel.app/pitch/">
+<link rel="canonical" href="https://middleman.edycu.dev/pitch/">
 <link rel="icon" type="image/svg+xml" href="../assets/icon.svg">
 <meta name="theme-color" content="#0B0E14">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Middleman">
-<meta property="og:url" content="https://middleman-cmc.vercel.app/pitch/">
+<meta property="og:url" content="https://middleman.edycu.dev/pitch/">
 <meta property="og:title" content="Middleman — pitch deck">
 <meta property="og:description" content="66.2 % of the #1 Uniswap v2 pair's volume was 3 wallets buying back what they just sold. Twelve slides, one keyless run.">
-<meta property="og:image" content="https://middleman-cmc.vercel.app/assets/og-image.png?v=71b0ea85">
+<meta property="og:image" content="https://middleman.edycu.dev/assets/og-image.png?v=71b0ea85">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Middleman — 66.2 % of MOTO/WETH volume is 3 wallets buying back what they just sold, in the same transaction. Two blue prints, one orange hairpin.">
@@ -32,7 +32,7 @@
 <meta name="twitter:creator" content="@edycutjong">
 <meta name="twitter:title" content="Middleman — pitch deck">
 <meta name="twitter:description" content="Who stands between your quote and your fill, per pool. Order the prints, join on the maker: 66.2 % of the #1 v2 pair was 3 wallets round-tripping.">
-<meta name="twitter:image" content="https://middleman-cmc.vercel.app/assets/og-image.png?v=71b0ea85">
+<meta name="twitter:image" content="https://middleman.edycu.dev/assets/og-image.png?v=71b0ea85">
 <link rel="preload" href="../assets/fonts/inter-tight-latin-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/jetbrains-mono-latin-var.woff2" as="font" type="font/woff2" crossorigin>
@@ -297,7 +297,7 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid 
 <section class="slide" data-title="Cover">
   <div class="cover">
     <div>
-      <div class="brandmark"><img src="../assets/icon.svg" alt="" width="26" height="26">Middleman <span class="ver mono" style="font-weight:400;font-size:18px;margin-left:6px">v0.0.0-dev</span></div>
+      <div class="brandmark"><img src="../assets/icon.svg" alt="" width="26" height="26">Middleman <span class="ver mono" style="font-weight:400;font-size:18px;margin-left:6px">v0.1.0</span></div>
       <h1 style="margin-top:36px">Who stands between<br>your quote and your fill.</h1>
       <p class="tag">Order the prints. Join on the maker. Name the middleman, per pool.</p>
       <div class="badges">
@@ -374,7 +374,7 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid 
       </div>
     </div>
     <!-- real screenshot: docs/screenshots/01-landing-hero-1440.png, the page rendered from the committed receipt -->
-    <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">middleman-cmc.vercel.app</span></div><img src="../assets/shots/01-landing-hero-1440.png" width="1440" height="1000" loading="lazy" decoding="async" alt="The page: 66.2 % headline in orange, the three-pool table with the round-trip row in orange, and the green route line — route via Uniswap v2 / WETH, cap slippage at 0.65 %"></div>
+    <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">middleman.edycu.dev</span></div><img src="../assets/shots/01-landing-hero-1440.png" width="1440" height="1000" loading="lazy" decoding="async" alt="The page: 66.2 % headline in orange, the three-pool table with the round-trip row in orange, and the green route line — route via Uniswap v2 / WETH, cap slippage at 0.65 %"></div>
   </div>
   <aside class="speaker-notes">This is the page as deployed, rendered from the committed run. The orange row is the middleman; the blue basis points are what an organic fill pays; the green line is the decision — a venue and a slippage cap, which is what the trader actually has to type.</aside>
 </section>
@@ -489,19 +489,19 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid 
   <div class="demo">
     <!-- real screenshot: docs/screenshots/04-uni-sandwich.png — UNI, fetched live through /api/swaps -->
     <div class="shot">
-      <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">middleman-cmc.vercel.app · UNI, live</span></div><img src="../assets/shots/04-uni-sandwich.png" width="1440" height="1000" loading="lazy" decoding="async" alt="UNI, live: 19 pools ranked by organic quote-to-fill, the green route line — route via Uniswap v3 / WETH, cap slippage at 0.20 % — and the raw-rows panel for the block that holds the one sandwich"></div>
+      <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">middleman.edycu.dev · UNI, live</span></div><img src="../assets/shots/04-uni-sandwich.png" width="1440" height="1000" loading="lazy" decoding="async" alt="UNI, live: 19 pools ranked by organic quote-to-fill, the green route line — route via Uniswap v3 / WETH, cap slippage at 0.20 % — and the raw-rows panel for the block that holds the one sandwich"></div>
       <div class="callout" style="left:-20px;top:120px"><i>1</i><span>19 pools of one token, ranked by organic p90</span></div>
       <div class="callout" style="left:-20px;top:520px"><i>2</i><span>the decision: venue + cap, with the rule stated</span></div>
       <div class="callout" style="left:-20px;top:622px"><i>3</i><span>the block that holds the sandwich — legs orange, victim red</span></div>
     </div>
     <!-- real screenshot: docs/screenshots/05-paste-box-live-shib.png — the paste box mid-fetch on SHIB -->
     <div class="shot half">
-      <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">middleman-cmc.vercel.app · SHIB, live</span></div><img src="../assets/shots/05-paste-box-live-shib.png" width="1440" height="1000" loading="lazy" decoding="async" alt="The paste box after a live SHIB fetch: 800 prints in 8 pages, 6.6 s, 0 credits; the headline reads 1.7× more per fill in Uniswap v2 / WETH than in ShibaSwap / WETH"></div>
+      <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">middleman.edycu.dev · SHIB, live</span></div><img src="../assets/shots/05-paste-box-live-shib.png" width="1440" height="1000" loading="lazy" decoding="async" alt="The paste box after a live SHIB fetch: 800 prints in 8 pages, 6.6 s, 0 credits; the headline reads 1.7× more per fill in Uniswap v2 / WETH than in ShibaSwap / WETH"></div>
       <div class="callout" style="left:-20px;top:64px"><i>4</i><span>800 prints · 8 pages · 0 credits, through /api/swaps</span></div>
     </div>
     <!-- real screenshot: docs/screenshots/07-evidence.png — every request behind the page -->
     <div class="shot half">
-      <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">middleman-cmc.vercel.app/evidence</span></div><img src="../assets/shots/07-evidence.png" width="1440" height="1000" loading="lazy" decoding="async" alt="/evidence: 108 requests to CoinMarketCap's keyless /public-api with HTTP status, UTC, milliseconds and the sha256 of each body; the engine's rules verbatim; the re-derive commands"></div>
+      <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">middleman.edycu.dev/evidence</span></div><img src="../assets/shots/07-evidence.png" width="1440" height="1000" loading="lazy" decoding="async" alt="/evidence: 108 requests to CoinMarketCap's keyless /public-api with HTTP status, UTC, milliseconds and the sha256 of each body; the engine's rules verbatim; the re-derive commands"></div>
       <div class="callout" style="left:-20px;top:120px"><i>5</i><span>every call: status · UTC · sha256 of the body</span></div>
     </div>
   </div>
@@ -607,8 +607,8 @@ MOTO · ethereum · 800 prints · 3.6 h · blocks 26006339–26007416 · capture
       <h2>Run it before<br>you score it.</h2>
       <div class="links">
         <a href="https://github.com/edycutjong/middleman" target="_blank" rel="noopener noreferrer">Repository <span>github.com/edycutjong/middleman<span class="arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></span></a>
-        <a href="https://middleman-cmc.vercel.app/">Live page <span>middleman-cmc.vercel.app</span></a>
-        <a href="https://middleman-cmc.vercel.app/judge">For judges <span>/judge · no key, no cookie</span></a>
+        <a href="https://middleman.edycu.dev/">Live page <span>middleman.edycu.dev</span></a>
+        <a href="https://middleman.edycu.dev/judge">For judges <span>/judge · no key, no cookie</span></a>
         <div class="row">Demo video <span>see the BUIDL page</span></div>
       </div>
     </div>
@@ -627,7 +627,7 @@ MOTO · ethereum · 800 prints · 3.6 h · blocks 26006339–26007416 · capture
 </section>
 
 <div id="chrome">
-  <div class="l"><span class="brandmark"><img src="../assets/icon.svg" alt="" width="26" height="26">Middleman</span><span class="ver">v0.0.0-dev</span><span>captured 2026-09-18 22:36:19 UTC</span><span>0 credits</span></div>
+  <div class="l"><span class="brandmark"><img src="../assets/icon.svg" alt="" width="26" height="26">Middleman</span><span class="ver">v0.1.0</span><span>captured 2026-09-18 22:36:19 UTC</span><span>0 credits</span></div>
   <div class="r"><span id="counter">01 / 12</span></div>
   <div class="prog" id="prog"></div>
 </div>

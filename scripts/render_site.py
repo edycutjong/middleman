@@ -27,7 +27,7 @@ from pathlib import Path
 BUILD = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BUILD))
 
-from middleman import enrich, recommend  # noqa: E402
+from middleman import __version__, enrich, recommend  # noqa: E402
 
 TEMPLATES = BUILD / "scripts" / "site_templates"
 PROOF = BUILD / "docs" / "proof"
@@ -42,15 +42,16 @@ EXT = (
     '<span class="arrow arrow-ext" aria-hidden="true">↗</span>'
     '<span class="sr-only"> (opens in a new tab)</span>'
 )
-SITE_URL = "https://middleman-cmc.vercel.app"
-SITE_SHORT = "middleman-cmc.vercel.app"
-# The version stamp on the deck's cover and in the landing page's footer. The committed HTML
-# carries the honest fallback — no release exists until release.yml tags one — and
-# .github/workflows/pages.yml substitutes the repository's latest tag over it at deploy, so the
-# deck, the page, the README badge and the live app agree. It is not read from `git describe`
-# here because the CI job that gates site/ against its templates clones shallow with no tags,
-# and a render that depended on tags would drift there.
-DECK_VERSION = "v0.0.0-dev"
+# The canonical host. middleman.edycu.dev is a custom domain on the same Vercel project as
+# middleman-cmc.vercel.app (DNS added 2026-09-20); both serve this build, the custom domain is
+# the one every og:url and canonical names, and the paste box is same-origin on either.
+SITE_URL = "https://middleman.edycu.dev"
+SITE_SHORT = "middleman.edycu.dev"
+# The version stamp on the deck's cover and in the landing page's footer: the package's own
+# declared version — the string the CLI prints on its first line — so the page, the deck and
+# `python3 scripts/middleman.py` agree. Not `git describe`: the CI job that gates site/ against
+# its templates clones shallow with no tags, and a render that depended on tags would drift.
+DECK_VERSION = f"v{__version__}"
 # The counts /judge publishes. tests/test_published_counts.py fails if they drift from the suite.
 TESTS_TOTAL, TESTS_OFFLINE, TESTS_LIVE = 145, 139, 6
 PROPERTY_CASES = 1000

@@ -42,7 +42,7 @@ run announces itself on its first line and in its receipt, so it can never pass 
 
 `scripts/seed.py`, keyless. The token was chosen by the published rule — *the base token of the
 pair CoinMarketCap ranks #1 on Ethereum Uniswap v2 by 24 h transactions at capture time* — and
-it was MOTO/WETH. The page at [middleman-cmc.vercel.app](https://middleman-cmc.vercel.app) is
+it was MOTO/WETH. The page at [middleman.edycu.dev](https://middleman.edycu.dev) is
 rendered from this receipt; `python3 scripts/verify_tape.py` re-derives it from
 [`data/tape_moto.json`](data/tape_moto.json) with the network unplugged.
 

@@ -10,15 +10,16 @@
   const SIZE_TOL = 0.05, MAX_VICTIMS = 4, MIN_ORGANIC = 50, CAP_STEP_PCT = 0.05, BPS = 10000;
   const RULE = 'lowest organic p90 quote-to-fill among pools with ≥ 50 organic prints';
   const REPO = 'https://github.com/edycutjong/middleman';
-  // The functions under api/ live on Vercel. On Vercel — and on scripts/serve.js, which routes
-  // api/ the same way from a fresh clone — the proxy is same-origin. Anywhere else the static
-  // page is hosted (GitHub Pages at middleman.edycu.dev, a file server) the fetch goes to the
-  // Vercel deployment by absolute URL; api/swaps.js and api/health.js send
-  // Access-Control-Allow-Origin: * and answer OPTIONS, and the request carries no custom
-  // header, so it is a simple cross-origin GET with no preflight.
-  const VERCEL = 'https://middleman-cmc.vercel.app';
+  // The functions under api/ live on the Vercel project that serves middleman.edycu.dev and
+  // middleman-cmc.vercel.app. On either host — and on scripts/serve.js, which routes api/ the
+  // same way from a fresh clone — the proxy is same-origin. Anywhere else the static page is
+  // hosted (a file server, a mirror) the fetch goes to the canonical host by absolute URL;
+  // api/swaps.js and api/health.js send Access-Control-Allow-Origin: * and answer OPTIONS, and
+  // the request carries no custom header, so it is a simple cross-origin GET with no preflight.
+  const CANONICAL = 'https://middleman.edycu.dev';
   const host = (typeof location !== 'undefined' && location.hostname) || '';
-  const API_BASE = (/\.vercel\.app$/.test(host) || host === 'localhost' || host === '127.0.0.1') ? '' : VERCEL;
+  const SAME_ORIGIN = host === 'middleman.edycu.dev' || /\.vercel\.app$/.test(host) || host === 'localhost' || host === '127.0.0.1';
+  const API_BASE = SAME_ORIGIN ? '' : CANONICAL;
 
   // ── detect ─────────────────────────────────────────────────────────────────
   const toInt = (v) => { const n = parseInt(String(v == null ? '' : v).trim(), 10); return Number.isFinite(n) ? n : null; };
