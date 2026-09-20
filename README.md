@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/assets/icon.svg" alt="Middleman icon" width="144">
+<img src="docs/assets/icon-animated.svg" alt="Middleman icon" width="144">
 
 <h1>Middleman</h1>
 
@@ -216,6 +216,9 @@ organic fill pays, and the sandwich is the named case the join was built to catc
 pull the prints  →  order by (block, log index)  →  recover pools  →  join on the maker  →  price every organic fill  →  route + cap
 ```
 
+<details>
+<summary><b>Architecture diagram</b> (click to expand)</summary>
+
 ```mermaid
 flowchart LR
   TX["/v1/dex/tokens/transactions<br/>ma · h · lgid · tp · a0 · a1 · tx · en · t0a · t1a"] --> PULL["tape.pull()<br/>keyless · lastId cursor · (tx, lgid) identity · receipts"]
@@ -228,6 +231,8 @@ flowchart LR
   SEED["scripts/seed.py"] --> TAPE[("data/tape_*.json")] -->|"verify_tape.py"| PROOF[("docs/proof/*.json")] --> RENDER["render_site.py"] --> SITE["site/ — /, /evidence, /judge"]
   SITE -->|"paste a token"| JS["site/middleman.js<br/>the engine, ported"] --> FN["/api/swaps<br/>keyless proxy + CORS + 60 s cache"] --> TX
 ```
+
+</details>
 
 No server, no database, no model. The product is one join applied to data only CoinMarketCap
 publishes, so everything that is not the fetch, the join, or the arithmetic was removed.
@@ -252,6 +257,7 @@ publishes, so everything that is not the fetch, the join, or the arithmetic was 
 
 Full derivation, every failure mode, and the deliberate non-architecture:
 **[ARCHITECTURE.md](ARCHITECTURE.md)** · the definitions: **[docs/METHOD.md](docs/METHOD.md)**.
+Rendered page, light and dark: **[middleman.edycu.dev/architecture](https://middleman.edycu.dev/architecture)**.
 
 ---
 
@@ -421,7 +427,7 @@ python3 scripts/middleman.py
 ```bash
 python3 scripts/middleman.py                                   # the hero by rule, live, keyless
 python3 scripts/middleman.py --address 0xbd965230588eaa536de6aa45e8ebbc01638535e0 --symbol MOTO --pages 8 --json moto.json
-python3 scripts/middleman.py --address 0x… --symbol X --platform bsc      # any token; ethereum | bsc | solana
+python3 scripts/middleman.py --address 0x… --symbol X --platform bsc  # any token; ethereum | bsc | solana
 python3 scripts/middleman.py --watchlist                       # SHIB · PEPE · UNI
 ```
 

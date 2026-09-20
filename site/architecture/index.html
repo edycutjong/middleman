@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Middleman — architecture: one pass over a paginated feed</title>
+<meta name="description" content="How Middleman is built: six keyless CoinMarketCap endpoints, a six-module stdlib engine (order, group, join, divide, rank), receipts that render a static site, and one serverless function that only adds a CORS header. Every name on the page exists in the repository.">
+<meta name="author" content="Edy Cu">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0B0E14">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F5F7FA">
+<link rel="canonical" href="https://middleman.edycu.dev/architecture">
+<link rel="icon" type="image/svg+xml" href="../assets/icon.svg">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Middleman">
+<meta property="og:url" content="https://middleman.edycu.dev/architecture">
+<meta property="og:title" content="Middleman — architecture: one pass over a paginated feed">
+<meta property="og:description" content="Six keyless CoinMarketCap endpoints, a six-module stdlib engine, receipts that render a static site, one serverless function that only adds a CORS header.">
+<meta property="og:image" content="https://middleman.edycu.dev/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Middleman — who stands between your quote and your fill, per pool, from real DEX prints on the CoinMarketCap API.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@edycutjong">
+<meta name="twitter:title" content="Middleman — architecture: one pass over a paginated feed">
+<meta name="twitter:description" content="Six keyless CoinMarketCap endpoints, a six-module stdlib engine, receipts that render a static site, one serverless function that only adds a CORS header.">
+<meta name="twitter:image" content="https://middleman.edycu.dev/assets/og-image.png">
+<script>
+/* the stored theme is applied before first paint, so a light-mode reader never sees a dark flash */
+(function(){try{var t=localStorage.getItem('middleman-theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}})();
+</script>
+<link rel="preload" href="../assets/fonts/inter-tight-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/jetbrains-mono-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Fonts are the site's own self-hosted latin subsets (SIL OFL 1.1) — the page loads no third-party resource. */
+@font-face{font-family:'Inter Tight';font-style:normal;font-weight:500 800;font-display:swap;src:url(../assets/fonts/inter-tight-latin-var.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400 700;font-display:swap;src:url(../assets/fonts/inter-latin-var.woff2) format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 700;font-display:swap;src:url(../assets/fonts/jetbrains-mono-latin-var.woff2) format('woff2')}
+@font-face{font-family:'Inter Fallback';src:local('Arial'),local('Helvetica');ascent-override:90.2%;descent-override:22.48%;line-gap-override:0%;size-adjust:107.4%}
+
+/* ── tokens: the front page's dark family is the base; light keeps the same hue relationships,
+      every text/background pair measured ≥ 4.5:1 (body) in both ── */
+:root{
+  --bg:#0B0E14; --surface:#141A24; --surface-2:#1A2230; --border:#243044; --text:#E6EDF3; --muted:#8B98A9; --dim:#5E6C80;
+  --accent:#FF7A45; --data:#5AC8FA; --verdict:#3DDC97; --flag:#FF5C5C;
+  --on-accent:#0B0E14;
+  --accent-soft:rgba(255,122,69,.12); --data-soft:rgba(90,200,250,.12); --verdict-soft:rgba(61,220,151,.12);
+  --link-underline:rgba(90,200,250,.55);
+  --header-bg:rgba(11,14,20,.78); --shadow:0 18px 50px -24px rgba(0,0,0,.8);
+  --glow-a:rgba(255,122,69,.09); --glow-b:rgba(90,200,250,.07);
+  --font-display:'Inter Tight','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI Variable','Segoe UI',system-ui,sans-serif;
+  --font-body:'Inter','Inter Fallback',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Liberation Mono',ui-monospace,monospace;
+  --num:'tnum' 1,'lnum' 1;
+  --r-sm:6px; --r-md:12px; --r-lg:20px;
+  --t-fast:160ms; --t-med:320ms; --ease:cubic-bezier(.16,.84,.44,1);
+  --maxw:1180px;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EAEFF5; --border:#CAD3DF; --text:#111826; --muted:#4F5D72; --dim:#6B7A90;
+    --accent:#B8400F; --data:#0A6A9A; --verdict:#0F7A55; --flag:#B91C1C;
+    --on-accent:#FFFFFF;
+    --accent-soft:rgba(184,64,15,.10); --data-soft:rgba(10,106,154,.10); --verdict-soft:rgba(15,122,85,.10);
+    --link-underline:rgba(10,106,154,.5);
+    --header-bg:rgba(245,247,250,.82); --shadow:0 18px 50px -28px rgba(17,24,38,.35);
+    --glow-a:rgba(184,64,15,.07); --glow-b:rgba(10,106,154,.06);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EAEFF5; --border:#CAD3DF; --text:#111826; --muted:#4F5D72; --dim:#6B7A90;
+  --accent:#B8400F; --data:#0A6A9A; --verdict:#0F7A55; --flag:#B91C1C;
+  --on-accent:#FFFFFF;
+  --accent-soft:rgba(184,64,15,.10); --data-soft:rgba(10,106,154,.10); --verdict-soft:rgba(15,122,85,.10);
+  --link-underline:rgba(10,106,154,.5);
+  --header-bg:rgba(245,247,250,.82); --shadow:0 18px 50px -28px rgba(17,24,38,.35);
+  --glow-a:rgba(184,64,15,.07); --glow-b:rgba(10,106,154,.06);
+  color-scheme:light;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:0s!important;animation-duration:0s!important}}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:17px;line-height:1.6;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(900px 480px at 78% -8%,var(--glow-a),transparent 60%),radial-gradient(700px 420px at 12% 18%,var(--glow-b),transparent 60%)}
+a{color:var(--data);text-decoration:none}
+a:hover{color:var(--text)}
+p a,li a,td a,.cap a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.16em;text-decoration-color:var(--link-underline);transition:text-decoration-color var(--t-fast),color var(--t-fast)}
+p a:hover,li a:hover,td a:hover,.cap a:hover{text-decoration-color:currentColor}
+::selection{background:var(--accent-soft)}
+img,svg{max-width:100%;height:auto;display:block}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;line-height:1.08;margin:0}
+h1{font-size:clamp(2rem,4.4vw,3.3rem);font-weight:800;max-width:22ch}
+h2{font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:700;max-width:30ch}
+h3{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;margin:0 0 8px}
+p{margin:0 0 1rem}
+code,.mono{font-family:var(--font-mono);font-feature-settings:var(--num)}
+code{font-size:.88em;background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:.06em .36em;color:var(--text);white-space:nowrap}
+td code,th code{white-space:normal;word-break:break-word}
+.muted{color:var(--muted)}
+.orange{color:var(--accent)}.blue{color:var(--data)}.green{color:var(--verdict)}.red{color:var(--flag)}
+.wrap{width:min(var(--maxw),calc(100% - 40px));margin:0 auto;position:relative;z-index:1}
+section{padding:clamp(44px,6vw,84px) 0;scroll-margin-top:84px}
+section+section{border-top:1px solid var(--border)}
+.kicker{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.lede{font-size:1.15rem;color:var(--muted);max-width:64ch}
+.lede b{color:var(--text);font-weight:600}
+.note{color:var(--muted);font-size:.95rem;max-width:72ch}
+.note b{color:var(--text);font-weight:600}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:absolute;left:12px;top:-60px;z-index:50;padding:10px 14px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-weight:700;transition:top var(--t-fast)}
+.skip:focus{top:12px;color:var(--on-accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* ── header — the front page's, plus the theme switch ── */
+header.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:var(--header-bg);border-bottom:1px solid transparent;transition:border-color var(--t-med),background var(--t-med)}
+header.top.scrolled{border-bottom-color:var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;color:var(--text);font-family:var(--font-display);font-weight:700;font-size:1.05rem;letter-spacing:-.01em;white-space:nowrap}
+.brand:hover{color:var(--text)}
+.brand svg{width:30px;height:30px;border-radius:7px;flex:none}
+.brand .here{font-family:var(--font-mono);font-weight:400;font-size:.8rem;color:var(--muted);letter-spacing:0}
+.nav-links{display:flex;gap:6px;align-items:center}
+.nav-links a{padding:8px 12px;border-radius:999px;color:var(--muted);font-size:.92rem;font-weight:500;transition:color var(--t-fast),background var(--t-fast),border-color var(--t-fast)}
+.nav-links a:hover{color:var(--text);background:var(--surface)}
+.nav-links a.judge{font-family:var(--font-mono);font-size:.86rem;letter-spacing:-.01em;color:var(--text);border:1px solid var(--border)}
+.nav-links a.judge:hover{border-color:var(--accent);color:var(--accent);background:var(--surface)}
+.gh,.theme{display:inline-flex;width:38px;height:38px;border-radius:50%;align-items:center;justify-content:center;color:var(--muted);transition:color var(--t-fast),background var(--t-fast),border-color var(--t-fast)}
+.gh:hover{color:var(--text);background:var(--surface)}
+.gh svg{width:20px;height:20px}
+.theme{background:var(--surface);border:1px solid var(--border);cursor:pointer;padding:0;font:inherit;color:var(--text)}
+.theme:hover{border-color:var(--accent);color:var(--accent)}
+.theme:active{transform:scale(.96)}
+.theme svg{width:18px;height:18px}
+.theme .moon{display:none}
+:root[data-theme="light"] .theme .sun{display:none}
+:root[data-theme="light"] .theme .moon{display:block}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]) .theme .sun{display:none}
+  :root:not([data-theme="dark"]) .theme .moon{display:block}
+}
+
+/* ── lead ── */
+.lead{padding-top:clamp(40px,6vw,72px)}
+.lead h1 .line2{color:var(--accent)}
+.statband{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0 0}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;transition:transform var(--t-med) var(--ease),border-color var(--t-med)}
+.stat:hover{transform:translateY(-2px);border-color:var(--dim)}
+.stat .v{font-family:var(--font-display);font-weight:800;font-size:1.7rem;letter-spacing:-.02em;line-height:1.1}
+.stat .v.o{color:var(--accent)}.stat .v.b{color:var(--data)}.stat .v.g{color:var(--verdict)}
+.stat .k{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);margin-top:4px}
+.rail{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:26px;font-size:.95rem}
+.rail a{color:var(--muted);font-weight:500;transition:color var(--t-fast)}
+.rail a:hover{color:var(--text)}
+.rail .arrow{display:inline-block;transition:transform var(--t-fast) var(--ease)}
+.rail a:hover .arrow{transform:translateX(3px)}
+.rail a:hover .arrow-ext{transform:translate(2px,-2px)}
+
+/* ── diagram ── */
+.diagram{margin-top:28px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow-x:auto;overscroll-behavior-x:contain;box-shadow:var(--shadow)}
+.diagram .inner{min-width:980px;padding:16px 12px 8px}
+.diagram .hint{font-family:var(--font-mono);font-size:.74rem;color:var(--muted);padding:0 20px 14px;display:none}
+svg.arch{width:100%;height:auto;font-family:var(--font-body)}
+svg.arch .grp{fill:var(--bg);stroke:var(--border);stroke-dasharray:5 4;stroke-width:1}
+svg.arch .gl{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;fill:var(--muted)}
+svg.arch .nd rect{fill:var(--surface);stroke:var(--border);stroke-width:1}
+svg.arch .nd .t{font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--text)}
+svg.arch .nd .c{font-size:10.5px;fill:var(--muted)}
+svg.arch .ep rect{stroke:var(--data)}
+svg.arch .ep .t{fill:var(--data)}
+svg.arch .ep.tx rect{fill:var(--data-soft);stroke-width:1.5}
+svg.arch .st rect{stroke:var(--accent)}
+svg.arch .st .t{fill:var(--accent)}
+svg.arch .st.join rect{fill:var(--accent-soft);stroke-width:1.5}
+svg.arch .data rect{stroke:var(--verdict)}
+svg.arch .data .t{fill:var(--verdict)}
+svg.arch .door rect,svg.arch .page rect,svg.arch .fn rect,svg.arch .js rect{stroke:var(--border)}
+svg.arch .fn rect{stroke:var(--data)}
+svg.arch .fn .t{fill:var(--data)}
+svg.arch .js .t{fill:var(--accent)}
+svg.arch .e{fill:none;stroke:var(--muted);stroke-width:1.4;stroke-linejoin:round}
+svg.arch .e.dash{stroke-dasharray:4 3}
+svg.arch #ah path{fill:var(--muted)}
+svg.arch .lb{font-family:var(--font-mono);font-size:10px;fill:var(--muted)}
+svg.arch .knock{fill:var(--surface)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.legend>span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:14px;height:10px;flex:none;border-radius:3px;border:1.5px solid var(--border);background:var(--surface)}
+.legend i.ep{border-color:var(--data)}.legend i.st{border-color:var(--accent)}.legend i.data{border-color:var(--verdict)}
+.legend i.grp{border-style:dashed;background:var(--bg)}
+
+/* ── tables, code ── */
+.tw{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);margin-top:22px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:500;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;font-family:var(--font-mono)}
+tr:last-child td{border-bottom:0}
+td.k{white-space:nowrap;color:var(--text);font-weight:600}
+td.k .mono{font-weight:500}
+td .mono{font-size:.9em}
+tbody tr{transition:background var(--t-fast)}
+tbody tr:hover{background:var(--surface-2)}
+pre{margin:22px 0 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 20px;overflow-x:auto;font-family:var(--font-mono);font-size:.84rem;line-height:1.55;color:var(--text);tab-size:4}
+pre .cm{color:var(--muted)}
+pre .o{color:var(--accent)}pre .b{color:var(--data)}pre .g{color:var(--verdict)}pre .r{color:var(--flag)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:22px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px 24px;transition:transform var(--t-med) var(--ease),border-color var(--t-med),box-shadow var(--t-med)}
+.card:hover{transform:translateY(-3px);border-color:var(--dim);box-shadow:var(--shadow)}
+.card p:last-child{margin-bottom:0}
+.card .kicker{margin-bottom:8px}
+dl{margin:0}
+dl div{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)}
+dl div:last-child{border-bottom:0}
+dt{font-family:var(--font-mono);font-size:.84rem;color:var(--muted);padding-top:2px}
+dd{margin:0;font-size:.95rem}
+
+/* ── footer ── */
+footer{padding:44px 0 60px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--border);position:relative;z-index:1}
+footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:24px}
+footer h3{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:500;line-height:1.6}
+footer ul{list-style:none;margin:0;padding:0}
+footer li{margin:6px 0}
+footer .brand{color:var(--text)}
+footer .brand img{width:30px;height:30px;border-radius:7px}
+footer .bottom{margin-top:32px;padding-top:18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--font-mono);font-size:.78rem}
+.link-quiet{color:var(--muted);transition:color var(--t-fast)}
+.link-quiet:hover{color:var(--text)}
+.arrow-ext{display:inline-block;font-size:.85em;margin-left:.3em;opacity:.8;transition:transform var(--t-fast) var(--ease),opacity var(--t-fast)}
+a:hover .arrow-ext{transform:translate(1px,-1px);opacity:1}
+
+@media (max-width:900px){
+  .statband{grid-template-columns:1fr 1fr}
+  .two{grid-template-columns:1fr}
+  footer .cols{grid-template-columns:1fr 1fr}
+  footer .cols>div:first-child{grid-column:1/-1}
+}
+@media (max-width:720px){
+  .nav-links a.text{display:none}
+  .diagram .hint{display:block}
+  .brand .here{display:none}
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  section{padding:40px 0}
+  .lede{font-size:1.05rem}
+  /* a three-column table cannot share 350px: each row becomes one block */
+  table,thead,tbody,tr,td{display:block}
+  thead{display:none}
+  tr{padding:12px 14px;border-bottom:1px solid var(--border)}
+  tr:last-child{border-bottom:0}
+  td{padding:2px 0;border:0;font-size:.92rem}
+  td.k{white-space:normal;font-size:1rem}
+  td.k+td:not(:last-child){font-size:.86rem;color:var(--muted)}
+  pre{padding:14px;font-size:.76rem}
+  dl div{grid-template-columns:1fr;gap:2px}
+  .card{padding:18px}
+  footer{padding:32px 0 40px;font-size:.85rem}
+}
+@media (max-width:480px){
+  .statband{grid-template-columns:1fr 1fr;gap:8px}
+  .stat{padding:12px}
+  .stat .v{font-size:1.4rem}
+  .nav{gap:8px}.brand{font-size:.95rem;gap:9px}.brand svg{width:26px;height:26px}
+  .nav-links a.judge{padding:7px 10px;font-size:.8rem;white-space:nowrap}
+  footer .cols{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top" id="top">
+  <div class="wrap nav">
+    <a class="brand" href="/" aria-label="Middleman — home">
+      <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect x="4" y="4" width="56" height="56" rx="12" fill="#0B0E14" stroke="#243044" stroke-width="3"/><line x1="15" y1="16" x2="49" y2="16" stroke="#5AC8FA" stroke-width="5" stroke-linecap="round"/><path d="M15 26.75H43.75A5.25 5.25 0 0 1 43.75 37.25H20" fill="none" stroke="#FF7A45" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 34.25L15 37.25L18 40.25" fill="none" stroke="#FF7A45" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><line x1="15" y1="48" x2="49" y2="48" stroke="#5AC8FA" stroke-width="5" stroke-linecap="round"/></svg>
+      Middleman <span class="here">/architecture</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="text" href="/">Home</a>
+      <a class="text" href="/evidence">Evidence</a>
+      <a class="text" href="/pitch">Pitch deck</a>
+      <a class="judge" href="/judge" title="For judges — the claim, the 30-second path, the receipt">For judges</a>
+      <a class="gh" href="https://github.com/edycutjong/middleman" aria-label="Source on GitHub (opens in a new tab)" title="Source on GitHub" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <button class="theme" id="theme" type="button" aria-label="Switch to light theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="lead" id="lead">
+  <div class="wrap">
+    <div class="kicker">Architecture · derived from the code, not a design document</div>
+    <h1><span class="line1">One pass over a paginated feed:</span><br><span class="line2">order, group, join, divide, rank.</span></h1>
+    <p class="lede" style="margin-top:18px"><b>No database, no model, no cache in the product path, no key anywhere.</b> The engine is six stdlib-only Python modules; the pages are static HTML rendered from committed receipts; one serverless function exists solely to add a CORS header CoinMarketCap omits. Every function named on this page exists in <code>middleman/</code>, <code>scripts/</code> or <code>api/</code> — if a claim here is not greppable, it is a bug in this page.</p>
+    <div class="statband" role="list" aria-label="Shape in numbers">
+      <div class="stat" role="listitem"><div class="v o">6</div><div class="k">engine modules · stdlib only</div></div>
+      <div class="stat" role="listitem"><div class="v b">6</div><div class="k">keyless endpoints · 4 load-bearing</div></div>
+      <div class="stat" role="listitem"><div class="v g">0</div><div class="k">runtime dependencies · 0 keys</div></div>
+      <div class="stat" role="listitem"><div class="v">1</div><div class="k">privileged function · 58 lines</div></div>
+    </div>
+    <nav class="rail" aria-label="Where to look">
+      <a href="/">The table <span class="arrow" aria-hidden="true">→</span></a>
+      <a href="/evidence">Evidence <span class="arrow" aria-hidden="true">→</span></a>
+      <a href="/judge">For judges <span class="arrow" aria-hidden="true">→</span></a>
+      <a href="/pitch">Pitch deck <span class="arrow" aria-hidden="true">→</span></a>
+      <a href="https://github.com/edycutjong/middleman/blob/main/ARCHITECTURE.md" target="_blank" rel="noopener noreferrer">ARCHITECTURE.md, the long form<span class="arrow arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
+    </nav>
+  </div>
+</section>
+
+<section id="shape">
+  <div class="wrap">
+    <div class="kicker">The shape of the thing</div>
+    <h2>Six endpoints in. One join. Receipts out. The browser closes the loop.</h2>
+    <p class="note" style="margin-top:14px">Read the middle column top to bottom: that is the whole product. Everything to its left is CoinMarketCap's keyless <code>/public-api</code>; everything to its right turns a run into a receipt a judge can re-derive offline; the band on top is what Vercel serves.</p>
+    <div class="diagram">
+      <div class="inner">
+<svg class="arch" viewBox="0 0 1180 640" role="img" aria-labelledby="arch-title arch-desc" xmlns="http://www.w3.org/2000/svg"><title id="arch-title">Middleman architecture: CoinMarketCap endpoints feed the six-module engine; the scripts write tapes and receipts; the receipts render the static site; the browser port calls one keyless proxy</title><desc id="arch-desc">Left: six keyless CoinMarketCap endpoints. Middle: tape.pull, detect.order and group, detect.middlemen, cost.pool_row, recommend.route, and enrich for labels. Right: scripts/middleman.py and scripts/seed.py drive the pull; seed writes data/tape_*.json and docs/proof/*.json, verify_tape.py re-derives one from the other, and render_site.py turns the proof into site/*.html. Top: Vercel serves the pages; the paste box runs site/middleman.js which calls /api/swaps, a keyless passthrough to the same transactions endpoint.</desc><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker></defs><rect class="grp" x="16" y="24" width="1148" height="150" rx="14"/>
+<text class="gl" x="32" y="46">Vercel · middleman.edycu.dev — site/ + two functions under api/</text>
+<g class="nd fn "><rect x="32" y="64" width="244" height="44" rx="9"/><text class="t" x="44" y="82">/api/swaps · api/swaps.js</text><text class="c" x="44" y="98">keyless passthrough · CORS · 60 s cache</text></g>
+<g class="nd js "><rect x="326" y="64" width="240" height="44" rx="9"/><text class="t" x="338" y="82">site/middleman.js</text><text class="c" x="338" y="98">the engine, ported to the browser</text></g>
+<g class="nd page "><rect x="654" y="64" width="240" height="44" rx="9"/><text class="t" x="666" y="82">/ · /evidence · /judge · /pitch</text><text class="c" x="666" y="98">static · zero requests to render</text></g>
+<g class="nd page "><rect x="958" y="64" width="190" height="44" rx="9"/><text class="t" x="970" y="82">site/*.html</text><text class="c" x="970" y="98">generated, never hand-edited</text></g>
+<g class="nd fn "><rect x="32" y="126" width="196" height="44" rx="9"/><text class="t" x="44" y="144">/api/health</text><text class="c" x="44" y="160">api/health.js · no upstream call</text></g>
+<path class="e" d="M958,86 L894,86" marker-end="url(#ah)"/>
+<path class="e" d="M654,86 L566,86" marker-end="url(#ah)"/>
+<text class="lb" x="610" y="77" text-anchor="middle">paste a token</text>
+<path class="e" d="M326,86 L276,86" marker-end="url(#ah)"/>
+<rect class="grp" x="16" y="206" width="276" height="404" rx="14"/>
+<text class="gl" x="32" y="228">CoinMarketCap · /public-api</text>
+<rect class="grp" x="340" y="206" width="340" height="404" rx="14"/>
+<text class="gl" x="356" y="228">middleman/ · six stdlib modules</text>
+<rect class="grp" x="712" y="206" width="452" height="404" rx="14"/>
+<text class="gl" x="728" y="228">scripts/ · data/ · docs/proof/</text>
+<g class="nd ep tx"><rect x="32" y="250" width="244" height="44" rx="9"/><text class="t" x="44" y="268">/v1/dex/tokens/transactions</text><text class="c" x="44" y="284">100 prints per page · lastId cursor</text></g>
+<g class="nd ep "><rect x="32" y="308" width="244" height="44" rx="9"/><text class="t" x="44" y="326">/v1/dex/token/pools</text><text class="c" x="44" y="342">pool address · venue · liquidity</text></g>
+<g class="nd ep "><rect x="32" y="366" width="244" height="44" rx="9"/><text class="t" x="44" y="384">/v1/dex/security/detail</text><text class="c" x="44" y="400">buy / sell tax</text></g>
+<g class="nd ep "><rect x="32" y="424" width="244" height="44" rx="9"/><text class="t" x="44" y="442">/v4/dex/pairs/quotes/latest</text><text class="c" x="44" y="458">24 h buy / sell counts</text></g>
+<g class="nd ep "><rect x="32" y="482" width="244" height="44" rx="9"/><text class="t" x="44" y="500">/v4/dex/spot-pairs/latest</text><text class="c" x="44" y="516">the hero rule → scripts/middleman.py</text></g>
+<g class="nd ep "><rect x="32" y="540" width="244" height="44" rx="9"/><text class="t" x="44" y="558">/v1/dex/platform/list</text><text class="c" x="44" y="574">explorer links → the pages</text></g>
+<g class="nd st "><rect x="356" y="250" width="256" height="44" rx="9"/><text class="t" x="368" y="268">tape.pull()</text><text class="c" x="368" y="284">backoff 15/30/60 s · a receipt per call</text></g>
+<g class="nd st "><rect x="356" y="308" width="256" height="44" rx="9"/><text class="t" x="368" y="326">detect.order() · detect.group()</text><text class="c" x="368" y="342">(int(h), int(lgid)) · (en, t0a, t1a)</text></g>
+<path class="e" d="M484.0,294 L484.0,308" marker-end="url(#ah)"/>
+<g class="nd st join"><rect x="356" y="366" width="256" height="44" rx="9"/><text class="t" x="368" y="384">detect.middlemen()</text><text class="c" x="368" y="400">round-trips · sandwiches · organic</text></g>
+<path class="e" d="M484.0,352 L484.0,366" marker-end="url(#ah)"/>
+<g class="nd st "><rect x="356" y="424" width="256" height="44" rx="9"/><text class="t" x="368" y="442">cost.pool_row()</text><text class="c" x="368" y="458">a1/a0 · quote-to-fill p50 / p90</text></g>
+<path class="e" d="M484.0,410 L484.0,424" marker-end="url(#ah)"/>
+<g class="nd st "><rect x="356" y="482" width="256" height="44" rx="9"/><text class="t" x="368" y="500">recommend.route()</text><text class="c" x="368" y="516">argmin organic p90 · cap ↑ 0.05 %</text></g>
+<path class="e" d="M484.0,468 L484.0,482" marker-end="url(#ah)"/>
+<g class="nd st "><rect x="356" y="554" width="256" height="44" rx="9"/><text class="t" x="368" y="572">enrich.*</text><text class="c" x="368" y="588">pool address · liquidity · taxes · 24 h coverage</text></g>
+<path class="e" d="M276,272 L356,272" marker-end="url(#ah)"/>
+<path class="e" d="M276,330 L316,330"/>
+<path class="e" d="M276,388 L316,388"/>
+<path class="e" d="M276,446 L316,446"/>
+<path class="e" d="M316,330 L316,576 L356,576" marker-end="url(#ah)"/>
+<path class="e" d="M612,576 L630,576 L630,446 L612,446" marker-end="url(#ah)"/>
+<g class="nd door "><rect x="728" y="250" width="200" height="44" rx="9"/><text class="t" x="740" y="268">scripts/middleman.py</text><text class="c" x="740" y="284">the door a judge walks through</text></g>
+<g class="nd door "><rect x="728" y="308" width="200" height="44" rx="9"/><text class="t" x="740" y="326">scripts/seed.py</text><text class="c" x="740" y="342">tapes · receipts · census, per chain</text></g>
+<path class="e" d="M728,268 L612,268" marker-end="url(#ah)"/>
+<path class="e" d="M728,330 L700,330 L700,282 L612,282" marker-end="url(#ah)"/>
+<g class="nd door "><rect x="958" y="250" width="190" height="44" rx="9"/><text class="t" x="970" y="268">scripts/render_site.py</text><text class="c" x="970" y="284">--check gates drift</text></g>
+<g class="nd data "><rect x="958" y="326" width="190" height="44" rx="9"/><text class="t" x="970" y="344">docs/proof/*.json</text><text class="c" x="970" y="360">numbers · URLs · statuses · hashes</text></g>
+<g class="nd data "><rect x="958" y="402" width="190" height="44" rx="9"/><text class="t" x="970" y="420">data/tape_*.json</text><text class="c" x="970" y="436">rows verbatim · page hashes</text></g>
+<path class="e" d="M1053.0,402 L1053.0,370" marker-end="url(#ah)"/>
+<rect class="knock" x="1007.0" y="379" width="92" height="14"/>
+<text class="lb" x="1053.0" y="390" text-anchor="middle">verify_tape.py, offline</text>
+<path class="e" d="M1053.0,326 L1053.0,294" marker-end="url(#ah)"/>
+<path class="e" d="M1053.0,250 L1053.0,108" marker-end="url(#ah)"/>
+<path class="e" d="M928,330 L943,330 L943,348 L958,348" marker-end="url(#ah)"/>
+<path class="e" d="M943,330 L943,424 L958,424" marker-end="url(#ah)"/>
+<path class="e" d="M250,108 L250,250" marker-end="url(#ah)"/>
+<text class="lb" x="258" y="194" text-anchor="start">the same keyless URL</text></svg>
+      </div>
+      <div class="hint">← scroll the diagram sideways →</div>
+    </div>
+    <div class="legend" aria-label="Diagram key">
+      <span><i class="ep"></i>CoinMarketCap endpoint</span>
+      <span><i class="st"></i>engine stage (<span class="mono">middleman/</span>)</span>
+      <span><i class="data"></i>committed data</span>
+      <span><i></i>script, page or function</span>
+      <span><i class="grp"></i>a boundary: API · engine · receipts · site</span>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="kicker">Two doors, one engine</div>
+        <p><code>scripts/middleman.py</code> is the door a judge walks through: live, keyless, zero flags — it asks <code>/v4/dex/spot-pairs/latest</code> for the day's #1 pair (the hero rule) and hands it to <code>tape.pull()</code>. <code>scripts/seed.py</code> is the same call per chain plus the watchlist; it writes the tapes and the receipts the site is rendered from.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">The loop at the top</div>
+        <p>Paste a token on the front page and <code>site/middleman.js</code> — the engine ported to the browser, parity-tested against Python on every tape — runs on rows fetched through <code>/api/swaps</code>: the identical keyless CoinMarketCap URL, body returned untouched, plus the one header CMC omits (<code>Access-Control-Allow-Origin</code>) and a 60 s CDN cache so ten judges pasting one token are one upstream call.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stages">
+  <div class="wrap">
+    <div class="kicker">Per call, per stage</div>
+    <h2>The fetch leaves a receipt. The join is the product. The rest is division.</h2>
+    <p class="note" style="margin-top:14px"><b>Per call:</b> <code>tape.get()</code> is one keyless GET with backoff; <code>tape.pull()</code> walks the <code>lastId</code> cursor for up to 8 pages of 100 prints, keys every print by <code>(tx, lgid)</code> — the only unique key across pages — and returns <code>(prints, meta)</code>, so an API error can never be reported as a property of the token. Every call, success or failure, leaves a receipt: URL, HTTP status, UTC, elapsed, sha256 of the body.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Stage</th><th>Function</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Fetch</td><td><span class="mono blue">tape.pull()</span></td><td>Keyless GET with backoff (15 / 30 / 60 s), cursor from <code>data.lastId</code> on the envelope, prints keyed by <code>(tx, lgid)</code>, a receipt per call.</td></tr>
+          <tr><td class="k">Order</td><td><span class="mono blue">detect.order()</span> · <span class="mono blue">detect.group()</span></td><td>Sort by <code>(int(h), int(lgid))</code> — both arrive as strings; recover pools from <code>(en, t0a, t1a)</code>, because the feed carries no pool address.</td></tr>
+          <tr><td class="k">Join</td><td><span class="mono orange">detect.middlemen()</span></td><td><b>The product.</b> Same maker, same block, next print on the other side, size within 5 % → round-trip; 1–4 other makers enclosed and <code>take &gt; 0</code> → sandwich; the rest organic.</td></tr>
+          <tr><td class="k">Price</td><td><span class="mono blue">cost.pool_row()</span></td><td><code>a1 / a0</code> per print, never the feed's rounded <code>q</code>; quote-to-fill against the previous organic print; p50 / p90 per pool, nearest-rank; the example block with its arithmetic.</td></tr>
+          <tr><td class="k">Route</td><td><span class="mono green">recommend.route()</span> · <span class="mono green">recommend.cap_pct()</span></td><td>Lowest organic p90 among pools with ≥ 50 organic prints; the cap is that p90 rounded up to the next 0.05 %. States the rule, never widens it.</td></tr>
+          <tr><td class="k">Label</td><td><span class="mono blue">enrich.*</span></td><td><code>token_pools</code> + <code>label_pools</code> (pool address, venue, liquidity), <code>security</code> (transfer taxes — never counted as a middleman), <code>pair_quotes</code> (the window's share of the pool's 24 h count), <code>hero_pair</code>, <code>platforms</code> (explorer templates). A label call that fails leaves that label blank; the table still renders.</td></tr>
+          <tr><td class="k">Render</td><td><span class="mono">cli.analyse()</span> → <span class="mono">compute()</span> → <span class="mono">render()</span></td><td>The table, the route line and the receipt on stdout; <code>main()</code> exits 75 (<code>EX_TEMPFAIL</code>) when nothing landed because every fetch was throttled.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="fields">
+  <div class="wrap">
+    <div class="kicker">The six fields the product rests on</div>
+    <h2>One object per swap. Six fields make the join possible; the rest is provenance.</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Field</th><th>Type on the wire</th><th>What it makes possible</th></tr></thead>
+        <tbody>
+          <tr><td class="k mono">ma</td><td>address</td><td><b>The maker.</b> "The same wallet on both sides of a block" becomes a count, not a suspicion.</td></tr>
+          <tr><td class="k mono">h</td><td><b>string</b></td><td><b>The block.</b> Both legs of a middleman are in one block; cast to <code>int</code> before comparing.</td></tr>
+          <tr><td class="k mono">lgid</td><td><b>string</b></td><td><b>The position inside the block.</b> "Between" is exact — a log index, not a timestamp. Cast to <code>int</code>.</td></tr>
+          <tr><td class="k mono">tp</td><td><code>"buy"</code> | <code>"sell"</code></td><td>The side, so two legs can be opposite.</td></tr>
+          <tr><td class="k mono">a0, a1</td><td>numbers</td><td>Base and quote amounts. <code>a1 / a0</code> is the price a print paid; <code>|Δa0| / a0 ≤ 5 %</code> is the size match.</td></tr>
+          <tr><td class="k mono">en, t0a, t1a</td><td>string | null, addresses</td><td>The pool, reconstructed — the feed carries no pool address.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top:16px"><code>tx</code> is carried for the same-transaction flag and the explorer link; <code>v</code> (USD) weights the round-trip share of volume. <code>q</code> is <b>not</b> read — it is rounded or zero on Uniswap v4 rows (<a href="https://github.com/edycutjong/middleman/blob/main/FEEDBACK.md" target="_blank" rel="noopener noreferrer">FEEDBACK.md<span class="arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a> #4).</p>
+  </div>
+</section>
+
+<section id="arithmetic">
+  <div class="wrap">
+    <div class="kicker">The arithmetic, in full</div>
+    <h2>Per pool, in chain order. Nothing here is a heuristic you cannot recompute by hand.</h2>
+    <p class="note" style="margin-top:14px"><code>middleman/detect.py</code>, <code>cost.py</code>, <code>recommend.py</code>:</p>
+<pre tabindex="0"><span class="cm"># the join</span>
+<span class="o">legs</span>(a, b)     = a.ma == b.ma <span class="cm">and</span> int(a.h) == int(b.h) <span class="cm">and</span> a.tp != b.tp
+                 <span class="cm">and</span> |b.a0 − a.a0| / a.a0 ≤ 0.05
+
+for each print a by wallet A, not yet a leg:
+    b        = A's NEXT print in the same block          <span class="cm">(none → a is organic so far)</span>
+    between  = the prints strictly between a and b
+    if legs(a, b):
+        take = b.a1 − a.a1  if a is a buy  else  a.a1 − b.a1
+        <span class="o">sandwich</span>   if 1 ≤ |between| ≤ 4 and every one is another maker printing in
+                   a's direction, none already a leg, and take &gt; 0   <span class="cm">(between = victims)</span>
+        <span class="o">round-trip</span> otherwise                                        <span class="cm">(between recorded)</span>
+
+<span class="cm"># the division</span>
+<span class="b">organic</span>        = prints that are neither leg of a match     <span class="cm">(victims stay organic)</span>
+q_i            = a1_i / a0_i
+q2f_i          = (q_i / q_{i−1} − 1) × 1e4   for a buy      <span class="cm">over consecutive ORGANIC prints</span>
+                 (1 − q_i / q_{i−1}) × 1e4   for a sell     <span class="cm">adverse-signed</span>
+p50, p90       = nearest-rank, rank = ceil(p/100 × n)        <span class="cm">always a real observation</span>
+
+<span class="cm"># the rank</span>
+<span class="g">route</span>          = argmin organic p90 among pools with ≥ 50 organic prints
+<span class="g">cap</span>            = ceil(p90 / 5 bps) × 0.05 %,  never below 0.05 %</pre>
+    <p class="note" style="margin-top:16px"><code>naive</code> is the same quote-to-fill series over all prints, legs included, computed only so it can be shown losing: on the hero pair it read <b>55.3 bps</b> against <b>15.5</b> organic.</p>
+  </div>
+</section>
+
+<section id="failure">
+  <div class="wrap">
+    <div class="kicker">Failure handling</div>
+    <h2>Every failure maps to a distinct outcome, so an outage is never blamed on a token.</h2>
+    <p class="note" style="margin-top:14px"><code>middleman/tape.py</code>. <code>pull()</code> returns <code>(prints, meta)</code>; the error lives in <code>meta</code>, never in the rows.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Condition</th><th>Behaviour</th></tr></thead>
+        <tbody>
+          <tr><td class="k">HTTP 429 · any 5xx · connection dropped</td><td><span class="blue">Transient.</span> Retried up to 3 times, 15 s → 30 s → 60 s.</td></tr>
+          <tr><td class="k">Transient on every retry</td><td><span class="orange">Throttled.</span> Returned with <code>throttled: True</code>; pages that already landed are kept, the window is marked partial and said out loud. When nothing landed the CLI exits <b>75</b> (<code>EX_TEMPFAIL</code>) with <code>throttle_advice()</code> — the two ways through.</td></tr>
+          <tr><td class="k">Any other 4xx</td><td><span class="red">Permanent.</span> Returned at once — retrying a 400 wastes the reader's time.</td></tr>
+          <tr><td class="k">DNS · refused · timeout</td><td>The caller's network. Returned as an error, <b>not</b> flagged as throttling.</td></tr>
+          <tr><td class="k">Malformed JSON</td><td>A contract problem. Returned at once.</td></tr>
+          <tr><td class="k">Any HTTP error body</td><td>Described by <code>describe_http_error()</code> as the status, CMC's error code and message — never a body sliced mid-string.</td></tr>
+          <tr><td class="k">A label call fails (<span class="mono">enrich.*</span>)</td><td>The table still renders; that label is blank. Context never takes down a run that has its number.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="routes">
+  <div class="wrap">
+    <div class="kicker">Routes · the deployment</div>
+    <h2>Four static pages, two functions, no key on the server either.</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Route</th><th>Type</th><th>Serves</th></tr></thead>
+        <tbody>
+          <tr><td class="k mono"><a href="/">/</a></td><td>static</td><td><code>site/index.html</code> — the table, the route line, the raw rows, the census strip, the receipt, the paste box. Rendered for the hero token; the Ethereum receipts are embedded so the token buttons switch tables with zero requests.</td></tr>
+          <tr><td class="k mono"><a href="/evidence">/evidence</a></td><td>static</td><td><code>site/evidence.html</code> — every call behind every receipt: URL, HTTP status, UTC, hash, credits; the rules verbatim; the endpoints table.</td></tr>
+          <tr><td class="k mono"><a href="/judge">/judge</a></td><td>static</td><td><code>site/judge.html</code> — one page for one reader: the claim, the 30-second path, the receipt block, the reproduce command, the limitations. <code>tests/test_judge_surface.py</code> serves it and asserts 200 + the claim with no credentials.</td></tr>
+          <tr><td class="k mono"><a href="/pitch">/pitch</a></td><td>static</td><td><code>site/pitch/index.html</code> — twelve slides rendered from the same receipts through <code>scripts/site_templates/deck.html</code>; the version stamp is <code>middleman.__version__</code>.</td></tr>
+          <tr><td class="k mono">/api/swaps</td><td>serverless · <span class="mono">api/swaps.js</span></td><td><code>GET ?platform=&amp;address=[&amp;lastId=]</code> → the identical keyless CMC URL, body untouched under <code>raw</code>, plus <code>Access-Control-Allow-Origin: *</code> and <code>Cache-Control: s-maxage=60</code>. Upstream status passed through; a 429 comes back as a 429 with the CLI command as <code>hint</code>. Validates the platform and the address shape; holds no key. <code>tests/test_proxy_boundary.py</code> drives it under node with <code>fetch</code> stubbed: it can reach exactly one keyless host, and never forwards a caller's key, token, cookie or forwarded-host header.</td></tr>
+          <tr><td class="k mono"><a href="/api/health">/api/health</a></td><td>serverless · <span class="mono">api/health.js</span></td><td>Server clock, the receipts' capture time, the census totals. No upstream call.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top:16px">The four pages are <b>generated, never hand-edited</b>: <code>scripts/render_site.py</code> fills <code>{{slot}}</code> templates from <code>docs/proof/*.json</code>, aborts on any unfilled slot, and <code>--check</code> fails <code>make check</code> if the committed HTML is not what the receipts render. <code>scripts/serve.js</code> serves the same routes from a fresh clone on port 8101. This page is the one hand-written exception: it holds no number a receipt owns.</p>
+  </div>
+</section>
+
+<section id="layout">
+  <div class="wrap">
+    <div class="kicker">Repository layout</div>
+    <h2>Six modules, eight scripts, four templates, two functions, ten tapes.</h2>
+<pre tabindex="0"><span class="o">middleman/</span>
+  tape.py         the fetch: keyless GET with backoff, receipts, the lastId cursor, (tx, lgid) identity
+  detect.py       order · group · middlemen — the join
+  cost.py         a1/a0 · quote-to-fill · percentiles · pool_row · the example block
+  recommend.py    route · cap_pct
+  enrich.py       hero_pair · token_pools · label_pools · security · pair_quotes · platforms
+  cli.py          analyse · compute · render · main — the table and the receipt
+<span class="o">scripts/</span>
+  middleman.py    the door a judge walks through (python3 scripts/middleman.py)
+  spike.py        the day-1 question, answered live → docs/proof/spike.json
+  seed.py         the hero rule per chain + the watchlist → data/ + docs/proof/ + census.json
+  verify_tape.py  every receipt re-derived from its tape, offline; exit 1 on drift
+  bench.py        p50/p95 of the fetch (live) and the engine (replay)
+  render_site.py  docs/proof/*.json → site/ through slot templates; --check gates drift
+  check_submission_readiness.py   placeholders and stale test counts
+  serve.js        site/ + api/ locally, the way Vercel routes them
+  site_templates/ index.html · evidence.html · judge.html · deck.html
+<span class="o">site/</span>
+  index.html · evidence.html · judge.html · pitch/index.html   generated — edit the templates or the receipts
+  architecture/index.html      this page — hand-written, holds no number a receipt owns
+  middleman.js    the engine ported to the browser + the page's interactions
+  assets/         icon, social card, three OFL fonts
+<span class="o">api/</span>
+  swaps.js · health.js         the two Vercel functions
+<span class="o">data/</span>
+  tape_&lt;sym&gt;.json             10 tapes, rows verbatim, page hashes — the raw material
+<span class="o">docs/</span>
+  METHOD.md                   the definitions, the invariant, the exclusions
+  proof/                      spike.json · live_run.json · &lt;sym&gt;.json ×10 · census.json · platforms.json · bench_*.json
+<span class="o">tests/</span>                        offline by default; the live tests are marked and run apart</pre>
+  </div>
+</section>
+
+<section id="not">
+  <div class="wrap">
+    <div class="kicker">Deliberate non-architecture</div>
+    <h2>What is not here, and why each absence is a decision.</h2>
+    <div class="two">
+      <div class="card">
+        <dl>
+          <div><dt>Database</dt><dd>Every number is recomputed from a fetch or a committed tape. There is nothing to persist.</dd></div>
+          <div><dt>Cache in the product</dt><dd>A cached tape is a stale tape; the claim is about the current window. The proxy's 60 s CDN cache exists only so ten judges pasting one token are one upstream call.</dd></div>
+          <div><dt>A key</dt><dd>Every endpoint the product calls is on <code>/public-api</code>. <code>CMC_API_KEY</code> is accepted as an escape hatch for a throttled IP — read from the environment at call time, never from disk, never printed, never in the deployment — and a keyed run says so on its first line and in its receipt.</dd></div>
+        </dl>
+      </div>
+      <div class="card">
+        <dl>
+          <div><dt>MEV labels, mempool, bundles</dt><dd>Not available on this API, and not needed: a middleman has to print, and the print order names them.</dd></div>
+          <div><dt>Sandwiches as the headline</dt><dd>Measured at 2 in 8,000 prints. The README says so; the detector stays because a zero it can prove is worth more than a rate it cannot.</dd></div>
+          <div><dt>A framework, a bundler, a font CDN</dt><dd>One HTML file per page, one script, three self-hosted fonts. The page makes zero requests to render.</dd></div>
+        </dl>
+      </div>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Dependencies</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="k">Runtime</td><td><b>none</b> — <code>requirements.txt</code> is a comment. Python 3.11 standard library: <code>urllib</code>, <code>json</code>, <code>hashlib</code>, <code>math</code>, <code>statistics</code>, <code>time</code>.</td></tr>
+          <tr><td class="k">Serverless</td><td>Node 20 <code>fetch</code>, <code>fs</code>, <code>path</code>. No <code>package.json</code>, no <code>node_modules</code>.</td></tr>
+          <tr><td class="k">Dev only</td><td><code>pytest</code>, <code>pytest-cov</code>, <code>ruff</code>, <code>pip-audit</code>, <code>hypothesis</code> (<code>requirements-dev.txt</code>). <code>node</code> for the parity test and the local server.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <div class="brand"><img src="../assets/icon.svg" alt="" width="30" height="30">Middleman</div>
+        <p style="margin-top:12px;max-width:44ch">Names the middleman. Built on the CoinMarketCap API for the <a href="https://dorahacks.io/hackathon/coinmarketcap-api-202609/detail" target="_blank" rel="noopener noreferrer">Build with CMC: API Hackathon<span class="arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>, Markets and Trading Tools track. MIT licensed.</p>
+      </div>
+      <div>
+        <h3>Repository</h3>
+        <ul>
+          <li><a class="link-quiet" href="https://github.com/edycutjong/middleman" target="_blank" rel="noopener noreferrer">Source<span class="arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></li>
+          <li><a class="link-quiet" href="https://github.com/edycutjong/middleman/blob/main/ARCHITECTURE.md" target="_blank" rel="noopener noreferrer">ARCHITECTURE.md — the long form<span class="arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></li>
+          <li><a class="link-quiet" href="https://github.com/edycutjong/middleman/blob/main/docs/METHOD.md" target="_blank" rel="noopener noreferrer">METHOD.md — the definitions<span class="arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></li>
+          <li><a class="link-quiet" href="https://github.com/edycutjong/middleman/blob/main/JUDGE.md" target="_blank" rel="noopener noreferrer">JUDGE.md<span class="arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>This site</h3>
+        <ul>
+          <li><a class="link-quiet" href="/">The table — /</a></li>
+          <li><a class="link-quiet" href="/evidence">Every call — /evidence</a></li>
+          <li><a class="link-quiet" href="/judge">For judges — /judge</a></li>
+          <li><a class="link-quiet" href="/pitch">Pitch deck — /pitch</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bottom">
+      <span>derived from the code, not a design document · every name on this page is greppable</span>
+      <span><a class="link-quiet" href="https://github.com/edycutjong/middleman/blob/main/ARCHITECTURE.md" target="_blank" rel="noopener noreferrer">ARCHITECTURE.md<span class="arrow-ext" aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('theme');
+  var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: light)'):null;
+  function current(){var t=root.getAttribute('data-theme');if(t==='light'||t==='dark')return t;return (mq&&mq.matches)?'light':'dark'}
+  function label(){var next=current()==='light'?'dark':'light';btn.setAttribute('aria-label','Switch to '+next+' theme');btn.title='Switch to '+next+' theme'}
+  btn.addEventListener('click',function(){
+    var next=current()==='light'?'dark':'light';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem('middleman-theme',next)}catch(e){}
+    label();
+  });
+  if(mq&&mq.addEventListener)mq.addEventListener('change',label);
+  label();
+  var top=document.getElementById('top');
+  function onScroll(){top.classList.toggle('scrolled',window.scrollY>8)}
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+})();
+</script>
+</body>
+</html>
