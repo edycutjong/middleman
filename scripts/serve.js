@@ -30,6 +30,7 @@ http.createServer(async (req, res) => {
   let rel = decodeURIComponent(url.pathname);
   if (rel === '/') rel = '/index.html';
   if (rel.endsWith('/') && fs.existsSync(path.join(SITE, rel, 'index.html'))) rel += 'index.html'; // /pitch/ → the deck
+  if (!path.extname(rel) && fs.existsSync(path.join(SITE, rel, 'index.html'))) rel += '/index.html'; // /pitch → the deck, the way Vercel's cleanUrls + trailingSlash:false serves it
   if (!path.extname(rel) && fs.existsSync(path.join(SITE, rel + '.html'))) rel += '.html'; // cleanUrls
   const file = path.normalize(path.join(SITE, rel));
   if (!file.startsWith(SITE) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.statusCode = 404; return res.end('not found'); }

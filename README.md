@@ -26,7 +26,7 @@ the legs out and an organic fill there pays 15.5 bps, not the 55.3 the raw tape 
 [![Live page](https://img.shields.io/badge/middleman.edycu.dev-Live-FF7A45?style=for-the-badge)](https://middleman.edycu.dev)
 [![For judges](https://img.shields.io/badge/⚖️_/judge-no_key,_no_setup-3DDC97?style=for-the-badge)](https://middleman.edycu.dev/judge)
 [![Evidence](https://img.shields.io/badge/every_call-Evidence-5AC8FA?style=for-the-badge)](https://middleman.edycu.dev/evidence)
-[![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-FFB020?style=for-the-badge)](https://middleman.edycu.dev/pitch/)
+[![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-FFB020?style=for-the-badge)](https://middleman.edycu.dev/pitch)
 [![API Feedback](https://img.shields.io/badge/📮_CMC_API-Feedback-4C9AFF?style=for-the-badge)](FEEDBACK.md)
 [![Built for Build with CMC](https://img.shields.io/badge/DoraHacks-Build_with_CMC-8b5cf6?style=for-the-badge)](https://dorahacks.io/hackathon/coinmarketcap-api-202609/detail)
 
@@ -302,7 +302,7 @@ submitted on chain; the product reads prints that already landed.
 | [middleman.edycu.dev](https://middleman.edycu.dev) | the table, the route line, the raw rows, the census strip, the receipt, the paste box — rendered from the committed capture, JavaScript-off safe |
 | [/judge](https://middleman.edycu.dev/judge) | one page for one reader: the claim, the 30-second path, the receipt block, the real reproduce command, the limitations — no key, no cookie, no session |
 | [/evidence](https://middleman.edycu.dev/evidence) | every request behind every receipt: URL, HTTP status, UTC, sha256 of the body, credits |
-| [/pitch/](https://middleman.edycu.dev/pitch/) | the pitch deck — 12 slides, arrow keys, `P` for speaker notes, `Cmd+P` for a PDF; every number a slot from the same receipts |
+| [/pitch](https://middleman.edycu.dev/pitch) | the pitch deck — 12 slides, arrow keys, `P` for speaker notes, `Cmd+P` for a PDF; every number a slot from the same receipts |
 | `/api/swaps?platform=&address=` | the identical keyless CMC URL with the one header CMC omits (`Access-Control-Allow-Origin`) and a 60 s CDN cache — [`api/swaps.js`](api/swaps.js), 58 lines, holds no secret and can reach no other host |
 | [/api/health](https://middleman.edycu.dev/api/health) | the server clock, the receipts' capture time, the census totals; no upstream call |
 
@@ -532,7 +532,7 @@ middleman/
 | **For judges** | **[JUDGE.md](JUDGE.md)** · **[/judge](https://middleman.edycu.dev/judge)** — the claim, the 30-second path, the receipt, the real reproduce command. |
 | **Live page** | **[middleman.edycu.dev](https://middleman.edycu.dev)** — the capture beside its raw rows, a dated snapshot that says so on every number, and a paste box that runs the engine live. |
 | **Evidence** | **[/evidence](https://middleman.edycu.dev/evidence)** — every request, hashed. |
-| **Pitch deck** | **[/pitch/](https://middleman.edycu.dev/pitch/)** — 12 slides, arrow keys, `P` for notes; the frozen slide is two raw rows and one division. |
+| **Pitch deck** | **[/pitch](https://middleman.edycu.dev/pitch)** — 12 slides, arrow keys, `P` for notes; the frozen slide is two raw rows and one division. |
 | **The receipts** | **[DEMO.md](DEMO.md)** — four real transcripts, with [`docs/proof/`](docs/proof/) behind them. |
 | **Social card** | [`docs/assets/og-image.png`](docs/assets/og-image.png) — the mark: two blue prints, one orange hairpin. |
 | **Screenshots** | [`docs/screenshots/`](docs/screenshots/) — nine, of live execution: the table, the raw rows, the UNI sandwich, the paste box mid-fetch, `/evidence`, mobile. |
