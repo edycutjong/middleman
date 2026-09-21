@@ -53,7 +53,7 @@ SITE_SHORT = "middleman.edycu.dev"
 # its templates clones shallow with no tags, and a render that depended on tags would drift.
 DECK_VERSION = f"v{__version__}"
 # The counts /judge publishes. tests/test_published_counts.py fails if they drift from the suite.
-TESTS_TOTAL, TESTS_OFFLINE, TESTS_LIVE = 145, 139, 6
+TESTS_TOTAL, TESTS_OFFLINE, TESTS_LIVE = 257, 251, 6
 PROPERTY_CASES = 1000
 EVENT = "https://dorahacks.io/hackathon/coinmarketcap-api-202609/detail"
 AUTHOR = "Edy Cu"
@@ -295,9 +295,14 @@ def hero_viz(r, pool):
     first viewport stays a picture and the words stay countable."""
     ex = pool.get("example") or {}
     rows = (ex.get("rows") or [])[:6]
-    legs = [lg for lg in (ex.get("highlight") or []) if any(x.get("lgid") == lg for x in rows)]
-    victims = set(ex.get("victims") or [])
     kind = ex.get("kind", "organic")
+    # an organic example highlights a fill, not a wallet's legs — the legend draws it plain
+    legs = (
+        [lg for lg in (ex.get("highlight") or []) if any(x.get("lgid") == lg for x in rows)]
+        if kind != "organic"
+        else []
+    )
+    victims = set(ex.get("victims") or [])
     sym = esc(r["symbol"])
     if not rows:
         svg = (

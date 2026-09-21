@@ -176,7 +176,7 @@ docs/
   METHOD.md                   the definitions, the invariant, the exclusions
   proof/                      spike.json · live_run.json · <sym>.json ×10 · census.json ·
                               platforms.json · bench_live.json · bench_replay.json
-tests/                        145 tests: 139 offline, 6 live
+tests/                        257 tests: 251 offline, 6 live
 ```
 
 ## Dependencies

@@ -91,8 +91,8 @@ def scan(counts=None):
                     break
             if counts and counts.get("total"):
                 for m in COUNT.finditer(line):
-                    n = int(next(g for g in m.groups() if g))
-                    if n not in (counts["total"], counts.get("offline")):
+                    published = int(next(g for g in m.groups() if g))
+                    if published not in (counts["total"], counts.get("offline")):
                         findings.append(
                             {
                                 "file": str(f.relative_to(ROOT)),

@@ -253,3 +253,9 @@ def test_explorer_links_come_from_the_platform_lists_template(monkeypatch):
     assert enrich.explorer_tx("ethereum", None, table) is None
     _serve(monkeypatch, _fail())
     assert enrich.platforms()[0] is None
+
+
+def test_pair_quotes_failure_is_none_with_the_receipt_kept(monkeypatch):
+    _serve(monkeypatch, _fail())
+    cov, receipt = enrich.pair_quotes("ethereum", "0xpool")
+    assert cov is None and receipt["ok"] is False

@@ -250,3 +250,16 @@ def test_the_keyless_throttle_advice_names_both_status_codes_and_the_way_through
     advice = tape.throttle_advice("HTTP 429 (error 1022): limit")
     assert "429" in advice and "500" in advice and "CMC_API_KEY" in advice
     assert "escape hatch" in advice
+
+
+def test_a_quiet_retry_backs_off_without_writing_to_stderr(monkeypatch, capsys):
+    _serve(monkeypatch, [_http_error(429, {}), _Resp(_page([_swap("a", 1)], None))])
+    swaps, meta = tape.pull("ethereum", "0xt", pages=1, quiet=True)
+    assert len(swaps) == 1 and meta["error"] is None
+    assert capsys.readouterr().err == ""
+
+
+def test_zero_pages_asks_for_nothing_and_returns_an_empty_tape(monkeypatch):
+    seen = _serve(monkeypatch, [])
+    swaps, meta = tape.pull("ethereum", "0xt", pages=0)
+    assert swaps == [] and seen == [] and meta["pages"] == 0 and meta["error"] is None

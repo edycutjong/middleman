@@ -38,7 +38,7 @@ the legs out and an organic fill there pays 15.5 bps, not the 55.3 the raw tape 
 ![CoinMarketCap](https://img.shields.io/badge/CoinMarketCap_DEX_API-3861FB?style=flat&logo=coinmarketcap&logoColor=white)
 ![No API key](https://img.shields.io/badge/API_key-not_required-4C9AFF?style=flat)
 ![Zero dependencies](https://img.shields.io/badge/runtime_deps-zero-5E6C80?style=flat)
-![Tests](https://img.shields.io/badge/tests-145-3DDC97?style=flat)
+![Tests](https://img.shields.io/badge/tests-257-3DDC97?style=flat)
 [![License](https://img.shields.io/badge/License-MIT-FFB020?style=flat)](LICENSE)
 
 </div>
@@ -216,8 +216,15 @@ organic fill pays, and the sandwich is the named case the join was built to catc
 pull the prints  →  order by (block, log index)  →  recover pools  →  join on the maker  →  price every organic fill  →  route + cap
 ```
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/architecture-dark.png">
+  <img src="docs/assets/architecture.png" alt="Middleman architecture: the CLI pulls a token's swaps from CoinMarketCap's keyless DEX feed, orders them by block and log index, joins on the maker, names round-trips and sandwiches per pool, and writes a receipt the site, the JS engine and verify_tape.py all read" width="100%">
+</picture>
+
+<p align="center"><sub>The same diagram as a page, light and dark, with the derivation beside it: <a href="https://middleman.edycu.dev/architecture">middleman.edycu.dev/architecture</a></sub></p>
+
 <details>
-<summary><b>Architecture diagram</b> (click to expand)</summary>
+<summary><b>Architecture diagram as Mermaid</b> (click to expand)</summary>
 
 ```mermaid
 flowchart LR
@@ -335,7 +342,7 @@ canonical host by absolute URL (`API_BASE` in `site/middleman.js`).
 |---|---|
 | Live run wall clock | **8.6 s** — 800 prints of the hero token, 11 calls, clean path · **11.0 s** and **11.6 s** on the third and fourth runs |
 | **Credits used** | **0** — keyless, with every CMC variable explicitly unset, on all four receipts |
-| Tests | **145** — 139 offline, 6 live; each regression named for the defect it pins |
+| Tests | **257** — 251 offline, 6 live; each regression named for the defect it pins |
 | **Property-based verification of the join** | **1,000 generated blocks, 0 violations** of `middlemen()`'s own definition |
 | Parity | the browser engine (`site/middleman.js`) vs the Python engine, every pool row of every committed tape |
 | Permission boundary | the one deployed function proven to reach exactly one keyless URL and never forward a caller's credential — `tests/test_proxy_boundary.py` |
@@ -375,7 +382,7 @@ pytest tests/test_property.py --hypothesis-show-statistics     # → 1000 passin
 | `security/detail` taxes are read from the list-wrapped, camel-cased block they actually arrive in | a misread tax would score a fee-on-transfer token as extraction | [`tests/test_enrich.py:146`](tests/test_enrich.py#L146) |
 | When no pool qualifies, the rule is stated, not widened | a routing rule that loosens itself to produce an answer is not a rule | [`tests/test_recommend.py:51`](tests/test_recommend.py#L51) |
 | An unfilled template slot stops the render rather than shipping the braces | no placeholder can reach a page a judge reads | [`tests/test_render_site.py:23`](tests/test_render_site.py#L23) |
-| Every surface publishes the test count the suite has | "139 tests" on a README that has 145 is the cheapest way to look careless | [`tests/test_published_counts.py:16`](tests/test_published_counts.py#L16) |
+| Every surface publishes the test count the suite has | "251 tests" on a README that has 257 is the cheapest way to look careless | [`tests/test_published_counts.py:16`](tests/test_published_counts.py#L16) |
 | `/judge` answers 200 with the claim to a client carrying no credentials | a judge page that breaks on submission day is worse than none | [`tests/test_judge_surface.py:89`](tests/test_judge_surface.py#L89) |
 | The join never violates its own definition, across 1,000 generated blocks | the property test, not the examples, is what makes the shapes above a definition | [`tests/test_property.py:31`](tests/test_property.py#L31) |
 
@@ -450,7 +457,7 @@ for key, rows in detect.group(prints).items():
 make setup           # dev deps only: pytest, pytest-cov, ruff, mypy, hypothesis, pip-audit
 make lint            # ruff check + format check
 make typecheck       # mypy over middleman/, scripts/ and tests/
-make test            # 139 offline tests, no internet
+make test            # 251 offline tests, no internet
 make test-coverage   # the same, branch coverage of the engine gated at 95%
 make test-live       # 6 tests against the real CoinMarketCap contract, keyless
 make demo            # the judged capability, live, no key
@@ -467,7 +474,7 @@ make ci              # lint + typecheck + test-coverage + audit + check
 | Layer | Tool | Status |
 |---|---|---|
 | Code quality | ruff (check + format) · mypy | ✅ |
-| Unit testing | pytest, 139 offline tests · engine branch coverage 97.6 %, gated at 95 % | ✅ |
+| Unit testing | pytest, 251 offline tests · engine + scripts branch coverage 100 %, gated at 100 % | ✅ |
 | Property testing | hypothesis, 1,000 generated blocks | ✅ |
 | Live contract testing | pytest `-m live` against real CMC, keyless | ✅ |
 | Permission boundary | `api/swaps.js` driven under node with `fetch` stubbed | ✅ |
@@ -509,7 +516,7 @@ middleman/
 │   └── site_templates/           index.html · evidence.html · judge.html · deck.html — {{slot}} templates
 ├── site/                         generated: / · /evidence · /judge · /pitch · middleman.js (the engine, ported)
 ├── api/                          swaps.js (keyless proxy) · health.js — the two Vercel functions
-├── tests/                        145 tests: the join, the fetch contract, the CLI, parity, the boundary, the surfaces
+├── tests/                        257 tests: the join, the fetch contract, the CLI, parity, the boundary, the surfaces
 ├── data/                         tape_<sym>.json ×10 — rows verbatim with page hashes; nothing judged reads them
 ├── docs/proof/                   <sym>.json ×10 · census.json · spike.json · live_run*.json · bench_*.json
 ├── docs/METHOD.md                the definitions, the invariant, the exclusions
@@ -540,6 +547,7 @@ middleman/
 
 | | |
 |---|---|
+| **Demo video** | **[https://youtu.be/BwikjIf19hQ](https://youtu.be/BwikjIf19hQ)** — 2 min 57 s: the committed page, a real keyless run from a fresh clone at real speed, LINK pasted live, the evidence page and the census; subtitles in the upload |
 | **For judges** | **[JUDGE.md](JUDGE.md)** · **[/judge](https://middleman.edycu.dev/judge)** — the claim, the 30-second path, the receipt, the real reproduce command. |
 | **Live page** | **[middleman.edycu.dev](https://middleman.edycu.dev)** — the capture beside its raw rows, a dated snapshot that says so on every number, and a paste box that runs the engine live. |
 | **Evidence** | **[/evidence](https://middleman.edycu.dev/evidence)** — every request, hashed. |

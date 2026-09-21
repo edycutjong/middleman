@@ -274,3 +274,48 @@ def test_python_dash_m_middleman_also_runs(offline, capsys, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["middleman", "--address", MOTO, "--pages", "1"])
     runpy.run_module("middleman", run_name="__main__")
     assert "route via" in capsys.readouterr().out
+
+
+def test_a_routed_pool_whose_24h_counts_did_not_land_has_no_coverage_line(offline, monkeypatch):
+    monkeypatch.setattr(enrich, "pair_quotes", lambda p, addr, quiet=False: (None, {"ok": False}))
+    r = cli.analyse("ethereum", MOTO, "MOTO", pages=2)
+    assert r["coverage"] is None and r["decision"]["pool"] is not None
+    out = io.StringIO()
+    cli.render(r, out=out)
+    assert "coverage:" not in out.getvalue()
+
+
+def test_liquidity_is_printed_in_millions_thousands_or_dollars():
+    assert cli._usd(None) == "—"
+    assert cli._usd(2_500_000.0) == "$2.5M"
+    assert cli._usd(959_000.0) == "$959k"
+    assert cli._usd(42.4) == "$42"
+
+
+def test_the_hero_line_does_not_divide_by_a_zero_spread():
+    rows = [
+        {
+            "venue": f"v{i}",
+            "quote": "Q",
+            "n_organic": 100,
+            "round_trips": {"pairs": 0, "wallets": [], "share_volume": 0, "same_tx_share": 0},
+            "sandwiches": {"count": 0, "victims": 0},
+            "q2f": {"p50_bps": p50},
+        }
+        for i, p50 in enumerate([0.0, 40.0])
+    ]
+    assert "every print organic" in cli.hero_line({"pools": rows})
+
+
+def test_the_table_marks_merged_fee_tiers_and_says_no_route_when_there_is_none(offline):
+    r = cli.analyse("ethereum", MOTO, "MOTO", pages=2)
+    r["pools"][0]["pools_merged"] = 3
+    r["decision"] = {"pool": None, "why": "no pool has enough organic prints"}
+    for p in r["pools"]:
+        p["example"] = None
+    out = io.StringIO()
+    cli.render(r, out=out)
+    text = out.getvalue()
+    assert "Uniswap v2 / WETH ×3" in text
+    assert "▶ no route — no pool has enough organic prints" in text
+    assert "raw rows" not in text and "◀ route" not in text

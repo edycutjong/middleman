@@ -19,8 +19,8 @@ typecheck:  ## mypy over middleman/, scripts/ and tests/ (config in pyproject.to
 test:  ## pytest, offline only (no internet)
 	pytest -q -m "not live"
 
-test-coverage:  ## offline tests, branch coverage of the engine (middleman/) gated at 95%
-	pytest -q -m "not live" --cov=middleman --cov-report=term-missing --cov-report=xml --cov-fail-under=95
+test-coverage:  ## offline tests, branch coverage of the engine (middleman/) and every script (scripts/) gated at 100%
+	pytest -q -m "not live" --cov=middleman --cov=scripts --cov-report=term-missing --cov-report=xml --cov-fail-under=100
 
 test-live:  ## the live tests — hit the real CoinMarketCap API, keyless
 	pytest -q -m live

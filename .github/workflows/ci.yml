@@ -41,10 +41,10 @@ jobs:
       # Offline only, including the JavaScript/Python parity test and the proxy boundary test
       # (node is installed above). The live tests run in the live-api job, where a CMC rate
       # limit is diagnosed as a rate limit rather than reported as a test failure.
-      # Branch coverage of the engine (middleman/) is gated at 95% — `make test-coverage`.
+      # Branch coverage of the engine (middleman/) and every script (scripts/) is gated at 100% — `make test-coverage`.
       - run: >-
-          pytest -q -m "not live" --cov=middleman --cov-report=term-missing
-          --cov-report=xml --cov-fail-under=95
+          pytest -q -m "not live" --cov=middleman --cov=scripts --cov-report=term-missing
+          --cov-report=xml --cov-fail-under=100
       - uses: actions/upload-artifact@v7
         if: matrix.python-version == '3.11'
         with: { name: coverage-xml, path: coverage.xml, retention-days: 7, if-no-files-found: ignore }
@@ -145,7 +145,7 @@ jobs:
     steps:
       - run: |
           echo "All gates passed."
-          echo "  Stage 1 · lint + mypy + tests on 3.11/3.12/3.13 (engine branch coverage ≥ 95%)"
+          echo "  Stage 1 · lint + mypy + tests on 3.11/3.12/3.13 (engine + scripts branch coverage ≥ 100%)"
           echo "  Stage 2 · pip-audit · placeholders · page drift · tape re-derivation"
           echo "  Stage 3 · deterministic benchmark (replay, CI only)"
           echo "  Stage 4 · the judged capability, live and keyless"

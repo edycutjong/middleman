@@ -57,7 +57,9 @@
     return side(first) === 'buy' ? a1s - a1f : a1f - a1s;
   }
   function middlemen(rows, tol = SIZE_TOL, maxVictims = MAX_VICTIMS) {
-    const n = rows.length, consumed = new Set(), rt = [], sw = [];
+    const n = rows.length, consumed = new Set(), rt = [], sw = [], pairs = [];
+    // 1. the join: every pair is found BEFORE any is classified, so a print that is itself a
+    //    leg of a later pair (A sell · B sell · A buy · B buy) is never mistaken for A's victim.
     for (let i = 0; i < n; i++) {
       if (consumed.has(i)) continue;
       const a = rows[i];
@@ -71,12 +73,16 @@
         between.push(j);
       }
       if (k === null || consumed.has(k) || !legsMatch(a, rows[k], tol)) continue;
-      const b = rows[k], tk = take(a, b), victims = between.map((j) => rows[j]);
+      pairs.push([i, k, between]);
+      consumed.add(i); consumed.add(k);
+    }
+    // 2. the shape, with every leg known.
+    for (const [i, k, between] of pairs) {
+      const a = rows[i], b = rows[k], tk = take(a, b), victims = between.map((j) => rows[j]);
       const isSandwich = between.length >= 1 && between.length <= maxVictims
         && between.every((j) => !consumed.has(j) && side(rows[j]) === side(a)) && tk != null && tk > 0;
       if (isSandwich) sw.push({ i, k, ma: a.ma, h: a.h, victims, legs: [a, b], take_quote: tk });
       else rt.push({ i, k, ma: a.ma, h: a.h, same_tx: a.tx != null && a.tx === b.tx, between: between.length, take_quote: tk, legs: [a, b] });
-      consumed.add(i); consumed.add(k);
     }
     const organic = rows.filter((_, idx) => !consumed.has(idx));
     return { rt, sw, organic };

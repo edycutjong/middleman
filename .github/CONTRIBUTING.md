@@ -19,7 +19,7 @@ make setup           # dev deps only: pytest, pytest-cov, ruff, mypy, hypothesis
 make lint            # ruff check + format check
 make lint-fix        # ruff --fix + format, in place
 make typecheck       # mypy over middleman/, scripts/ and tests/
-make test            # 139 offline tests, no internet
+make test            # 251 offline tests, no internet
 make test-coverage   # the same, branch coverage of the engine gated at 95%
 make test-live       # 6 tests against the real CoinMarketCap contract, keyless
 make demo            # the judged capability, live, no key

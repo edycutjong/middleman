@@ -260,3 +260,25 @@ def test_the_return_leg_is_the_wallets_next_print_not_any_later_one():
     rt, _, organic = detect.middlemen(rows)
     assert len(rt) == 1 and [r["lgid"] for r in rt[0]["legs"]] == ["2", "3"]
     assert [r["lgid"] for r in organic] == ["1"]
+
+
+def test_a_leg_with_no_quote_amount_still_pairs_but_its_take_is_unknown():
+    rows = [make_row(10, 1, "A", "buy", 100, 1.00), make_row(10, 2, "A", "sell", 100, 1.01)]
+    rows[1]["a1"] = None
+    rt, sw, _ = detect.middlemen(rows)
+    assert not sw and len(rt) == 1 and rt[0]["take_quote"] is None
+
+
+def test_two_wallets_washing_around_each_other_are_two_round_trips_even_when_one_came_out_ahead():
+    """Found by the property test: A sell · B sell · A buy · B buy with A's return leg cheaper
+    than its first. B's prints are the legs of B's own round-trip, so B is nobody's victim —
+    whatever A's take. The pairing must be settled before any pair is named."""
+    rows = [
+        make_row(10, 1, "A", "sell", 2.0, 2.0),
+        make_row(10, 2, "B", "sell", 2.0, 1.0),
+        make_row(10, 3, "A", "buy", 2.0, 1.0),
+        make_row(10, 4, "B", "buy", 2.0, 1.0),
+    ]
+    rt, sw, organic = detect.middlemen(rows)
+    assert not sw and [m["ma"] for m in rt] == ["A", "B"] and not organic
+    assert rt[0]["take_quote"] == 1.0 and rt[0]["between"] == 1

@@ -123,7 +123,10 @@ def middlemen(rows, tol=SIZE_TOL, max_victims=MAX_VICTIMS):
     """
     n = len(rows)
     consumed = set()
-    round_trips, sandwiches = [], []
+    # 1. the join: pair each print with its wallet's next print in the block. Every pair is
+    #    found BEFORE any is classified, so a print that is itself a leg of a later pair
+    #    (A sell · B sell · A buy · B buy) is never mistaken for A's victim.
+    pairs = []
     for i in range(n):
         if i in consumed:
             continue
@@ -142,7 +145,13 @@ def middlemen(rows, tol=SIZE_TOL, max_victims=MAX_VICTIMS):
             between.append(j)
         if k is None or k in consumed or not _legs_match(a, rows[k], tol):
             continue
-        b = rows[k]
+        pairs.append((i, k, between))
+        consumed.update((i, k))
+    # 2. the shape: with every leg known, the prints between two legs are victims only if
+    #    none of them is a leg of another pair.
+    round_trips, sandwiches = [], []
+    for i, k, between in pairs:
+        a, b = rows[i], rows[k]
         take = _take(a, b)
         victims = [rows[j] for j in between]
         is_sandwich = (
@@ -176,7 +185,6 @@ def middlemen(rows, tol=SIZE_TOL, max_victims=MAX_VICTIMS):
                     "legs": [a, b],
                 }
             )
-        consumed.update((i, k))
     organic = [r for idx, r in enumerate(rows) if idx not in consumed]
     return round_trips, sandwiches, organic
 
