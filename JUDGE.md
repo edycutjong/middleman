@@ -132,5 +132,5 @@ average is not small everywhere. Both retractions are dated in the README.
 | **How it works** | [ARCHITECTURE.md](ARCHITECTURE.md) — derived from the code · [docs/METHOD.md](docs/METHOD.md) — the definitions |
 | **API feedback for CMC** | [FEEDBACK.md](FEEDBACK.md) — eight dated, evidenced findings |
 | **The engine** | [`middleman/`](middleman/) — six stdlib modules · [`scripts/middleman.py`](scripts/middleman.py) — the door |
-| **The tests** | [`tests/`](tests/) — 153, each regression named for the defect it pins |
+| **The tests** | [`tests/`](tests/) — 257 tests, each regression named for the defect it pins |
 | **Live page** | [middleman.edycu.dev](https://middleman.edycu.dev) · [/judge](https://middleman.edycu.dev/judge) · [/evidence](https://middleman.edycu.dev/evidence) |
